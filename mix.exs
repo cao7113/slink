@@ -1,13 +1,19 @@
 defmodule Slink.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/cao7113/slink"
+  @version "0.1.0"
+
   def project do
     [
       app: :slink,
-      version: "0.1.0",
-      elixir: "~> 1.14",
+      version: @version,
+      elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      name: "Shareup links",
+      docs: docs(),
+      source_url: @source_url,
       aliases: aliases(),
       deps: deps()
     ]
@@ -58,7 +64,11 @@ defmodule Slink.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+
+      ## Tools
+      # https://github.com/zachdaniel/git_ops
+      {:git_ops, "~> 2.6.1", only: [:dev]}
     ]
   end
 
@@ -80,6 +90,17 @@ defmodule Slink.MixProject do
         "tailwind slink --minify",
         "esbuild slink --minify",
         "phx.digest"
+      ]
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      source_url: @source_url,
+      source_ref: "v#{@version}",
+      extras: [
+        "README.md"
       ]
     ]
   end
