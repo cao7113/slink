@@ -4,3 +4,8 @@ tasks:
   default: mix test
   sh: iex --erl "-kernel shell_history enabled" -S mix
   run: iex --erl "-kernel shell_history enabled" -S mix phx.server
+
+  ## Git ops
+  cmt: mix git_ops.release --yes && git push --follow-tags
+  app-info: mix git_ops.project_info
+  init-release: mix git_ops.release --initial
