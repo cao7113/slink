@@ -38,6 +38,7 @@ defmodule Slink.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -68,7 +69,9 @@ defmodule Slink.MixProject do
 
       ## Tools
       # https://github.com/zachdaniel/git_ops
-      {:git_ops, "~> 2.6.1", only: [:dev]}
+      {:git_ops, "~> 2.6", only: [:dev]},
+      {:endon, "~> 2.0"}
+      # {:timex, "~> 3.7"}
     ]
   end
 

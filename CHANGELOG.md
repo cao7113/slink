@@ -5,11 +5,8 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
-## [v0.1.0](https://github.com/cao7113/slink/compare/v0.1.0...v0.1.0) (2024-07-24)
-
-
-
+## [v0.1.0](https://github.com/cao7113/slink/tree/v0.1.0) (2024-07-24)
 
 ### Improvements:
 
-* try run at fly.io
+- try run at fly.io
