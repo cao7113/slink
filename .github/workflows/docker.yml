@@ -1,0 +1,22 @@
+name: Docker Compose Test
+on:
+  push:
+    branches:
+      - docker
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  test-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run app in docker compose env
+        run: |
+          docker compose version
+          docker compose up --quiet-pull --exit-code-from curl # --abort-on-container-exit

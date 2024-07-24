@@ -1,0 +1,96 @@
+# https://docs.docker.com/compose/compose-file/05-services/
+services:
+  # https://github.com/docker-library/docs/tree/master/postgres
+  # https://github.com/docker-library/postgres/blob/master/16/bullseye/Dockerfile
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # here init app db, maybe run below in psql: 
+      # create database slink_prod
+      POSTGRES_DB: slink_prod
+    ports:
+      - 25432:5432
+    # https://docs.docker.com/compose/compose-file/05-services/#healthcheck
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+      start_interval: 3s
+    # set shared memory limit when using docker-compose
+    shm_size: 256mb
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+  
+  # # init create db or init seed data here???
+  # psql:
+  #   image: postgres
+  #   depends_on:
+  #     db: 
+  #       condition: service_healthy
+  #   command: >
+  #     sh -c "
+  #       echo test connection by psql
+  #       psql postgresql://postgres:postgres@db:5432/postgres -c 'select current_database()'
+  #       psql postgresql://postgres:postgres@db/slink_prod -c '\\conninfo'
+  #       sleep 500000
+  #     "
+
+  # https://github.com/cao7113/slink/pkgs/container/slink
+  # http://web.slink.orb.local/
+  web:
+    image: ghcr.io/cao7113/slink
+    # build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo Runing db migration
+        bin/migrate
+        echo Running web server
+        bin/server
+      "
+    # ports:
+    #   - 4000
+    environment:
+      #DATABASE_URL: "postgres://postgres:postgres@db:5432/slink_prod"
+      DATABASE_URL: "ecto://postgres:postgres@db:5432/slink_prod"
+      SECRET_KEY_BASE: "nVRbwGkshVYZzRYao7G98WZJBSRVqYsyVXZE0NjuSt57hBxwYTI9yPPh0fEaS1z/"
+      # MIX_ENV: "prod"
+      # PHX_SERVER: true
+      PHX_HOST: "localhost"
+      # PORT: "4000"
+    # https://docs.docker.com/compose/compose-file/05-services/#healthcheck
+    healthcheck:
+      test: bin/slink pid || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+      start_interval: 3s
+
+  curl:
+    image: curlimages/curl:8.8.0
+    depends_on:
+      web:
+        condition: service_healthy
+    command: >
+      sh -c "
+        set -e
+        # echo ping web
+        # ping -c 3 web
+        echo Ping web api
+        curl -sS  http://web:4000/api/ping
+        # echo
+        # echo Get db urls
+        # curl -sS http://web:4000/api/urls
+      "
