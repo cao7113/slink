@@ -15,6 +15,7 @@ defmodule SlinkWeb.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
+    plug :get_api_user
   end
 
   scope "/", SlinkWeb do
@@ -23,9 +24,35 @@ defmodule SlinkWeb.Router do
     get("/", PageController, :home)
   end
 
+  ## Links routes
+  scope "/", SlinkWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_user_to_link_ops,
+      on_mount: [{SlinkWeb.UserAuth, :ensure_authenticated}] do
+      live "/links/new", LinkLive.Index, :new
+      live "/links/:id/edit", LinkLive.Index, :edit
+      live "/links/:id/show/edit", LinkLive.Show, :edit
+    end
+  end
+
+  scope "/", SlinkWeb do
+    pipe_through(:browser)
+
+    live_session :mount_user_to_link,
+      on_mount: [{SlinkWeb.UserAuth, :mount_current_user}] do
+      live "/links", LinkLive.Index, :index
+      live "/links/:id", LinkLive.Show, :show
+    end
+  end
+
+  ## API routes
   scope "/api", SlinkWeb do
     pipe_through(:api)
     get("/ping", ApiController, :ping)
+
+    # Links API
+    resources "/links", LinkController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

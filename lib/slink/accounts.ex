@@ -8,6 +8,41 @@ defmodule Slink.Accounts do
 
   alias Slink.Accounts.{User, UserToken, UserNotifier}
 
+  @api_token_context "api-token"
+
+  ## API
+
+  @doc """
+  Creates a new api token for a user.
+
+  The token returned must be saved somewhere safe.
+  This token cannot be recovered from the database.
+  """
+  def create_user_api_token(user) do
+    {encoded_token, user_token} = UserToken.build_email_token(user, @api_token_context)
+    Repo.insert!(user_token)
+    encoded_token
+  end
+
+  @doc """
+  Fetches the user by API token.
+  """
+  def fetch_user_by_api_token(token) do
+    with %User{} = user <- get_user_by_api_token(token) do
+      {:ok, user}
+    else
+      _ -> :error
+    end
+  end
+
+  def get_user_by_api_token(token) do
+    with {:ok, query} <- UserToken.verify_email_token_query(token, @api_token_context) do
+      Repo.one(query)
+    else
+      _ -> nil
+    end
+  end
+
   ## Database getters
 
   @doc """

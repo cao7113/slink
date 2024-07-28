@@ -4,6 +4,7 @@ defmodule SlinkWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
+  require Logger
   alias Slink.Accounts
 
   # Make the remember me cookie valid for 60 days.
@@ -12,6 +13,35 @@ defmodule SlinkWeb.UserAuth do
   @max_age 60 * 60 * 24 * 60
   @remember_me_cookie "_slink_web_user_remember_me"
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
+
+  def require_api_user(conn, _opts) do
+    with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
+         {:ok, user} <- Accounts.fetch_user_by_api_token(token) do
+      assign(conn, :current_user, user)
+    else
+      _ ->
+        conn
+        |> send_resp(:unauthorized, "No access for you")
+        |> halt()
+    end
+  end
+
+  def get_api_user(conn, _opts) do
+    with ["Bearer " <> token] <- get_req_header(conn, "authorization") do
+      user = Accounts.get_user_by_api_token(token)
+      assign(conn, :current_user, user)
+    else
+      _ ->
+        assign(conn, :current_user, nil)
+    end
+  end
+
+  def put_api_auth_token(conn, user) do
+    encoded_token = Accounts.create_user_api_token(user)
+
+    conn
+    |> put_req_header("authorization", "Bearer " <> encoded_token)
+  end
 
   @doc """
   Logs the user in.
@@ -177,7 +207,13 @@ defmodule SlinkWeb.UserAuth do
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
-        Accounts.get_user_by_session_token(user_token)
+        user = Accounts.get_user_by_session_token(user_token)
+
+        if user do
+          Logger.debug("current_user #{user.email} assigned to socket")
+        end
+
+        user
       end
     end)
   end

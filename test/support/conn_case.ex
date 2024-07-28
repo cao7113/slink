@@ -44,8 +44,8 @@ defmodule SlinkWeb.ConnCase do
   It stores an updated connection and a registered user in the
   test context.
   """
-  def register_and_log_in_user(%{conn: conn}) do
-    user = Slink.AccountsFixtures.user_fixture()
+  def register_and_log_in_user(%{conn: conn}, user_attrs \\ []) do
+    user = Slink.AccountsFixtures.user_fixture(user_attrs)
     %{conn: log_in_user(conn, user), user: user}
   end
 
@@ -60,5 +60,15 @@ defmodule SlinkWeb.ConnCase do
     conn
     |> Phoenix.ConnTest.init_test_session(%{})
     |> Plug.Conn.put_session(:user_token, token)
+  end
+
+  def register_and_put_api_user_auth_token(conn, user_attrs \\ []) do
+    user = Slink.AccountsFixtures.user_fixture(user_attrs)
+    conn = SlinkWeb.UserAuth.put_api_auth_token(conn, user)
+
+    %{
+      conn: conn,
+      user: user
+    }
   end
 end

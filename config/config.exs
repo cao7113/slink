@@ -9,7 +9,13 @@ import Config
 
 config :slink,
   ecto_repos: [Slink.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  ## Build info
+  build_mode: config_env(),
+  build_time: DateTime.utc_now(),
+  source_url: Mix.Project.config()[:source_url],
+  commit_id: System.get_env("GIT_COMMIT_ID", ""),
+  commit_time: System.get_env("GIT_COMMIT_TIME", "")
 
 # Configures the endpoint
 config :slink, SlinkWeb.Endpoint,
