@@ -9,7 +9,13 @@ import Config
 
 config :slink,
   ecto_repos: [Slink.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  ## Build info
+  build_mode: config_env(),
+  build_time: DateTime.utc_now(),
+  source_url: Mix.Project.config()[:source_url],
+  commit_id: System.get_env("GIT_COMMIT_ID", ""),
+  commit_time: System.get_env("GIT_COMMIT_TIME", "")
 
 # Configures the endpoint
 config :slink, SlinkWeb.Endpoint,
@@ -60,6 +66,9 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :endon,
+  repo: Slink.Repo
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

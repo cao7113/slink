@@ -9,3 +9,9 @@ tasks:
   cmt: mix git_ops.release --yes && git push --follow-tags
   app-info: mix git_ops.project_info
   init-release: mix git_ops.release --initial
+
+  ## DB
+  sql: pgcli -U postgres slink_dev
+  mig: mix ecto.migrate
+  db-down: mix ecto.rollback --step -- {{.CLI_ARGS}}
+  db-down1: task db-down -- 1

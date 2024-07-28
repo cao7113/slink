@@ -31,6 +31,8 @@ defmodule Slink.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  # for handy dev testing
+  defp elixirc_paths(:dev), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -38,13 +40,15 @@ defmodule Slink.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      # TODO bump on release to {:phoenix_live_view, "~> 1.0.0"},
+      # TODO bump on release to
+      # {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix_live_view, "~> 1.0.0-rc.1", override: true},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
@@ -68,7 +72,10 @@ defmodule Slink.MixProject do
 
       ## Tools
       # https://github.com/zachdaniel/git_ops
-      {:git_ops, "~> 2.6.1", only: [:dev]}
+      {:git_ops, "~> 2.6", only: [:dev]},
+      {:endon, "~> 2.0"},
+      {:faker, "~> 0.18", only: [:dev, :test]}
+      # {:timex, "~> 3.7"}
     ]
   end
 
