@@ -5,6 +5,17 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.2.0](https://github.com/cao7113/slink/compare/v0.1.0...v0.2.0) (2024-07-28)
+
+
+
+
+### Features:
+
+* draft links live and api with user-auth
+
+* add mix phx.gen.auth Accounts User users support
+
 ## [v0.1.0](https://github.com/cao7113/slink/tree/v0.1.0) (2024-07-24)
 
 ### Improvements:
