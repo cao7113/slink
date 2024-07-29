@@ -1,23 +1,24 @@
-# fly.toml app configuration file generated for slink2 on 2024-07-24T12:00:38+08:00
+# fly.toml app configuration file generated for slink on 2024-07-29T08:46:30+08:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'slink2'
+app = 'slink'
 primary_region = 'nrt'
 kill_signal = 'SIGTERM'
 
 [build]
+# image = 'ghcr.io/cao7113/slink:v0.2.0'
 
 [deploy]
 release_command = '/app/bin/migrate'
 
 [env]
-PHX_HOST = 'slink2.fly.dev'
+PHX_HOST = 'slink.fly.dev'
 PORT = '8080'
 # https://fly.io/docs/elixir/getting-started/#important-ipv6-settings
-ERL_AFLAGS = "-proto_dist inet6_tcp"
-ECTO_IPV6 = "true"
+ECTO_IPV6 = 'true'
+ERL_AFLAGS = '-proto_dist inet6_tcp'
 
 [http_service]
 internal_port = 8080
@@ -33,6 +34,4 @@ hard_limit = 1000
 soft_limit = 1000
 
 [[vm]]
-memory = '512mb'
-cpu_kind = 'shared'
-cpus = 1
+size = 'shared-cpu-1x'

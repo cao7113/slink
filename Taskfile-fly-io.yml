@@ -1,0 +1,52 @@
+# https://taskfile.dev
+version: "3"
+
+## Fly.io https://hexdocs.pm/phoenix/fly.html
+# https://fly.io/docs/elixir/getting-started/
+vars:
+  APP_NAME: slink
+  FLY_APP_NAME: slink
+  FLY_DB_APP_NAME: shareup-db
+
+tasks:
+  default: echo fly on app {{.FLY_APP_NAME}}
+
+  # IEx require mem: 512m+ on fly.io
+  sh: fly ssh console --pty -C "/app/bin/{{.APP_NAME}} remote"
+  ssh: fly ssh console
+  st: fly status
+  # deploy new app version
+  # up: fly deploy --build-arg GIT_COMMIT_ID=$(git log -1 --format="%H") --build-arg GIT_COMMIT_TIME=$(git log -1 --format="%ct")
+  # task f:upv -- v0.1.6
+  upv: fly deploy --image ghcr.io/cao7113/slink:{{.CLI_ARGS}} --debug --verbose
+  up: |
+    latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+    echo "deploying latest tag: $latest_tag"
+    echo task fly:upv -- $latest_tag
+  reup: fly app restart
+  log: fly logs
+  open: fly open
+  # create new app and fly.toml
+  launch: fly launch --debug --verbose # --now
+  vm: fly machine ls
+  ls: fly app ls
+  db: fly postgres connect -a {{.FLY_DB_APP_NAME}}
+  db-users: fly postgres users list --app {{.FLY_DB_APP_NAME}}
+  # plain env and secrets
+  env: fly config env
+  sec: fly secrets ls
+  show: fly scale show
+  # fly scale count 2
+  # sets up a root certificate for your account and then issues a certificate.
+  ssh-agent: fly ssh issue --agent
+  board: fly dashboard
+  # Add a dedicated ipv4 with: fly ips allocate-v4
+  ips: fly ip private
+
+  ## DB
+  db-check: fly checks list -a {{.FLY_DB_APP_NAME}}
+
+  # https://fly.io/docs/flyctl/install/
+  install: brew install flyctl
+  # fly auth login
+  # fly help
