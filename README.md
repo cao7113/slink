@@ -1,7 +1,13 @@
-# Slink
+# Slink - Shareup links
 
 [![CI](https://github.com/cao7113/slink/actions/workflows/ci.yml/badge.svg)](https://github.com/cao7113/slink/actions/workflows/ci.yml)
 [![Release](https://github.com/cao7113/slink/actions/workflows/release.yml/badge.svg)](https://github.com/cao7113/slink/actions/workflows/release.yml)
+
+## Flying on fly.io
+
+- https://slink.fly.dev/links
+
+## Getting Started
 
 To start your Phoenix server:
 
