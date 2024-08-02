@@ -7,6 +7,7 @@ alias Slink, as: S
 alias Slink.Repo
 alias Slink.Accounts
 alias Slink.Accounts.User
+alias Slink.Accounts.UserToken
 alias Slink.Links
 alias Slink.Links.Link
 # alias Slink.Sites
