@@ -1,5 +1,6 @@
 defmodule Slink.Accounts.UserToken do
   use Ecto.Schema
+  use Endon
   import Ecto.Query
   alias Slink.Accounts.UserToken
 
@@ -14,12 +15,45 @@ defmodule Slink.Accounts.UserToken do
   @session_validity_in_days 60
 
   schema "users_tokens" do
+    # NOTE: this is hashed token, not directly used by user, only for verification
     field :token, :binary
     field :context, :string
     field :sent_to, :string
     belongs_to :user, Slink.Accounts.User
 
     timestamps(type: :utc_datetime, updated_at: false)
+  end
+
+  ## API Tokens
+
+  @api_token_context "api-token"
+
+  def build_api_token(user) do
+    build_email_token(user, @api_token_context)
+  end
+
+  def verify_api_token_query(token) do
+    verify_email_token_query(token, @api_token_context)
+  end
+
+  def user_api_tokens_query(user, mode \\ :all) when mode in [:all, :valid, :invalid] do
+    context = @api_token_context
+    days = days_for_context(context)
+
+    query =
+      from token in UserToken,
+        where: [user_id: ^user.id, context: ^context]
+
+    case mode do
+      :invalid ->
+        from t in query, where: t.inserted_at <= ago(^days, "day")
+
+      :valid ->
+        from t in query, where: t.inserted_at > ago(^days, "day")
+
+      _ ->
+        query
+    end
   end
 
   @doc """

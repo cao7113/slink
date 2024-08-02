@@ -8,9 +8,25 @@ defmodule Slink.Accounts do
 
   alias Slink.Accounts.{User, UserToken, UserNotifier}
 
-  @api_token_context "api-token"
-
   ## API
+
+  @doc """
+  Get user latest api token
+  """
+  def user_latest_api_token(user) do
+    UserToken.user_api_tokens_query(user, :valid)
+    |> order_by(desc: :id)
+    |> limit(1)
+    |> Repo.one()
+  end
+
+  @doc """
+  Get user api-tokens
+  """
+  def user_api_tokens(user, mode \\ :valid) when mode in [:all, :valid, :invalid] do
+    UserToken.user_api_tokens_query(user, mode)
+    |> Repo.all()
+  end
 
   @doc """
   Creates a new api token for a user.
@@ -19,7 +35,7 @@ defmodule Slink.Accounts do
   This token cannot be recovered from the database.
   """
   def create_user_api_token(user) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, @api_token_context)
+    {encoded_token, user_token} = UserToken.build_api_token(user)
     Repo.insert!(user_token)
     encoded_token
   end
@@ -36,7 +52,7 @@ defmodule Slink.Accounts do
   end
 
   def get_user_by_api_token(token) do
-    with {:ok, query} <- UserToken.verify_email_token_query(token, @api_token_context) do
+    with {:ok, query} <- UserToken.verify_api_token_query(token) do
       Repo.one(query)
     else
       _ -> nil
