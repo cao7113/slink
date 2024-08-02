@@ -49,5 +49,42 @@ defmodule SlinkWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+
+  # plug(
+  #   Corsica,
+  #   log: [rejected: :debug],
+  #   # origins: "*",
+  #   origins: [
+  #     "http://localhost:3000",
+  #     "http://127.0.0.1:3000",
+  #     "http://localhost:8000",
+  #     "http://127.0.0.1:8000",
+  #     "http://localhost:4000",
+  #     "http://localhost:4001",
+  #     ~r{^https://(.*\.?)link\fly\.dev$}
+  #   ],
+  #   allow_headers: [
+  #     "authorization",
+  #     "content-type",
+  #     "accept-language",
+  #     "special",
+  #     "accept",
+  #     "origin",
+  #     "x-requested-with"
+  #   ],
+  #   allow_credentials: true,
+  #   max_age: 600
+  # )
+
+  plug(
+    Corsica,
+    # TODO: put in config part
+    origins: "*",
+    allow_methods: :all,
+    allow_headers: :all,
+    allow_credentials: true,
+    max_age: 600
+  )
+
   plug SlinkWeb.Router
 end

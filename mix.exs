@@ -74,7 +74,8 @@ defmodule Slink.MixProject do
       # https://github.com/zachdaniel/git_ops
       {:git_ops, "~> 2.6", only: [:dev]},
       {:endon, "~> 2.0"},
-      {:faker, "~> 0.18", only: [:dev, :test]}
+      {:faker, "~> 0.18", only: [:dev, :test]},
+      {:corsica, "~> 2.1"}
       # {:timex, "~> 3.7"}
     ]
   end
