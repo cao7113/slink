@@ -110,6 +110,14 @@ defmodule Slink.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+  def get_user_by_id(id), do: Repo.get!(User, id)
+
+  def get_user_with_admin(id) when is_integer(id) do
+    User
+    |> preload(:admin_user)
+    |> limit(1)
+    |> Repo.get_by(id: id)
+  end
 
   ## User registration
 
@@ -400,5 +408,115 @@ defmodule Slink.Accounts do
       {:ok, %{user: user}} -> {:ok, user}
       {:error, :user, changeset, _} -> {:error, changeset}
     end
+  end
+
+  ## Admin
+
+  alias Slink.Accounts.AdminUser
+
+  @doc """
+  Returns the list of admin_users.
+
+  ## Examples
+
+      iex> list_admin_users()
+      [%AdminUser{}, ...]
+
+  """
+  def list_admin_users do
+    Repo.all(AdminUser)
+  end
+
+  @doc """
+  Gets a single admin_user.
+
+  Raises `Ecto.NoResultsError` if the Admin user does not exist.
+
+  ## Examples
+
+      iex> get_admin_user!(123)
+      %AdminUser{}
+
+      iex> get_admin_user!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_admin_user!(id), do: Repo.get!(AdminUser, id)
+
+  def get_admin_by_user!(user_id) when is_integer(user_id),
+    do: Repo.get_by(AdminUser |> limit(1), user_id: user_id)
+
+  def get_admin_by_user!(%User{id: user_id}), do: get_admin_by_user!(user_id)
+
+  @doc """
+  Creates a admin_user.
+
+  ## Examples
+
+      iex> create_admin_user(%{field: value})
+      {:ok, %AdminUser{}}
+
+      iex> create_admin_user(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_admin_user(attrs \\ %{}) when is_map(attrs) do
+    %AdminUser{}
+    |> AdminUser.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_admin_from_user(%User{id: user_id} = _user, attrs \\ []) when is_list(attrs) do
+    attrs
+    |> Enum.into(%{})
+    |> Map.put(:user_id, user_id)
+    |> create_admin_user()
+  end
+
+  @doc """
+  Updates a admin_user.
+
+  ## Examples
+
+      iex> update_admin_user(admin_user, %{field: new_value})
+      {:ok, %AdminUser{}}
+
+      iex> update_admin_user(admin_user, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_admin_user(%AdminUser{} = admin_user, attrs) do
+    admin_user
+    |> AdminUser.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a admin_user.
+
+  ## Examples
+
+      iex> delete_admin_user(admin_user)
+      {:ok, %AdminUser{}}
+
+      iex> delete_admin_user(admin_user)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_admin_user(%AdminUser{} = admin_user) do
+    Repo.delete(admin_user)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking admin_user changes.
+
+  ## Examples
+
+      iex> change_admin_user(admin_user)
+      %Ecto.Changeset{data: %AdminUser{}}
+
+  """
+  def change_admin_user(%AdminUser{} = admin_user, attrs \\ %{}) do
+    AdminUser.changeset(admin_user, attrs)
   end
 end

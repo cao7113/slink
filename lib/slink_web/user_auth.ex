@@ -194,6 +194,42 @@ defmodule SlinkWeb.UserAuth do
     end
   end
 
+  def on_mount(:ensure_authenticated_for_admin, _params, session, socket) do
+    socket = mount_current_user(socket, session)
+
+    if socket.assigns.current_user do
+      {:cont, socket}
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(:error, "You must log in as admin to access this page.")
+        |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
+
+      {:halt, socket}
+    end
+  end
+
+  # assign admin_user if exists
+  def on_mount(:check_admin_user, _params, _session, socket) do
+    current_user = socket.assigns.current_user
+    admin_user = Accounts.get_admin_by_user!(current_user)
+
+    if admin_user do
+      {:cont,
+       socket
+       |> Phoenix.Component.assign_new(:current_admin, fn ->
+         admin_user
+       end)}
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(:error, "No permission to access!")
+        |> Phoenix.LiveView.redirect(to: ~p"/")
+
+      {:halt, socket}
+    end
+  end
+
   def on_mount(:redirect_if_user_is_authenticated, _params, session, socket) do
     socket = mount_current_user(socket, session)
 

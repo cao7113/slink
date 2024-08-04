@@ -28,4 +28,18 @@ defmodule Slink.AccountsFixtures do
     [_, token | _] = String.split(captured_email.text_body, "[TOKEN]")
     token
   end
+
+  @doc """
+  Generate a admin_user.
+  """
+  def admin_user_fixture(attrs \\ %{}) do
+    {:ok, admin_user} =
+      attrs
+      |> Enum.into(%{
+        role: :super
+      })
+      |> Slink.Accounts.create_admin_user()
+
+    admin_user
+  end
 end
