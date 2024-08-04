@@ -39,6 +39,7 @@ module.exports = {
     },
   },
   plugins: [
+    // NOTE: below conflict with backpex https://github.com/naymspace/backpex/blob/develop/guides/get_started/installation.md#remove-tailwindcssforms-plugin
     // require("@tailwindcss/forms"),
     require("daisyui"),
     // Allows prefixing tailwind classes with LiveView classes to add rules
