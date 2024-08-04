@@ -2,7 +2,7 @@ defmodule Slink.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/cao7113/slink"
-  @version "0.3.0"
+  @version "0.3.1"
 
   def project do
     [
