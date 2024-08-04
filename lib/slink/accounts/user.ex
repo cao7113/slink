@@ -2,6 +2,7 @@ defmodule Slink.Accounts.User do
   use Ecto.Schema
   use Endon
   import Ecto.Changeset
+  alias Slink.Accounts.AdminUser
 
   schema "users" do
     field :email, :string
@@ -10,7 +11,17 @@ defmodule Slink.Accounts.User do
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
 
+    has_one :admin_user, AdminUser
+
     timestamps(type: :utc_datetime)
+  end
+
+  @doc false
+  def changeset(user, attrs) do
+    user
+    |> cast(attrs, [:email])
+    |> validate_required([:email])
+    |> unique_constraint(:email)
   end
 
   @doc """

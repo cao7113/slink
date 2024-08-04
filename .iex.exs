@@ -8,6 +8,7 @@ alias Slink.Repo
 alias Slink.Accounts
 alias Slink.Accounts.User
 alias Slink.Accounts.UserToken
+alias Slink.Accounts.AdminUser
 alias Slink.Links
 alias Slink.Links.Link
 # alias Slink.Sites
@@ -16,4 +17,5 @@ alias Slink.Links.Link
 # alias Slink.Tags.Tag
 
 ## Helpers
+alias Slink.Fixtures
 # alias ProcessHelper, as: Ph

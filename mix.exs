@@ -15,7 +15,8 @@ defmodule Slink.MixProject do
       docs: docs(),
       source_url: @source_url,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      preferred_cli_env: prefered_cli_env()
     ]
   end
 
@@ -73,10 +74,12 @@ defmodule Slink.MixProject do
       ## Tools
       # https://github.com/zachdaniel/git_ops
       {:git_ops, "~> 2.6", only: [:dev]},
-      {:endon, "~> 2.0"},
       {:faker, "~> 0.18", only: [:dev, :test]},
-      {:corsica, "~> 2.1"}
-      # {:timex, "~> 3.7"}
+      {:endon, "~> 2.0"},
+      {:corsica, "~> 2.1"},
+      # {:timex, "~> 3.7"},
+      # admin panel
+      {:backpex, "~> 0.6.0"}
     ]
   end
 
@@ -98,8 +101,25 @@ defmodule Slink.MixProject do
         "tailwind slink --minify",
         "esbuild slink --minify",
         "phx.digest"
-      ]
+      ],
+      "dev.init": ["app.start", &init_data/1],
+      "dev.reset": ["ecto.reset --force", "dev.init"],
+      "test.reset": ["ecto.reset --force"]
     ]
+  end
+
+  def prefered_cli_env do
+    [
+      "dev.init": :dev,
+      "dev.reset": :dev,
+      "test.reset": :test
+    ]
+  end
+
+  defp init_data(_) do
+    if Slink.build_mode() in [:dev] do
+      Slink.Fixtures.init_data!()
+    end
   end
 
   defp docs do

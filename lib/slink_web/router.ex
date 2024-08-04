@@ -24,6 +24,26 @@ defmodule SlinkWeb.Router do
     get("/", PageController, :home)
   end
 
+  import Backpex.Router
+
+  scope "/admin", SlinkWeb.Admin do
+    pipe_through :browser
+    backpex_routes()
+
+    live_session :admin_panel,
+      on_mount: [
+        Backpex.InitAssigns,
+        {SlinkWeb.UserAuth, :ensure_authenticated_for_admin},
+        {SlinkWeb.UserAuth, :check_admin_user}
+      ] do
+      live_resources("/", LinkLive)
+      live_resources("/users", UserLive)
+      live_resources("/user_tokens", UserTokenLive)
+      live_resources("/admin_users", AdminUserLive)
+      live_resources("/links", LinkLive)
+    end
+  end
+
   ## Links routes
   scope "/", SlinkWeb do
     pipe_through [:browser, :require_authenticated_user]

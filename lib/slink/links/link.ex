@@ -19,4 +19,12 @@ defmodule Slink.Links.Link do
     |> validate_required([:user_id, :url])
     |> unique_constraint(:url)
   end
+
+  def update_changeset(link, attrs, _) do
+    changeset(link, attrs)
+  end
+
+  def create_changeset(link, attrs, _) do
+    changeset(link, attrs)
+  end
 end
