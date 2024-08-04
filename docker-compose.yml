@@ -48,6 +48,7 @@ services:
   # http://web.slink.orb.local/
   web:
     image: ghcr.io/cao7113/slink
+    # image: slink
     # build: .
     depends_on:
       db:

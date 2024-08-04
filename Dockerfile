@@ -21,8 +21,9 @@ ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
-  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y build-essential git curl unzip
+# RUN apt-get update -y && apt-get install -y build-essential git curl \
+#   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
 WORKDIR /app
@@ -50,6 +51,11 @@ COPY priv priv
 COPY lib lib
 
 COPY assets assets
+
+# build assets
+# bun required
+RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.1.21"
+RUN cd assets && ~/.bun/bin/bun --version && ~/.bun/bin/bun install
 
 # compile assets
 RUN mix assets.deploy

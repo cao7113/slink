@@ -22,3 +22,6 @@ tasks:
   mig: mix ecto.migrate
   db-down: mix ecto.rollback --step -- {{.CLI_ARGS}}
   db-down1: task db-down -- 1
+
+  ## Docker
+  dk-build: docker build -t slink .
