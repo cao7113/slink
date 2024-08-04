@@ -5,6 +5,21 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.0](https://github.com/cao7113/slink/compare/v0.2.0...v0.3.0) (2024-08-04)
+
+
+
+
+### Features:
+
+* draft backpex admin
+
+### Improvements:
+
+* improve api-tokens query
+
+* add cors support
+
 ## [v0.2.0](https://github.com/cao7113/slink/compare/v0.1.0...v0.2.0) (2024-07-28)
 
 
