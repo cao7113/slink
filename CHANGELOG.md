@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.2](https://github.com/cao7113/slink/compare/v0.3.1...v0.3.2) (2024-08-10)
+
+
+
+
+### Bug Fixes:
+
+* rename to Accounts.create_api_token
+
 ## [v0.3.1](https://github.com/cao7113/slink/compare/v0.3.0...v0.3.1) (2024-08-04)
 
 
