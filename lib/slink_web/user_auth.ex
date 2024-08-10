@@ -37,7 +37,7 @@ defmodule SlinkWeb.UserAuth do
   end
 
   def put_api_auth_token(conn, user) do
-    encoded_token = Accounts.create_user_api_token(user)
+    encoded_token = Accounts.create_api_token(user)
 
     conn
     |> put_req_header("authorization", "Bearer " <> encoded_token)

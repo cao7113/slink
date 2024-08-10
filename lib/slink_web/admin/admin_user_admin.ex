@@ -37,6 +37,10 @@ defmodule SlinkWeb.Admin.AdminUserLive do
       by_admin_id: %{
         module: Backpex.Fields.Text,
         label: "By Admin ID"
+      },
+      inserted_at: %{
+        module: Backpex.Fields.Text,
+        label: "Inserted At"
       }
     ]
   end

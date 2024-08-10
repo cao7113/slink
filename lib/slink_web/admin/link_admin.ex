@@ -25,6 +25,10 @@ defmodule SlinkWeb.Admin.LinkLive do
       url: %{
         module: Backpex.Fields.Text,
         label: "URL"
+      },
+      inserted_at: %{
+        module: Backpex.Fields.Text,
+        label: "Inserted At"
       }
     ]
   end

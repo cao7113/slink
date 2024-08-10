@@ -34,7 +34,7 @@ defmodule Slink.Accounts do
   The token returned must be saved somewhere safe.
   This token cannot be recovered from the database.
   """
-  def create_user_api_token(user) do
+  def create_api_token(user) do
     {encoded_token, user_token} = UserToken.build_api_token(user)
     Repo.insert!(user_token)
     encoded_token

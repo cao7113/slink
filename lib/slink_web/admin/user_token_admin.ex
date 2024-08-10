@@ -33,6 +33,10 @@ defmodule SlinkWeb.Admin.UserTokenLive do
       context: %{
         module: Backpex.Fields.Text,
         label: "Context"
+      },
+      inserted_at: %{
+        module: Backpex.Fields.Text,
+        label: "Inserted At"
       }
     ]
   end

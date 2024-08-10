@@ -37,6 +37,7 @@ tasks:
   sec: fly secrets ls
   show: fly scale show
   # fly scale count 2
+  # f m update e82d339f725618 --vm-memory 512
   # sets up a root certificate for your account and then issues a certificate.
   ssh-agent: fly ssh issue --agent
   board: fly dashboard

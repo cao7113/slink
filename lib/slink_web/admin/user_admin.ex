@@ -21,11 +21,15 @@ defmodule SlinkWeb.Admin.UserLive do
       email: %{
         module: Backpex.Fields.Text,
         label: "Email"
-      }
+      },
       # url: %{
       #   module: Backpex.Fields.Text,
       #   label: "URL"
-      # }
+      # },
+      inserted_at: %{
+        module: Backpex.Fields.Text,
+        label: "Inserted At"
+      }
     ]
   end
 end
