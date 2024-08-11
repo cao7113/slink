@@ -34,4 +34,7 @@ hard_limit = 1000
 soft_limit = 1000
 
 [[vm]]
-size = 'shared-cpu-1x'
+# size = 'shared-cpu-1x'gs
+memory = "512mb"
+cpu_kind = 'shared'
+cpus = 1

@@ -11,7 +11,7 @@ vars:
 tasks:
   default: echo fly on app {{.FLY_APP_NAME}}
 
-  # IEx require mem: 512m+ on fly.io
+  # NOTE: IEx require mem: 512m+ on fly.io
   sh: fly ssh console --pty -C "/app/bin/{{.APP_NAME}} remote"
   ssh: fly ssh console
   st: fly status
