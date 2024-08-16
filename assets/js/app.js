@@ -15,7 +15,7 @@
 //     import "some-package"
 //
 
-// Alpine
+// Alpine to support backpex admin
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;

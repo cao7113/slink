@@ -9,7 +9,7 @@ defmodule Slink.AccountsTest do
   describe "create_api_token/1 and fetch_user_by_api_token/1" do
     test "creates and fetches by token" do
       user = user_fixture()
-      token = Accounts.create_api_token(user)
+      {token, _} = Accounts.create_api_token(user)
       assert Accounts.fetch_user_by_api_token(token) == {:ok, user}
       assert Accounts.fetch_user_by_api_token("invalid") == :error
     end

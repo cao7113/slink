@@ -13,6 +13,7 @@ defmodule Slink.Accounts.UserToken do
   @confirm_validity_in_days 7
   @change_email_validity_in_days 7
   @session_validity_in_days 60
+  @api_validity_in_days 365
 
   schema "users_tokens" do
     # NOTE: this is hashed token, not directly used by user, only for verification
@@ -27,6 +28,8 @@ defmodule Slink.Accounts.UserToken do
   ## API Tokens
 
   @api_token_context "api-token"
+
+  def api_valid_days, do: @api_validity_in_days
 
   def build_api_token(user) do
     build_email_token(user, @api_token_context)
@@ -160,7 +163,7 @@ defmodule Slink.Accounts.UserToken do
     end
   end
 
-  defp days_for_context("api-token"), do: 365
+  defp days_for_context("api-token"), do: @api_validity_in_days
   defp days_for_context("confirm"), do: @confirm_validity_in_days
   defp days_for_context("reset_password"), do: @reset_password_validity_in_days
 

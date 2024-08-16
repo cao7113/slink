@@ -6,25 +6,6 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = {
-  daisyui: {
-    themes: [
-      {
-        light: {
-          ...require("daisyui/src/theming/themes").light,
-          primary: "#1d4ed8",
-          "primary-content": "white",
-          secondary: "#f39325",
-          "secondary-content": "white",
-        },
-        dark: {
-          ...require("daisyui/src/theming/themes").dark,
-        },
-        cyberpunk: {
-          ...require("daisyui/src/theming/themes").cyberpunk,
-        },
-      },
-    ],
-  },
   content: [
     "./js/**/*.js",
     "../lib/slink_web.ex",
@@ -40,8 +21,12 @@ module.exports = {
   },
   plugins: [
     // NOTE: below conflict with backpex https://github.com/naymspace/backpex/blob/develop/guides/get_started/installation.md#remove-tailwindcssforms-plugin
-    // require("@tailwindcss/forms"),
+    require("@tailwindcss/forms")({
+      // strategy: "base", // only generate global styles
+      strategy: "class", // only generate classes
+    }),
     require("daisyui"),
+
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:
     //
@@ -114,4 +99,24 @@ module.exports = {
       );
     }),
   ],
+  // for backpex admin
+  daisyui: {
+    themes: [
+      {
+        light: {
+          ...require("daisyui/src/theming/themes").light,
+          primary: "#1d4ed8",
+          "primary-content": "white",
+          secondary: "#f39325",
+          "secondary-content": "white",
+        },
+        dark: {
+          ...require("daisyui/src/theming/themes").dark,
+        },
+        cyberpunk: {
+          ...require("daisyui/src/theming/themes").cyberpunk,
+        },
+      },
+    ],
+  },
 };
