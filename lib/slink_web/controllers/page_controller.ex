@@ -6,4 +6,8 @@ defmodule SlinkWeb.PageController do
     # so skip the default app layout.
     render(conn, :home, layout: false)
   end
+
+  def try(conn, _params) do
+    render(conn, :try, layout: false)
+  end
 end

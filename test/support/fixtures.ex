@@ -43,11 +43,11 @@ defmodule Slink.Fixtures do
     [hd(users), hd(adms)]
     |> Enum.each(fn user ->
       # create api-tokens
-      token = Accounts.create_api_token(user)
+      token_info = Accounts.create_api_token_info(user)
 
       append_file(".env.dev.api-token", """
-      # #{user.email} id=#{user.id} api token generated at #{DateTime.utc_now()}
-      USER#{user.id}_API_TOKEN=#{token}
+      # #{user.email} user-id=#{user.id} api token generated at #{DateTime.utc_now()}
+      #{Jason.encode!(token_info, pretty: true)}
 
       """)
 

@@ -64,7 +64,11 @@ defmodule SlinkWeb.ConnCase do
 
   def register_and_put_api_user_auth_token(conn, user_attrs \\ []) do
     user = Slink.AccountsFixtures.user_fixture(user_attrs)
-    conn = SlinkWeb.UserAuth.put_api_auth_token(conn, user)
+    {encoded_token, _} = Slink.Accounts.create_api_token(user)
+
+    conn =
+      conn
+      |> Plug.Conn.put_req_header("authorization", "Bearer " <> encoded_token)
 
     %{
       conn: conn,
