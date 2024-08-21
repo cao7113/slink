@@ -1,0 +1,45 @@
+<div :if={assigns[:new_api_token]} class="mb-8 space-y-4">
+  New API Token:
+  <span class="block font-smibold text-red-400 space-y-4 space-x-4">
+    Please save below token in safe place, we DONOT show it again anywhere!!!
+    <.button phx-click={JS.toggle_class("hidden", to: "#new-api-token" )} class="btn btn-accent btn-sm">Show or Hide
+    </.button>
+  </span>
+  <span id="new-api-token" class="hidden font-bold text-red-400 bg-green-200">
+    <%=@new_api_token%>
+  </span>
+
+
+</div>
+
+<.header>
+  Listing API Tokens
+  <:actions>
+    <.button phx-click="create">Create API Token</.button>
+  </:actions>
+</.header>
+
+<.table id="api_tokens" rows={@streams.api_tokens}>
+  <:col :let={{_id, item}} label="#ID">
+    <%= item.id %>
+  </:col>
+  <:col :let={{_id, item}} label="Hash Hex">
+    <%= item.hex_hashed_token |> String.slice(0..9) %>
+  </:col>
+  <:col :let={{_id, item}} label="Expired At">
+    <%= item.expired_at %>
+  </:col>
+  <:col :let={{_id, item}} label="Inserted At">
+    <%= item.inserted_at %>
+  </:col>
+  <:col :let={{_id, item}} label="UserID">
+    <%= item.user_id %>
+  </:col>
+  <:action :let={{id, item}}>
+    <.link phx-click={JS.push("delete", value: %{id: item.id}) |>
+      hide("##{id}")}
+      >
+      Delete
+    </.link>
+  </:action>
+</.table>

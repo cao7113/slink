@@ -10,7 +10,7 @@ defmodule SlinkWeb.Router do
     plug(:put_root_layout, html: {SlinkWeb.Layouts, :root})
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-    plug :fetch_current_user
+    plug(:fetch_current_user)
   end
 
   pipeline :api do
@@ -22,7 +22,10 @@ defmodule SlinkWeb.Router do
     pipe_through(:browser)
 
     get("/", PageController, :home)
+    get("/phoenix", PageController, :phoenix)
     get("/try", PageController, :try)
+
+    live "/live/try", TryLive
   end
 
   ## Links routes
@@ -120,6 +123,9 @@ defmodule SlinkWeb.Router do
       on_mount: [{SlinkWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+      live "/users/api_tokens", UserApiTokenLive, :index
+      live "/users/api_tokens/new", UserApiTokenLive, :new
     end
   end
 

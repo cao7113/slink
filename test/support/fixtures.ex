@@ -42,12 +42,11 @@ defmodule Slink.Fixtures do
 
     [hd(users), hd(adms)]
     |> Enum.each(fn user ->
-      # create api-tokens
-      token_info = Accounts.create_api_token_info(user)
+      {et, token_info} = Accounts.create_api_token(user)
 
       append_file(".env.dev.api-token", """
       # #{user.email} user-id=#{user.id} api token generated at #{DateTime.utc_now()}
-      #{Jason.encode!(token_info, pretty: true)}
+      #{Jason.encode!(token_info |> Map.from_struct() |> Map.put(:user_email, user.email) |> Map.delete(:user) |> Map.delete(:__meta__) |> Map.delete(:token) |> Map.put(:secret_token, et), pretty: true)}
 
       """)
 
