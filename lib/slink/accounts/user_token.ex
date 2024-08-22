@@ -86,7 +86,7 @@ defmodule Slink.Accounts.UserToken do
     by_token_and_context_query(token, @api_token_context)
   end
 
-  def user_api_tokens_query(user, mode \\ :all) when mode in [:all, :valid, :invalid] do
+  def list_api_tokens_query(user, mode \\ :all) when mode in [:all, :valid, :invalid] do
     context = @api_token_context
     days = days_for_context(context)
 

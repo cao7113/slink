@@ -11,20 +11,10 @@ defmodule Slink.Accounts do
   ## API
 
   @doc """
-  Get user latest api token
+  List api-tokens
   """
-  def user_latest_api_token(user) do
-    UserToken.user_api_tokens_query(user, :valid)
-    |> order_by(desc: :id)
-    |> limit(1)
-    |> Repo.one()
-  end
-
-  @doc """
-  Get user api-tokens
-  """
-  def user_api_tokens(user, mode \\ :valid) when mode in [:all, :valid, :invalid] do
-    UserToken.user_api_tokens_query(user, mode)
+  def list_api_tokens(user, mode \\ :valid) when mode in [:all, :valid, :invalid] do
+    UserToken.list_api_tokens_query(user, mode)
     |> order_by([t], desc: t.id)
     |> Repo.all()
     |> Enum.map(&UserToken.enrich/1)

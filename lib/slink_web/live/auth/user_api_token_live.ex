@@ -9,7 +9,7 @@ defmodule SlinkWeb.UserApiTokenLive do
   @impl true
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
-    tokens = Accounts.user_api_tokens(current_user, :all)
+    tokens = Accounts.list_api_tokens(current_user, :all)
     {:ok, stream(socket, :api_tokens, tokens, at: @insert_index)}
   end
 
