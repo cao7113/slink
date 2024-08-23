@@ -22,6 +22,10 @@ defmodule Slink.Accounts.UserToken do
     field :sent_to, :string
     belongs_to :user, Slink.Accounts.User
 
+    # virtual fields
+    field :expired_at, :utc_datetime, virtual: true
+    field :token_hex, :string, virtual: true
+
     timestamps(type: :utc_datetime, updated_at: false)
   end
 
@@ -29,23 +33,81 @@ defmodule Slink.Accounts.UserToken do
 
   @api_token_context "api-token"
 
-  def api_valid_days, do: @api_validity_in_days
-
   def build_api_token(user) do
-    build_email_token(user, @api_token_context)
+    {encoded_token, hashed_token} = encode_api_token()
+
+    {encoded_token,
+     %UserToken{
+       token: hashed_token,
+       context: @api_token_context,
+       user_id: user.id
+     }}
   end
 
-  def verify_api_token_query(token) do
-    verify_email_token_query(token, @api_token_context)
+  def verify_api_token_query(user_api_token) do
+    with {:ok, token} <- decode_api_token(user_api_token) do
+      query =
+        from token in by_token_and_context_query(token, @api_token_context),
+          join: user in assoc(token, :user),
+          where: token.inserted_at > ago(@api_validity_in_days, "day"),
+          select: user
+
+      {:ok, query}
+    else
+      r ->
+        {:error, r}
+    end
   end
 
-  def user_api_tokens_query(user, mode \\ :all) when mode in [:all, :valid, :invalid] do
+  @prefix_size 10
+
+  def encode_api_token() do
+    token = :crypto.strong_rand_bytes(@rand_size)
+    hashed_token = :crypto.hash(@hash_algorithm, token)
+    <<prefix::binary-size(@prefix_size), _rest::binary>> = Base.encode16(hashed_token)
+    user_api_token = prefix <> "-" <> Base.url_encode64(token, padding: false)
+    {user_api_token, hashed_token}
+  end
+
+  def decode_api_token(user_api_token) do
+    String.split(user_api_token, "-", parts: 2)
+    |> case do
+      [_, encoded_token] ->
+        {:ok, raw_token} = Base.url_decode64(encoded_token, padding: false)
+        hased_token = :crypto.hash(@hash_algorithm, raw_token)
+        {:ok, hased_token}
+
+      _ ->
+        :invalid_user_api_token
+    end
+  end
+
+  def api_token_query(token) do
+    by_token_and_context_query(token, @api_token_context)
+  end
+
+  def list_api_tokens_query(user, mode \\ :all, opts \\ [])
+      when mode in [:all, :valid, :invalid] do
     context = @api_token_context
     days = days_for_context(context)
 
     query =
       from token in UserToken,
         where: [user_id: ^user.id, context: ^context]
+
+    page = opts[:page]
+
+    query =
+      if page do
+        per_page = opts[:per_page] || 10
+        offset = (page - 1) * per_page
+
+        from t in query,
+          offset: ^offset,
+          limit: ^per_page
+      else
+        query
+      end
 
     case mode do
       :invalid ->
@@ -80,7 +142,13 @@ defmodule Slink.Accounts.UserToken do
   """
   def build_session_token(user) do
     token = :crypto.strong_rand_bytes(@rand_size)
-    {token, %UserToken{token: token, context: "session", user_id: user.id}}
+
+    {token,
+     %UserToken{
+       token: token,
+       context: "session",
+       user_id: user.id
+     }}
   end
 
   @doc """
@@ -129,6 +197,14 @@ defmodule Slink.Accounts.UserToken do
        sent_to: sent_to,
        user_id: user.id
      }}
+  end
+
+  def enrich(%{inserted_at: inserted_at, token: token, context: ctx} = ut) do
+    %{
+      ut
+      | expired_at: inserted_at |> DateTime.add(days_for_context(ctx), :day),
+        token_hex: Base.encode16(token) |> String.slice(0..9)
+    }
   end
 
   @doc """

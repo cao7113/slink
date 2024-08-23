@@ -1,0 +1,52 @@
+<div id="status" class="hidden" phx-disconnected={JS.show()} phx-connected={JS.hide()}>
+  Attempting to reconnect...
+</div>
+
+<div class="mx-auto  max-w-lg flex items-center mt-8">
+  <.button
+    class="btn btn-secondary"
+    phx-click="wait"
+    phx-value-duration-ms="10000"
+    phx-throttle="10000"
+  >
+    Waiting...
+  </.button>
+</div>
+
+<div class="mx-auto max-w-lg flex flex-col space-y-4" phx-window-keyup="update_temp">
+  <div class="text-4xl">
+    Current temperature: <span class="text-red-400 font-bold">
+      <%= @temperature %>
+    </span>°C
+  </div>
+
+  <div class="space-x-4">
+    <button phx-click="inc_temperature" class="btn btn-primary btn-lg" phx-throttle="2000">
+      Up or ArrowUp key
+    </button>
+    <button phx-click="dec_temperature" class="btn btn-secondary btn-lg" phx-throttle="1000">
+      Down or ArrowDown
+    </button>
+  </div>
+</div>
+
+<div class="mx-auto  max-w-lg flex items-center mt-8">
+  <.button class="btn btn-secondary" phx-click={show_modal("try-modal")}>Show modal</.button>
+  <.modal id="try-modal">Here test modal</.modal>
+</div>
+
+<div class="mx-auto  max-w-lg mt-8">
+  <div class="block">
+    <.button
+      phx-click={JS.toggle(to: "#item", in: "fade-in-scale", out: "fade-out-scale")}
+      class=" btn btn-accent"
+    >
+      Toggle item
+    </.button>
+  </div>
+  <div id="item">My Item</div>
+</div>
+
+<div phx-mounted={JS.transition("animate-ping", time: 200)} class="btn btn-accent">
+  test phx-mounted transition
+</div>

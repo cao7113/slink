@@ -1,0 +1,73 @@
+<div :if={assigns[:new_api_token]} class="w-full mb-8 space-y-4">
+  New API Token:
+  <span class="block font-smibold text-red-400 space-y-4 space-x-4">
+    Save below token in SAFE place,
+    <.button
+      phx-click={
+        JS.toggle(
+          to: "#new-api-token",
+          in: {"ease-out duration-300", "opacity-0", "opacity-100"},
+          out: {"ease-out duration-300", "opacity-100", "opacity-0"}
+        )
+      }
+      class="btn btn-accent btn-sm"
+    >
+      Show or
+      Hide
+    </.button>
+    we DONOT show it again!
+  </span>
+  <span id="new-api-token" class="hidden font-bold text-red-400 bg-green-200">
+    <%= @new_api_token %>
+  </span>
+</div>
+
+<.header>
+  <div>
+    Listing API Tokens
+    <div>(Total items <%= @total_count %> in pages: <%= @total_pages %>)</div>
+  </div>
+
+  <:actions>
+    <.link class="btn btn-secondary" phx-click="create" phx-throttle="300">
+      Create API Token
+    </.link>
+    <.link class="btn btn-accent" navigate={~p"/users/api-tokens"} phx-throttle="1000">
+      Refresh
+    </.link>
+    <.link class="btn btn-accent bg-red-500" phx-click="delete-all">
+      Delete All
+    </.link>
+  </:actions>
+</.header>
+
+<.scroll_pages
+  id="api_tokens"
+  rows={@streams.api_tokens}
+  page={@page}
+  end_of_timeline={@end_of_timeline}
+>
+  <:col :let={{_id, item}} label="#ID">
+    <%= item.id %>
+  </:col>
+  <:col :let={{_id, item}} label="Hash Hex">
+    <%= item.token_hex %>
+  </:col>
+  <:col :let={{_id, item}} label="Expired At">
+    <%= item.expired_at %>
+  </:col>
+  <:col :let={{_id, item}} label="Inserted At">
+    <%= item.inserted_at %>
+  </:col>
+  <:col :let={{_id, item}} label="UserID">
+    <%= item.user_id %>
+  </:col>
+  <:action :let={{id, item}}>
+    <.link phx-click={
+      JS.push("delete", value: %{id: item.id, hex: item.token_hex})
+      |> hide("##{id}")
+    }>
+      Delete
+    </.link>
+  </:action>
+</.scroll_pages>

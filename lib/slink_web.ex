@@ -52,6 +52,7 @@ defmodule SlinkWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
+        log: :debug,
         layout: {SlinkWeb.Layouts, :app}
 
       unquote(html_helpers())

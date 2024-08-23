@@ -104,7 +104,8 @@ defmodule Slink.MixProject do
       ],
       "dev.init": ["app.start", &init_data/1],
       "dev.reset": ["ecto.reset --force", "dev.init"],
-      "test.reset": ["ecto.reset --force"]
+      reset: ["dev.reset"],
+      "reset.test": ["ecto.reset --force"]
     ]
   end
 
@@ -112,7 +113,7 @@ defmodule Slink.MixProject do
     [
       "dev.init": :dev,
       "dev.reset": :dev,
-      "test.reset": :test
+      "reset.test": :test
     ]
   end
 

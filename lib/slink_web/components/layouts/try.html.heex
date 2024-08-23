@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" Slink">
+      <%= assigns[:page_title] || "" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+    <%!-- https://tailwindcss.com/docs/installation/play-cdn --%>
+    <%!-- <script src="https://cdn.tailwindcss.com"></script> --%>
+  </head>
+
+  <body class="min-h-screen w-full flex flex-col">
+    <header class="bg-blue-600 text-white p-4">
+      <nav class="container mx-auto flex justify-between items-center">
+        <a href="#" class="text-xl font-bold">MyWebsite</a>
+        <ul class="flex space-x-4">
+          <li><a href="#" class="hover:text-gray-300">Home</a></li>
+          <li><a href="#" class="hover:text-gray-300">About</a></li>
+          <li><a href="#" class="hover:text-gray-300">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="flex flex-1 container mx-auto">
+      <aside class="bg-gray-200 w-1/4 p-4">
+        <nav class="space-y-2">
+          <a href="#" class="block text-blue-600 hover:text-blue-800">Dashboard</a>
+          <a href="#" class="block text-blue-600 hover:text-blue-800">Profile</a>
+          <a href="#" class="block text-blue-600 hover:text-blue-800">Settings</a>
+        </nav>
+      </aside>
+
+      <main class="flex-1 bg-white p-8">
+        <h1 class="text-2xl font-bold mb-4">Welcome to MyWebsite</h1>
+        <p class="mb-4">
+          This is the main content area. Here you can put any content that is central to your webpage.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque luctus ex eget velit vehicula, non gravida
+          arcu venenatis.
+        </p>
+
+        <%= @inner_content %>
+      </main>
+    </div>
+
+    <footer class="bg-blue-600 text-white p-4">
+      <nav class="container mx-auto flex justify-between items-center">
+        <p>&copy; 2024 MyWebsite. All rights reserved.</p>
+        <ul class="flex space-x-4">
+          <li><a href="#" class="hover:text-gray-300">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-gray-300">Terms of Service</a></li>
+        </ul>
+      </nav>
+    </footer>
+  </body>
+</html>

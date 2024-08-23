@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]" data-theme="light">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="csrf-token" content={get_csrf_token()} />
+  <.live_title suffix=" Slink">
+    <%= assigns[:page_title] || "" %>
+  </.live_title>
+  <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+  <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+  </script>
+</head>
+
+<body class="min-h-screen w-full flex flex-col bg-white">
+  <header class="p-4">
+    <nav class="container mx-auto flex justify-between items-center">
+      <ul class="relative z-50 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-start">
+        <li>
+          <a href="/" class="text-xl font-bold">Slink</a>
+        </li>
+        <li>
+          <.link href={~p"/links"} class="">
+            Links
+          </.link>
+        </li>
+      </ul>
+
+      <ul class="relative z-50 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
+        <%= if @current_user do %>
+          <li class="text-[0.8125rem] leading-6 text-zinc-900">
+            <%= @current_user.email %> # <%= @current_user.id %>
+          </li>
+          <li>
+            <.link href={~p"/users/settings"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700">
+              Settings
+            </.link>
+          </li>
+          <li>
+            <.link href={~p"/users/log_out"} method="delete"
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700">
+              Log out
+            </.link>
+          </li>
+          <% else %>
+            <li>
+              <.link href={~p"/users/register"}
+                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700">
+                Register
+              </.link>
+            </li>
+            <li>
+              <.link href={~p"/users/log_in"}
+                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700">
+                Log in
+              </.link>
+            </li>
+            <% end %>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="mx-auto w-4xl">
+    <%= @inner_content %>
+  </main>
+
+  <footer class="p-4">
+    <nav class="container mx-auto flex justify-between items-center">
+      <p>&copy; <%= DateTime.utc_now.year %> Slink. All rights reserved.</p>
+      <ul class="flex space-x-4">
+        <li><a href="#" class="hover:text-gray-300">Privacy Policy</a></li>
+        <li><a href="#" class="hover:text-gray-300">Terms of Service</a></li>
+      </ul>
+    </nav>
+  </footer>
+</body>
+
+</html>

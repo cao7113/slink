@@ -7,20 +7,25 @@
   </:actions>
 </.header>
 
-<.table
-  id="links"
-  rows={@streams.links}
-  row_click={fn {_id, link} -> JS.navigate(~p"/links/#{link}") end}
->
-  <:col :let={{_id, link}} label="#ID"><%= link.id %></:col>
+<.table id="links" rows={@streams.links} row_click={fn {_id, link} -> JS.navigate(~p"/links/#{link}") end}
+  >
+  <:col :let={{_id, link}} label="#ID">
+    <%= link.id %>
+  </:col>
   <:col :let={{_id, link}} label="Title">
-    <%= link.title |> Slink.Helper.short_title(limit: 20) %>
+    <%= Slink.Helper.short_title(link.title, limit: 20) %>
   </:col>
   <:col :let={{_id, link}} label="Url">
-    <.link href={link.url}><%= link.url |> Slink.Helper.short_url(limit: 30) %></.link>
+    <.link href={link.url}>
+      <%= Slink.Helper.short_url(link.url,limit: 30) %>
+    </.link>
   </:col>
-  <:col :let={{_id, link}} label="UpdatedAt"><%= link.updated_at %></:col>
-  <:col :let={{_id, link}} label="FromUser"><%= link.user_id %></:col>
+  <:col :let={{_id, link}} label="UpdatedAt">
+    <%= link.updated_at %>
+  </:col>
+  <:col :let={{_id, link}} label="FromUser">
+    <%= link.user_id %>
+  </:col>
   <:action :let={{_id, link}}>
     <div class="sr-only">
       <.link navigate={~p"/links/#{link}"}>Show</.link>
@@ -30,23 +35,16 @@
     </.link>
   </:action>
   <:action :let={{id, link}}>
-    <.link
-      :if={allow_do?(:delete, link, @current_user)}
-      phx-click={JS.push("delete", value: %{id: link.id}) |> hide("##{id}")}
+    <.link :if={allow_do?(:delete, link, @current_user)} phx-click={JS.push("delete", value: %{id: link.id}) |>
+      hide("##{id}")}
       data-confirm="Are you sure?"
-    >
+      >
       Delete
     </.link>
   </:action>
 </.table>
 
 <.modal :if={@live_action in [:new, :edit]} id="link-modal" show on_cancel={JS.patch(~p"/links")}>
-  <.live_component
-    module={SlinkWeb.LinkLive.FormComponent}
-    id={@link.id || :new}
-    title={@page_title}
-    action={@live_action}
-    link={@link}
-    patch={~p"/links"}
-  />
+  <.live_component module={SlinkWeb.LinkLive.FormComponent} id={@link.id || :new} title={@page_title}
+    action={@live_action} link={@link} patch={~p"/links"} />
 </.modal>

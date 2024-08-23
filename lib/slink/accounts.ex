@@ -11,62 +11,37 @@ defmodule Slink.Accounts do
   ## API
 
   @doc """
-  Get user latest api token
+  List api-tokens
   """
-  def user_latest_api_token(user) do
-    UserToken.user_api_tokens_query(user, :valid)
-    |> order_by(desc: :id)
-    |> limit(1)
-    |> Repo.one()
-  end
-
-  @doc """
-  Get user api-tokens
-  """
-  def user_api_tokens(user, mode \\ :valid) when mode in [:all, :valid, :invalid] do
-    UserToken.user_api_tokens_query(user, mode)
+  def list_api_tokens(user, mode \\ :valid, opts \\ []) when mode in [:all, :valid, :invalid] do
+    list_api_tokens_query(user, mode, opts)
+    |> order_by([t], desc: t.id)
     |> Repo.all()
-    |> Enum.map(fn t ->
-      user_token_info(t, user)
-    end)
+    |> Enum.map(&UserToken.enrich/1)
+  end
+
+  def list_api_tokens_query(user, mode \\ :all, opts \\ []) do
+    UserToken.list_api_tokens_query(user, mode, opts)
+  end
+
+  def total_pages_info_of(query, per_page \\ 10) when is_integer(per_page) and per_page > 0 do
+    total_count = Repo.aggregate(query, :count)
+    total_pages = div(total_count, per_page) + if rem(total_count, per_page) == 0, do: 0, else: 1
+    [total_count: total_count, total_pages: total_pages]
   end
 
   @doc """
-  Creates a new api token for a user.
-
-  The token returned must be saved somewhere safe.
-  This token cannot be recovered from the database.
+  Creates api token for a user.
+  The token returned must be saved somewhere safe. This token cannot be recovered from the database.
   """
   def create_api_token(user) do
     {encoded_token, user_token} = UserToken.build_api_token(user)
-    user_token_record = Repo.insert!(user_token)
-    {encoded_token, user_token_record}
-  end
 
-  def create_api_token_info(user) do
-    {encoded_token, user_token} = create_api_token(user)
+    ut =
+      Repo.insert!(user_token)
+      |> UserToken.enrich()
 
-    user_token_info(user_token, user)
-    |> Map.merge(%{
-      # NOTE: secret token part(only visible when created by user self)
-      encoded_token: encoded_token
-    })
-  end
-
-  def user_token_info(%UserToken{user_id: user_id} = user_token, in_user \\ nil) do
-    user = if in_user, do: in_user, else: get_user!(user_id)
-
-    %{
-      # token info
-      user_token_id: user_token.id,
-      user_id: user_id,
-      inserted_at: user_token.inserted_at,
-      expired_at: user_token.inserted_at |> DateTime.add(UserToken.api_valid_days(), :day),
-      hashed_token: Base.encode16(user_token.token),
-      # user info
-      user_email: user.email,
-      encoded_token: "ONLY-USER-KNOWN-SECRET!"
-    }
+    {encoded_token, ut}
   end
 
   @doc """
@@ -86,6 +61,14 @@ defmodule Slink.Accounts do
     else
       _ -> nil
     end
+  end
+
+  @doc """
+  Deletes api tokens.
+  """
+  def delete_api_token(token) do
+    Repo.delete_all(UserToken.api_token_query(token))
+    :ok
   end
 
   ## Database getters

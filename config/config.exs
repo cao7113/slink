@@ -10,7 +10,7 @@ import Config
 config :slink,
   ecto_repos: [Slink.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ## Build info
+  ## Build Info
   build_mode: config_env(),
   build_time: DateTime.utc_now(),
   source_url: Mix.Project.config()[:source_url],

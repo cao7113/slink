@@ -6,14 +6,6 @@ defmodule Slink.Fixtures do
 
   alias Slink.Accounts
 
-  @doc """
-  Batch gen specified fixtures
-  """
-  def batch_gen(gen_fun \\ &Slink.LinksFixtures.link_fixture/0, n \\ Enum.random(1..10))
-      when is_function(gen_fun, 0) do
-    Enum.each(1..n, fn _ -> gen_fun.() end)
-  end
-
   def init_data!(pwd \\ "123456123456") do
     mark_email = "a1@b.c"
 
@@ -40,14 +32,20 @@ defmodule Slink.Fixtures do
         user
       end)
 
+    dot_env_file = ".env.dev.api-token"
+
+    File.write(dot_env_file, """
+    ## API Tokens with mix reset generated at #{DateTime.utc_now()}
+
+    """)
+
     [hd(users), hd(adms)]
     |> Enum.each(fn user ->
-      # create api-tokens
-      token_info = Accounts.create_api_token_info(user)
+      {et, token_info} = Accounts.create_api_token(user)
 
-      append_file(".env.dev.api-token", """
-      # #{user.email} user-id=#{user.id} api token generated at #{DateTime.utc_now()}
-      #{Jason.encode!(token_info, pretty: true)}
+      append_file(dot_env_file, """
+      # #{user.email} user-id=#{user.id}
+      #{Jason.encode!(token_info |> Map.from_struct() |> Map.put(:user_email, user.email) |> Map.delete(:user) |> Map.delete(:__meta__) |> Map.delete(:token) |> Map.put(:secret_token, et), pretty: true)}
 
       """)
 
@@ -59,6 +57,23 @@ defmodule Slink.Fixtures do
         20
       )
     end)
+  end
+
+  def batch_api_tokens(%Accounts.User{} = user, n \\ 10) do
+    batch_gen(
+      fn ->
+        Accounts.create_api_token(user)
+      end,
+      n
+    )
+  end
+
+  @doc """
+  Batch gen specified fixtures
+  """
+  def batch_gen(gen_fun \\ &Slink.LinksFixtures.link_fixture/0, n \\ Enum.random(1..10))
+      when is_function(gen_fun, 0) do
+    Enum.each(1..n, fn _ -> gen_fun.() end)
   end
 
   def append_file(file_path, content) do

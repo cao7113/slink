@@ -9,17 +9,19 @@
       </p>
     </div>
     <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
-      <a href="https://twitter.com/elixirphoenix" class="hover:text-zinc-700">
-        @elixirphoenix
+      <.link navigate={~p"/links"} class="hover:text-zinc-700">
+        Links
+      </.link>
+      <a href="https://hexdocs.pm/phoenix_live_view/1.0.0-rc.6/live-navigation.html" target="_blank"
+        class="hover:text-zinc-700">
+        LiveView
       </a>
-      <a href="https://github.com/phoenixframework/phoenix" class="hover:text-zinc-700">
-        GitHub
-      </a>
-      <a
-        href="https://hexdocs.pm/phoenix/overview.html"
-        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
-      >
-        Get Started <span aria-hidden="true">&rarr;</span>
+      <.link :if={Slink.build_mode()==:dev} href="/live/try">TryLive</.link>
+      <.link :if={Slink.build_mode()==:dev} href="/dev/dashboard" target="_blank">Dashboard</.link>
+      <.link :if={Slink.build_mode()==:dev} href="/dev/mailbox" target="_blank">Mail</.link>
+      <a href="https://hexdocs.pm/phoenix/overview.html" target="_blank"
+        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80">
+        Phx
       </a>
     </div>
   </div>
