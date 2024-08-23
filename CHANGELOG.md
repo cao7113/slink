@@ -5,6 +5,19 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.4.0](https://github.com/cao7113/slink/compare/v0.3.2...v0.4.0) (2024-08-23)
+
+
+
+
+### Features:
+
+* add api-token create and management page
+
+### Bug Fixes:
+
+* tailwind plugin form conflict with backpex, use explicit form-input class instead
+
 ## [v0.3.2](https://github.com/cao7113/slink/compare/v0.3.1...v0.3.2) (2024-08-10)
 
 
