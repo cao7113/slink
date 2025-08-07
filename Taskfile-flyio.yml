@@ -4,9 +4,9 @@ version: "3"
 ## Fly.io https://hexdocs.pm/phoenix/fly.html
 # https://fly.io/docs/elixir/getting-started/
 vars:
+  APP_NAME: slink
   FLY_APP_NAME: slink
   FLY_DB_APP_NAME: shareup-db
-  APP_NAME: slink
 
 tasks:
   default: echo fly on app {{.FLY_APP_NAME}}
@@ -42,7 +42,7 @@ tasks:
   vm: fly machine ls
   ls: fly app ls
   db:
-    aliases: [pg]
+    aliases: [sql, pg]
     cmds:
       - fly postgres connect -a {{.FLY_DB_APP_NAME}}
   db-users: fly postgres users list --app {{.FLY_DB_APP_NAME}}

@@ -4,7 +4,7 @@
 
 ## Gmail SMTP
 
-使用app专用密码（去除中间的空格，16个字符）
+使用app专用密码（16个字符，需要去除中间空格）
 
 - https://myaccount.google.com/apppasswords
 - https://support.google.com/accounts/answer/185833?hl=zh-Hans
