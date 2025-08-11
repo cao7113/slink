@@ -23,6 +23,6 @@ DROP DATABASE slink WITH (FORCE);
 ## Rename db
 
 ```
-SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'slink_v2';
-ALTER DATABASE slink_v2 RENAME TO slink;
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'slink';
+ALTER DATABASE slink RENAME TO slink;
 ```

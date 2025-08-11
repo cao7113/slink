@@ -20,6 +20,7 @@ tasks:
   launch: fly launch --no-deploy --debug --verbose # --now
   dep: fly deploy
   dig: fly dig {{.FLY_APP_NAME}}.internal
+  apps: fly dig TXT _apps.internal -o personal
   s1: fly scale count 1 --yes
   s0: fly scale count 0 --yes
   ping: curl https://{{.FLY_APP_NAME}}.fly.dev/ping
@@ -54,7 +55,8 @@ tasks:
   ssh-agent: fly ssh issue --agent
   board: fly dashboard
   # Add a dedicated ipv4 with: fly ips allocate-v4
-  ips: fly ip private
+  # Private 6PN ip
+  ip: fly ip private
 
   ## platform
   regions: fly platform regions

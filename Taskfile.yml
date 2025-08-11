@@ -5,6 +5,7 @@ vars:
   DOCKER_IMG_NAME: slink
   DOCKER_CONTAINER_NAME: slink
   DEV_API_HOST: http://localhost:4000
+  FLY_API_HOST: https://slink.fly.dev
 includes:
   # task f:iex
   flyio:
@@ -38,7 +39,7 @@ tasks:
     aliases: [sql, pg]
     cmds:
       - |
-        pgcli slink_v2_dev
+        pgcli slink_dev
   db.mig: mix ecto.migrate
   db.reset.test:
     env:
@@ -72,19 +73,14 @@ tasks:
       - remote.s2
       - rc6
     env:
-      ERL_AFLAGS: "-proto_dist inet6_tcp -kernel shell_history enabled"
+      ERL_AFLAGS: "-kernel shell_history enabled"
       CLUSTER_APP_NAME: "slink"
       RELEASE_COOKIE: happy-cookie-not-secret-but-for-cluster
     cmds:
-      - echo "==Custerning into remote app ${CLUSTER_APP_NAME}"
-      - run/cluster-with-remote.sh
-  remote.s1:
-    env:
-      ERL_AFLAGS: "-proto_dist inet6_tcp -kernel shell_history enabled"
-      CLUSTER_APP_NAME: "slink"
-      RELEASE_COOKIE: slinkfuncookie
-    cmds:
-      - echo "==Custerning into remote app ${CLUSTER_APP_NAME}"
+      - |
+        echo "==Custerning into remote app ${CLUSTER_APP_NAME}"
+        echo "Trigger slink running if suspended"
+        curl {{.FLY_API_HOST}}/api | jq
       - run/cluster-with-remote.sh
 
   # https://fly.io/docs/elixir/advanced-guides/connect-observer-to-your-app/
@@ -99,6 +95,23 @@ tasks:
     cmds:
       - echo "==Observing remote app"
       - run/observer.sh
+
+  # local release run in dev mode
+  prel: MIX_ENV=prod mix release --overwrite
+  lp-test:
+    dir: local-prod
+    cmds:
+      - pwd
+  lp: task lp-stop && task lp-run -- daemon
+  lp-run:
+    dir: local-prod
+    cmds:
+      - run/prod.sh
+  lp-stop:
+    dir: local-prod
+    cmds:
+      - _build/dev/rel/slink/bin/slink stop
+  lps: task lp-stop && task lp-run -- start
 
   ## Docker run env
   dk.build: docker build -t {{.DOCKER_IMG_NAME}} .

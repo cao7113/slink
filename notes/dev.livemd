@@ -15,7 +15,7 @@ opts = [
   port: 5432,
   username: "postgres",
   password: "postgres",
-  database: "slink_v2_dev"
+  database: "slink_dev"
 ]
 
 {:ok, conn} = Kino.start_child({Postgrex, opts})
