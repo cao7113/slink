@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.1 (2025-08-11)
+
+
+
+
+### Bug Fixes:
+
+* add /api/info/builder authorized route and migrate slink-v1 by Ryn Cao
+
 ## v0.3.0 (2025-08-07)
 
 
