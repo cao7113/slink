@@ -5,8 +5,11 @@ defmodule Slink.Accounts do
 
   import Ecto.Query, warn: false
   alias Slink.Repo
-
   alias Slink.Accounts.{User, UserToken, UserNotifier, Scope}
+
+  ## Utils
+
+  def check_password(%User{} = user, pass), do: User.valid_password?(user, pass)
 
   ## My UserToken
 

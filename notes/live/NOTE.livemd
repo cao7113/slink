@@ -1,0 +1,189 @@
+# Slink notes
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.16.0"},
+  {:kino_db, "~> 0.3.0"},
+  {:postgrex, "~> 0.18"},
+  {:kino_explorer, "~> 0.1.20"},
+  {:merquery, "~> 0.3.0"}
+])
+```
+
+## Knonw bugs
+
+* unspport non chrome-extension://xxxx like non-http links in code
+
+## Test accounts
+
+ref test/support/fixtures.ex
+
+* a1@b.c / 123456123456
+* adm1@b.c / same above  for adminers
+
+## Node info
+
+```elixir
+%{
+  node: Node.self,
+  cookie: Node.get_cookie(),
+  nodes: Node.list
+} |> Kino.Tree.new()
+```
+
+## Local app links
+
+### Remote execution
+
+<!-- livebook:{"break_markdown":true} -->
+
+in slink project run:
+
+```
+  node6:
+    env:
+      # RELEASE_DISTRIBUTION: name
+      ERL_AFLAGS: "-proto_dist inet6_tcp -kernel shell_history enabled"
+    cmds:
+      - |
+        iex --name slink@::1 --cookie slink -S mix
+```
+
+<!-- livebook:{"attrs":"eyJhc3NpZ25fdG8iOiIiLCJjb2RlIjoiU2xpbmsuTGlua3MuTGluay5maXJzdCIsImNvb2tpZV9zb3VyY2UiOiJ0ZXh0IiwiY29va2llX3RleHQiOiJzbGluayIsIm5vZGVfc291cmNlIjoidGV4dCIsIm5vZGVfdGV4dCI6InNsaW5rQDo6MSJ9","chunks":null,"kind":"Elixir.Kino.RemoteExecutionCell","livebook_object":"smart_cell"} -->
+
+```elixir
+require Kino.RPC
+node = :"slink@::1"
+Node.set_cookie(node, :slink)
+Kino.RPC.eval_string(node, ~S"Slink.Links.Link.first", file: __ENV__.file)
+```
+
+### DB explore
+
+<!-- livebook:{"attrs":"eyJjYWNlcnRmaWxlIjoiIiwiZGF0YWJhc2UiOiJzbGlua19kZXYiLCJob3N0bmFtZSI6ImxvY2FsaG9zdCIsInBhc3N3b3JkIjoicG9zdGdyZXMiLCJwb3J0Ijo1NDMyLCJ0eXBlIjoicG9zdGdyZXMiLCJ1c2VfaXB2NiI6ZmFsc2UsInVzZV9zc2wiOmZhbHNlLCJ1c2VybmFtZSI6InBvc3RncmVzIiwidmFyaWFibGUiOiJsb2NhbF9jb25uIn0","chunks":null,"kind":"Elixir.KinoDB.ConnectionCell","livebook_object":"smart_cell"} -->
+
+```elixir
+opts = [
+  hostname: "localhost",
+  port: 5432,
+  username: "postgres",
+  password: "postgres",
+  database: "slink_dev"
+]
+
+{:ok, local_conn} = Kino.start_child({Postgrex, opts})
+```
+
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoicG9zdGdyZXMiLCJ2YXJpYWJsZSI6ImxvY2FsX2Nvbm4ifSwiZGF0YV9mcmFtZV9hbGlhcyI6IkVsaXhpci5FeHBsb3Jlci5EYXRhRnJhbWUiLCJxdWVyeSI6InNlbGVjdCAqIGZyb20gbGlua3Mgb3JkZXIgYnkgaWQgZGVzYyBsaW1pdCA1IiwicmVzdWx0X3ZhcmlhYmxlIjoibG9jYWxfbGlua3MiLCJ0aW1lb3V0IjpudWxsfQ","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+
+```elixir
+local_links =
+  Postgrex.query!(local_conn, ~S"select * from links order by id desc limit 5", [])
+```
+
+## Flyio app links
+
+* https://slink.fly.dev
+* http://slink.internal:8080/api/ping
+* fly dig AAAA slink.internal
+
+<!-- livebook:{"break_markdown":true} -->
+
+### API requests
+
+```elixir
+req =
+  Req.new(
+    method: :get,
+    url: "http://slink.internal:8080/api/ping",
+    headers: %{},
+    params: %{"http://slink.internal:8080/api/ping" => ""}
+  )
+req = Req.merge(req, inet6: true)
+{req, flyio_resp} = Req.request(req)
+flyio_resp.body|>Kino.Tree.new()
+```
+
+### DB connection
+
+<!-- livebook:{"break_markdown":true} -->
+
+使用fly 6PN地址，如 shareup-db.internal
+
+* 注意<span style="color: red;">**开启IPv6开关**</span>
+
+<!-- livebook:{"attrs":"eyJjYWNlcnRmaWxlIjoiIiwiZGF0YWJhc2UiOiJzbGluayIsImhvc3RuYW1lIjoic2hhcmV1cC1kYi5pbnRlcm5hbCIsInBhc3N3b3JkX3NlY3JldCI6IkZMWV9TTElOS19EQl9QQVNTV09SRCIsInBvcnQiOjU0MzIsInR5cGUiOiJwb3N0Z3JlcyIsInVzZV9pcHY2Ijp0cnVlLCJ1c2Vfc3NsIjpmYWxzZSwidXNlcm5hbWUiOiJzbGluayIsInZhcmlhYmxlIjoiZmx5aW9fY29ubiJ9","chunks":null,"kind":"Elixir.KinoDB.ConnectionCell","livebook_object":"smart_cell"} -->
+
+```elixir
+opts = [
+  hostname: "shareup-db.internal",
+  port: 5432,
+  username: "slink",
+  password: System.fetch_env!("LB_FLY_SLINK_DB_PASSWORD"),
+  database: "slink",
+  socket_options: [:inet6]
+]
+
+{:ok, flyio_conn} = Kino.start_child({Postgrex, opts})
+```
+
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoicG9zdGdyZXMiLCJ2YXJpYWJsZSI6ImZseWlvX2Nvbm4ifSwiZGF0YV9mcmFtZV9hbGlhcyI6IkVsaXhpci5FeHBsb3Jlci5EYXRhRnJhbWUiLCJxdWVyeSI6InNlbGVjdCAqIGZyb20gbGlua3Mgb3JkZXIgYnkgdXBkYXRlZF9hdCBkZXNjIGxpbWl0IDMiLCJyZXN1bHRfdmFyaWFibGUiOiJmbHlpb19saW5rcyIsInRpbWVvdXQiOm51bGx9","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+
+```elixir
+flyio_links =
+  Postgrex.query!(
+    flyio_conn,
+    ~S"select * from links order by updated_at desc limit 3",
+    []
+  )
+```
+
+### Remote execution
+
+<!-- livebook:{"break_markdown":true} -->
+
+* [http://[fdaa:2:686c:a7b:17c:2499:7edf:2]:8080/api/ping](http://[fdaa:2:686c:a7b:17c:2499:7edf:2]:8080/api/ping)
+* s@fdaa:2:686c:a7b:17c:2499:7edf:2
+* s@slink.internal
+* e82d339f725618.vm.slink.internal
+
+```elixir
+req =
+  Req.new(
+    method: :get,
+    url: "http://slink.internal:8080/api/ping",
+    headers: %{},
+    params: %{"http://slink.internal:8080/api/ping" => ""}
+  )
+req = Req.merge(req, inet6: true)
+{req, flyio_resp} = Req.request(req)
+flyio_resp.body |> Kino.Tree.new
+```
+
+<span style="color: red">
+Below remote-execution require local livebook running in inet6 mode, like
+</span>
+
+```
+  node6:
+    env:
+      LIVEBOOK_DISTRIBUTION: name
+      # Note: should use inet6 when connect to Flyio app?
+      LIVEBOOK_NODE: "lv@::1"
+      LIVEBOOK_COOKIE: "livebook"
+      ERL_AFLAGS: "-proto_dist inet6_tcp -kernel shell_history enabled"
+    cmds:
+      - |
+        iex -S mix phx.server
+```
+
+<!-- livebook:{"attrs":"eyJhc3NpZ25fdG8iOiJzcyIsImNvZGUiOiJTbGluay5MaW5rcy5MaW5rLmxhc3QiLCJjb29raWVfc291cmNlIjoidGV4dCIsImNvb2tpZV90ZXh0Ijoic2xpbmtmdW5jb29raWUiLCJub2RlX3NvdXJjZSI6InRleHQiLCJub2RlX3RleHQiOiJzbGlua0BzbGluay5pbnRlcm5hbCJ9","chunks":null,"kind":"Elixir.Kino.RemoteExecutionCell","livebook_object":"smart_cell"} -->
+
+```elixir
+require Kino.RPC
+node = :"slink@slink.internal"
+Node.set_cookie(node, :slinkfuncookie)
+ss = Kino.RPC.eval_string(node, ~S"Slink.Links.Link.last", file: __ENV__.file)
+```
+
+<!-- livebook:{"offset":5700,"stamp":{"token":"XCP.1lo-0a_VogwjVIypYO2W1CU2MIKMfq3lQMX_g1ZbgfzF4-rINNcTlTtHwjGksE5qegFd3xZjXLZQ5MVlTSyhazq7QyMjP7ZH6GluQXQKMBTkdePZDQSwqUNwx7w-aYI9","version":2}} -->

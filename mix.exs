@@ -1,7 +1,10 @@
 defmodule Slink.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/cao7113/slink"
+  # automatically bump version on release by git_ops
   @version "0.3.0"
+
   def project do
     [
       app: :slink,
@@ -12,7 +15,11 @@ defmodule Slink.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      name: "Shareup links",
+      docs: docs(),
+      source_url: @source_url,
+      preferred_cli_env: prefered_cli_env()
     ]
   end
 
@@ -65,6 +72,8 @@ defmodule Slink.MixProject do
       {:bandit, "~> 1.5"},
 
       # App enhancement
+      # {:faker, "~> 0.18", only: [:dev, :test]},
+      # {:corsica, "~> 2.1"},
       {:endon, "~> 2.0"},
       {:flop, "~> 0.26.3"},
       # smtp support for gmail
@@ -88,7 +97,6 @@ defmodule Slink.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "ecto.reset.force": ["ecto.drop --force-drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind slink", "esbuild slink"],
@@ -96,6 +104,38 @@ defmodule Slink.MixProject do
         "tailwind slink --minify",
         "esbuild slink --minify",
         "phx.digest"
+      ],
+      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"],
+      # Helpers
+      "ecto.reset.force": ["ecto.drop --force-drop", "ecto.setup"],
+      "dev.init": ["app.start", &init_data/1],
+      "dev.reset": ["ecto.reset.force", "dev.init"],
+      "test.reset": ["ecto.reset.force"],
+      reset: ["dev.reset", "test.reset"],
+      routes: ["phx.routes"]
+    ]
+  end
+
+  defp init_data(_) do
+    TestHelpers.init_data()
+    Mix.shell().info("Init #{Mix.env()} data")
+  end
+
+  def prefered_cli_env do
+    [
+      "dev.init": :dev,
+      "dev.reset": :dev,
+      "test.reset": :test
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      source_url: @source_url,
+      source_ref: "v#{@version}",
+      extras: [
+        "README.md"
       ]
     ]
   end

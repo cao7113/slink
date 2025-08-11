@@ -33,3 +33,11 @@ u1 = User.find(1)
 ## Ops API
 # A.create_user_api_token(A.get_user!(1))
 # UserAuth.get_login_magic_link_url(User.find(1))
+
+## Helpers
+alias ProcessHelper, as: Ph
+
+## Tailwind
+# get tailwind version
+# iex> Tailwind.latest_version
+# tailwind cli at: _build/tailwind* after run: mix tailwind.install

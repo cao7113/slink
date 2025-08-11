@@ -32,12 +32,20 @@ defmodule SlinkWeb.Router do
     get "/ping", ToolsController, :ping
     get "/info", ToolsController, :info
 
+    scope "/" do
+      pipe_through [:require_authenticated_api_user]
+
+      get "/info/builder", ToolsController, :build_info
+    end
+
     # resources "/links", Api.LinkController, except: [:new, :edit]
     get "/links", LinkController, :index
     get "/links/:id", LinkController, :show
 
     scope "/links" do
       pipe_through [:require_authenticated_api_user]
+
+      get "/info/builder", ToolsController, :build_info
 
       post "/", LinkController, :create
       put "/:id", LinkController, :update

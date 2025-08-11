@@ -12,6 +12,14 @@ config :endon,
 
 config :flop, repo: Slink.Repo
 
+## Build Info
+config :slink,
+  build_mode: config_env(),
+  build_time: DateTime.utc_now(:second),
+  source_url: Mix.Project.config()[:source_url],
+  commit_id: System.get_env("GIT_COMMIT_ID", ""),
+  commit_time: System.get_env("GIT_COMMIT_TIME", "")
+
 config :slink, :scopes,
   user: [
     default: true,

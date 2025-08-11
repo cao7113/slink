@@ -38,29 +38,24 @@ tasks:
   db:
     aliases: [sql, pg]
     cmds:
-      - |
-        pgcli slink_dev
+      - pgcli slink_dev
   db.mig: mix ecto.migrate
-  db.reset.test:
-    env:
-      MIX_ENV: test
-    cmds:
-      - mix ecto.reset.force
-  db.reset: |
-    mix ecto.reset.force
-    mix dev.init
-    task db.reset.test
-    echo reset dev and test db
+  db.reset: mix reset
+  # task db.down -- 1
+  db.down: mix ecto.rollback --step -- {{.CLI_ARGS}}
+  db.down1: task db.down -- 1
 
   ## Git ops
-  ops.init: mix git_ops.release --initial
+  ops: |
+    mix git_ops.project_info
+    # mix eh.git.ops.types
   ops.up: |
     mix git_ops.release --yes
     git push --follow-tags
     # fly deploy
   ops.up.rel: mix git_ops.release
   ops.up.tag: git push --follow-tags
-  ops.types: mix eh.git.ops.types
+  ops.init: mix git_ops.release --initial
   ops.setup: |
     # run after add igniter dep in mix.exs
     mix igniter.install git_ops

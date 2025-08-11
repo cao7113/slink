@@ -1,4 +1,6 @@
 # Slink - Share up links
+[![CI](https://github.com/cao7113/slink/actions/workflows/ci.yml/badge.svg)](https://github.com/cao7113/slink/actions/workflows/ci.yml)
+[![Fly Release](https://github.com/cao7113/slink/actions/workflows/fly-deploy/badge.svg)](https://github.com/cao7113/slink/actions/workflows/fly-deploy.yml)
 
 Refactor Slink from scratch, because:
 

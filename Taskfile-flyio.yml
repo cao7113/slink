@@ -6,61 +6,61 @@ version: "3"
 vars:
   APP_NAME: slink
   FLY_APP_NAME: slink
-  FLY_DB_APP_NAME: shareup-db
+  FLY_DB_APP_NAME: shareup-db-pg17
 
 tasks:
-  default: echo fly on app {{.FLY_APP_NAME}}
+  default: echo Flying on app {{.FLY_APP_NAME}}
+
   # The --pty flag tells the SSH server to run the command in a pseudo-terminal.
   # You will generally need this only when running interactive commands, like IEx.
   # https://fly.io/docs/elixir/the-basics/iex-into-running-app/#creating-a-shell-script-for-convenience
   iex: fly ssh console --pty -C "/app/bin/{{.APP_NAME}} remote"
   sh: fly ssh console
   st: fly status
+  log: fly logs
+  ping: curl https://{{.FLY_APP_NAME}}.fly.dev/api/ping
+
   # create new app and fly.toml, --no-deploy wait to add secrets
   launch: fly launch --no-deploy --debug --verbose # --now
   dep: fly deploy
-  dig: fly dig {{.FLY_APP_NAME}}.internal
-  apps: fly dig TXT _apps.internal -o personal
+
   s1: fly scale count 1 --yes
+  s2: fly scale count 2 --yes
   s0: fly scale count 0 --yes
-  ping: curl https://{{.FLY_APP_NAME}}.fly.dev/ping
-  # fly machine clone MACHINE_ID --region NEW_REGION
-  # fly scale count 3 --region "nrt,hkg" --yes
-  s3: fly scale count 3 --region "nrt,hkg,sin" --yes
-  # fly scale count 8 --max-per-region 1 --region bom,fra,gru,hkg,nrt,ord,scl,syd
+  s3: fly scale count 3 --max-per-region 1 --region "nrt,hkg,sin" --yes
   show: fly scale show
+  # fly machine clone MACHINE_ID --region NEW_REGION
+
   # deploy new app version
-  upl: fly deploy --build-arg GIT_COMMIT_ID=$(git log -1 --format="%H") --build-arg GIT_COMMIT_TIME=$(git log -1 --format="%ct")
+  # upl: fly deploy --build-arg GIT_COMMIT_ID=$(git log -1 --format="%H") --build-arg GIT_COMMIT_TIME=$(git log -1 --format="%ct")
   # task f:upv -- v0.1.6
-  upv: fly deploy --image ghcr.io/cao7113/slink:{{.CLI_ARGS}} --debug --verbose
-  up: |
-    latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
-    echo "deploying latest tag: $latest_tag"
-    echo task fly:upv -- $latest_tag
-  reup: fly app restart
-  log: fly logs
+  # upv: fly deploy --image ghcr.io/cao7113/slink:{{.CLI_ARGS}} --debug --verbose
+
+  board: fly dashboard
   open: fly apps open
-  vm: fly machine ls
   ls: fly app ls
-  db:
-    aliases: [sql, pg]
-    cmds:
-      - fly postgres connect -a {{.FLY_DB_APP_NAME}}
-  db-users: fly postgres users list --app {{.FLY_DB_APP_NAME}}
   # plain env and secrets
   env: fly config env
   sec: fly secrets ls
+  dig: fly dig {{.FLY_APP_NAME}}.internal
+  apps: fly dig TXT _apps.internal -o personal
+
+  vm: fly machine ls
   # f m update e82d339f725618 --vm-memory 512
   # sets up a root certificate for your account and then issues a certificate.
   ssh-agent: fly ssh issue --agent
-  board: fly dashboard
   # Add a dedicated ipv4 with: fly ips allocate-v4
   # Private 6PN ip
   ip: fly ip private
 
   ## platform
   regions: fly platform regions
-  vm-sizes: fly platform vm-sizes
+  vm.sizes: fly platform vm-sizes
 
   ## DB
-  db-check: fly checks list -a {{.FLY_DB_APP_NAME}}
+  db:
+    aliases: [sql, pg]
+    cmds:
+      - fly postgres connect -a {{.FLY_DB_APP_NAME}}
+  db.users: fly postgres users list --app {{.FLY_DB_APP_NAME}}
+  db.checks: fly checks list -a {{.FLY_DB_APP_NAME}}
