@@ -18,8 +18,8 @@ defmodule SlinkWeb.Api.LinkControllerTest do
 
   setup %{conn: conn, user: user} do
     unauthed_conn = put_req_header(conn, "accept", "application/json")
-    authed_conn = put_user_api_token(unauthed_conn, user: user)
-    {:ok, unauthed_conn: unauthed_conn, conn: authed_conn}
+    conn = log_in_user_by_api_token(unauthed_conn, user: user)
+    {:ok, unauthed_conn: unauthed_conn, conn: conn}
   end
 
   describe "index" do

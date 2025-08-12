@@ -22,4 +22,13 @@ defmodule Slink.LinksFixtures do
     {:ok, link} = Slink.Links.create_link(scope, attrs)
     link
   end
+
+  def rand_links(scope, opts \\ []) do
+    count = Keyword.get(opts, :count, 5)
+
+    1..count
+    |> Enum.map(fn _ ->
+      link_fixture(scope)
+    end)
+  end
 end

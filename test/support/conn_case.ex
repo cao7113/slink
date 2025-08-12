@@ -77,14 +77,14 @@ defmodule SlinkWeb.ConnCase do
     Slink.AccountsFixtures.override_token_authenticated_at(token, authenticated_at)
   end
 
-  ## API
+  ## API helpers
 
-  def put_user_api_token(conn, opts \\ []) do
+  def log_in_user_by_api_token(conn, opts \\ []) do
     api_token =
       Keyword.get_lazy(opts, :api_token, fn ->
         user = Keyword.fetch!(opts, :user)
-        token = Slink.Accounts.create_user_api_token(user)
-        "Bearer #{token}"
+        encoded_token = Slink.Accounts.create_user_api_token(user)
+        "Bearer #{encoded_token}"
       end)
 
     conn

@@ -12,14 +12,41 @@ Mix.install([
 
 ## Knonw bugs
 
-* unspport non chrome-extension://xxxx like non-http links in code
+* Unspport non chrome-extension://xxxx like non-http links in code
 
 ## Test accounts
 
 ref test/support/fixtures.ex
 
 * a1@b.c / 123456123456
-* adm1@b.c / same above  for adminers
+
+## DB
+
+```elixir
+opts = [
+  hostname: "localhost",
+  port: 5432,
+  username: "postgres",
+  password: "postgres",
+  database: "slink_dev"
+]
+
+{:ok, conn} = Kino.start_child({Postgrex, opts})
+Kino.nothing()
+```
+
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoicG9zdGdyZXMiLCJ2YXJpYWJsZSI6ImNvbm4ifSwiZGF0YV9mcmFtZV9hbGlhcyI6IkVsaXhpci5FeHBsb3Jlci5EYXRhRnJhbWUiLCJxdWVyeSI6InNlbGVjdCAqIGZyb20gdXNlcnMgb3JkZXIgYnkgaWQgYXNjIiwicmVzdWx0X3ZhcmlhYmxlIjoicmVzdWx0IiwidGltZW91dCI6bnVsbH0","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+
+```elixir
+result = Postgrex.query!(conn, ~S"select * from users order by id asc", [])
+```
+
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoicG9zdGdyZXMiLCJ2YXJpYWJsZSI6ImNvbm4ifSwiZGF0YV9mcmFtZV9hbGlhcyI6IkVsaXhpci5FeHBsb3Jlci5EYXRhRnJhbWUiLCJxdWVyeSI6InNlbGVjdCAqIGZyb20gdXNlcnNfdG9rZW5zIG9yZGVyIGJ5IGlkIGRlc2MgbGltaXQgMzAiLCJyZXN1bHRfdmFyaWFibGUiOiJyZXN1bHQyIiwidGltZW91dCI6bnVsbH0","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+
+```elixir
+result2 =
+  Postgrex.query!(conn, ~S"select * from users_tokens order by id desc limit 30", [])
+```
 
 ## Node info
 
@@ -40,20 +67,14 @@ ref test/support/fixtures.ex
 in slink project run:
 
 ```
-  node6:
-    env:
-      # RELEASE_DISTRIBUTION: name
-      ERL_AFLAGS: "-proto_dist inet6_tcp -kernel shell_history enabled"
-    cmds:
-      - |
-        iex --name slink@::1 --cookie slink -S mix
+task node6
 ```
 
-<!-- livebook:{"attrs":"eyJhc3NpZ25fdG8iOiIiLCJjb2RlIjoiU2xpbmsuTGlua3MuTGluay5maXJzdCIsImNvb2tpZV9zb3VyY2UiOiJ0ZXh0IiwiY29va2llX3RleHQiOiJzbGluayIsIm5vZGVfc291cmNlIjoidGV4dCIsIm5vZGVfdGV4dCI6InNsaW5rQDo6MSJ9","chunks":null,"kind":"Elixir.Kino.RemoteExecutionCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":"eyJhc3NpZ25fdG8iOiIiLCJjb2RlIjoiU2xpbmsuTGlua3MuTGluay5maXJzdCIsImNvb2tpZV9zb3VyY2UiOiJ0ZXh0IiwiY29va2llX3RleHQiOiJzbGluayIsIm5vZGVfc291cmNlIjoidGV4dCIsIm5vZGVfdGV4dCI6InNsaW5rQG1hYy5sb2NhbCJ9","chunks":null,"kind":"Elixir.Kino.RemoteExecutionCell","livebook_object":"smart_cell"} -->
 
 ```elixir
 require Kino.RPC
-node = :"slink@::1"
+node = :"slink@mac.local"
 Node.set_cookie(node, :slink)
 Kino.RPC.eval_string(node, ~S"Slink.Links.Link.first", file: __ENV__.file)
 ```
@@ -112,11 +133,11 @@ flyio_resp.body|>Kino.Tree.new()
 
 * 注意<span style="color: red;">**开启IPv6开关**</span>
 
-<!-- livebook:{"attrs":"eyJjYWNlcnRmaWxlIjoiIiwiZGF0YWJhc2UiOiJzbGluayIsImhvc3RuYW1lIjoic2hhcmV1cC1kYi5pbnRlcm5hbCIsInBhc3N3b3JkX3NlY3JldCI6IkZMWV9TTElOS19EQl9QQVNTV09SRCIsInBvcnQiOjU0MzIsInR5cGUiOiJwb3N0Z3JlcyIsInVzZV9pcHY2Ijp0cnVlLCJ1c2Vfc3NsIjpmYWxzZSwidXNlcm5hbWUiOiJzbGluayIsInZhcmlhYmxlIjoiZmx5aW9fY29ubiJ9","chunks":null,"kind":"Elixir.KinoDB.ConnectionCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":"eyJjYWNlcnRmaWxlIjoiIiwiZGF0YWJhc2UiOiJzbGluayIsImhvc3RuYW1lIjoic2hhcmV1cC1kYi1wZzE3LmludGVybmFsIiwicGFzc3dvcmRfc2VjcmV0IjoiRkxZX1NMSU5LX0RCX1BBU1NXT1JEIiwicG9ydCI6NTQzMiwidHlwZSI6InBvc3RncmVzIiwidXNlX2lwdjYiOnRydWUsInVzZV9zc2wiOmZhbHNlLCJ1c2VybmFtZSI6InNsaW5rIiwidmFyaWFibGUiOiJmbHlpb19jb25uIn0","chunks":null,"kind":"Elixir.KinoDB.ConnectionCell","livebook_object":"smart_cell"} -->
 
 ```elixir
 opts = [
-  hostname: "shareup-db.internal",
+  hostname: "shareup-db-pg17.internal",
   port: 5432,
   username: "slink",
   password: System.fetch_env!("LB_FLY_SLINK_DB_PASSWORD"),
@@ -177,13 +198,13 @@ Below remote-execution require local livebook running in inet6 mode, like
         iex -S mix phx.server
 ```
 
-<!-- livebook:{"attrs":"eyJhc3NpZ25fdG8iOiJzcyIsImNvZGUiOiJTbGluay5MaW5rcy5MaW5rLmxhc3QiLCJjb29raWVfc291cmNlIjoidGV4dCIsImNvb2tpZV90ZXh0Ijoic2xpbmtmdW5jb29raWUiLCJub2RlX3NvdXJjZSI6InRleHQiLCJub2RlX3RleHQiOiJzbGlua0BzbGluay5pbnRlcm5hbCJ9","chunks":null,"kind":"Elixir.Kino.RemoteExecutionCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":"eyJhc3NpZ25fdG8iOiJzcyIsImNvZGUiOiJTbGluay5MaW5rcy5MaW5rLmxhc3QiLCJjb29raWVfc291cmNlIjoidGV4dCIsImNvb2tpZV90ZXh0IjoiaGFwcHktY29va2llLW5vdC1zZWNyZXQtYnV0LWZvci1jbHVzdGVyIiwibm9kZV9zb3VyY2UiOiJ0ZXh0Iiwibm9kZV90ZXh0Ijoic2xpbmstMDFLMkJaUlZGWlMwVFpOUlI3V0g1NldSWjZAZmRhYToyOjY4NmM6YTdiOjE3YjplYWI0OjJhOTE6MiJ9","chunks":null,"kind":"Elixir.Kino.RemoteExecutionCell","livebook_object":"smart_cell"} -->
 
 ```elixir
 require Kino.RPC
-node = :"slink@slink.internal"
-Node.set_cookie(node, :slinkfuncookie)
+node = :"slink-01K2BZRVFZS0TZNRR7WH56WRZ6@fdaa:2:686c:a7b:17b:eab4:2a91:2"
+Node.set_cookie(node, :"happy-cookie-not-secret-but-for-cluster")
 ss = Kino.RPC.eval_string(node, ~S"Slink.Links.Link.last", file: __ENV__.file)
 ```
 
-<!-- livebook:{"offset":5700,"stamp":{"token":"XCP.1lo-0a_VogwjVIypYO2W1CU2MIKMfq3lQMX_g1ZbgfzF4-rINNcTlTtHwjGksE5qegFd3xZjXLZQ5MVlTSyhazq7QyMjP7ZH6GluQXQKMBTkdePZDQSwqUNwx7w-aYI9","version":2}} -->
+<!-- livebook:{"offset":6867,"stamp":{"token":"XCP.oPmMp-CjkpTo0RTsOFW8cVUDWasabQflomygxD4XGxhH-XALPi2Kfz649R5_BygCv0cEnxkYKsiHTWZ_gook3hGl3tC5zXVpwIiqGrLA6STlnsHTy-1-uuX1MrH8loLx","version":2}} -->

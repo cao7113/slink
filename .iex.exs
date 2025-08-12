@@ -23,9 +23,11 @@ alias SlinkWeb.UserAuth
 ## Remote
 alias Remote, as: R
 alias EnvHelper, as: Env
+alias Builder, as: B
 
 ## Testing
-alias TestHelpers, as: Th
+alias Slink.Factory
+alias Slink.Factory, as: F
 
 ## Data
 u1 = User.find(1)

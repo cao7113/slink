@@ -54,7 +54,7 @@ defmodule Slink.Accounts do
   ## API
 
   @doc """
-  Creates a new api token for a user.
+  Creates api-token for a user.
 
   The token returned must be saved somewhere safe.
   This token cannot be recovered from the database.

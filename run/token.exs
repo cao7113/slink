@@ -1,5 +1,4 @@
 #! mix run
-
 defmodule Token do
   @test_token "PiQFJ0AJBzliWD0-VwsjDjcoIlMmFwc-UARQwzSL7mvXnfoEujRjdcsg"
   # raw-unmasked-token: keWv7sTuU5Kf9mLKBBp9BttY

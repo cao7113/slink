@@ -35,6 +35,7 @@ defmodule Slink.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  # allow dev use test-fixtures
   defp elixirc_paths(:dev), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
@@ -71,18 +72,18 @@ defmodule Slink.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
 
-      # App enhancement
-      # {:faker, "~> 0.18", only: [:dev, :test]},
-      # {:corsica, "~> 2.1"},
+      # App enhancement deps
       {:endon, "~> 2.0"},
       {:flop, "~> 0.26.3"},
       # smtp support for gmail
       {:gen_smtp, "~> 1.3"},
+      # {:corsica, "~> 2.1"},
 
       # Dev Tools
       {:igniter, "~> 0.6", only: [:dev, :test]},
-      {:tidewave, "~> 0.3", only: [:dev]},
-      {:git_ops, "~> 2.0", only: [:dev], runtime: false}
+      {:git_ops, "~> 2.0", only: [:dev], runtime: false},
+      # {:faker, "~> 0.18", only: [:dev, :test]},
+      {:tidewave, "~> 0.3", only: [:dev]}
     ]
   end
 
@@ -108,17 +109,13 @@ defmodule Slink.MixProject do
       precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"],
       # Helpers
       "ecto.reset.force": ["ecto.drop --force-drop", "ecto.setup"],
-      "dev.init": ["app.start", &init_data/1],
+      # "dev.init": ["app.start", "run run/dev-seed.exs"],
+      "dev.init": ["run run/dev-seed.exs"],
       "dev.reset": ["ecto.reset.force", "dev.init"],
       "test.reset": ["ecto.reset.force"],
       reset: ["dev.reset", "test.reset"],
       routes: ["phx.routes"]
     ]
-  end
-
-  defp init_data(_) do
-    TestHelpers.init_data()
-    Mix.shell().info("Init #{Mix.env()} data")
   end
 
   def prefered_cli_env do

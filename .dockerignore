@@ -49,3 +49,4 @@ notes/
 fly.toml
 Taskfile*
 .env*
+.github

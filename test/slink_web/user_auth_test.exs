@@ -214,7 +214,7 @@ defmodule SlinkWeb.UserAuthTest do
     test "valid token", %{conn: conn, user: user} do
       conn =
         conn
-        |> put_user_api_token(user: user)
+        |> log_in_user_by_api_token(user: user)
         |> UserAuth.fetch_current_scope_for_api_user()
 
       assert conn.assigns.current_scope.user.id == user.id
@@ -223,7 +223,7 @@ defmodule SlinkWeb.UserAuthTest do
     test "invalid bearer token", %{conn: conn} do
       conn =
         conn
-        |> put_user_api_token(api_token: "Bearer invalid-bearer-token")
+        |> log_in_user_by_api_token(api_token: "Bearer invalid-bearer-token")
         |> UserAuth.fetch_current_scope_for_api_user()
 
       assert conn.assigns.current_scope == nil
@@ -232,7 +232,7 @@ defmodule SlinkWeb.UserAuthTest do
     test "invalid token", %{conn: conn} do
       conn =
         conn
-        |> put_user_api_token(api_token: "invalid-token")
+        |> log_in_user_by_api_token(api_token: "invalid-token")
         |> UserAuth.fetch_current_scope_for_api_user()
 
       assert conn.assigns.current_scope == nil

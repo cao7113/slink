@@ -15,22 +15,28 @@ includes:
 tasks:
   default: mix test
   sh: iex --erl "-kernel shell_history enabled" -S mix
-  run: iex --erl "-kernel shell_history enabled" -S mix phx.server
+  run:
+    env:
+      ERL_AFLAGS: "-kernel shell_history enabled"
+    cmds:
+      # - iex --erl "-kernel shell_history enabled" -S mix phx.server
+      - iex -S mix phx.server
   run6:
+    aliases: [r6, n6, node6]
     env:
       # local livebook deployed with ipv6
       ERL_AFLAGS: "-proto_dist inet6_tcp -kernel shell_history enabled"
       # RELEASE_DISTRIBUTION: name
     cmds:
-      # iex(slink2@mac.local)1>
-      - iex --name slink2 --cookie slink2 -S mix phx.server
+      # iex(slink@mac.local)1>
+      - iex --name slink --cookie slink -S mix phx.server
   fmt: mix format
 
   # Links
   link.create: |
     curl -X POST \
       -H "Content-Type: application/json" \
-      -H "Authorization: Bearer ${DEV_API_TOKEN}" \
+      -H "Authorization: Bearer dev_api_token---kC6IkpcQRO4VvuVFgszZRnvDDSU" \
       -d '{"link": {"title": "Example", "url": "https://example1.com"}}' \
       {{.DEV_API_HOST}}/api/links
 

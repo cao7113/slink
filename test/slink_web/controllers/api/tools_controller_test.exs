@@ -19,7 +19,7 @@ defmodule SlinkWeb.Api.ToolsControllerTest do
     test "user authorized", %{conn: conn, user: user} do
       conn =
         conn
-        |> put_user_api_token(user: user)
+        |> log_in_user_by_api_token(user: user)
         |> get(~p"/api/info")
 
       info = json_response(conn, 200)
@@ -41,7 +41,7 @@ defmodule SlinkWeb.Api.ToolsControllerTest do
     test "user authorized", %{conn: conn, user: user} do
       conn =
         conn
-        |> put_user_api_token(user: user)
+        |> log_in_user_by_api_token(user: user)
         |> get(~p"/api/info/builder")
 
       %{

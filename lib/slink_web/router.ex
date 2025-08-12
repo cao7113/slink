@@ -33,6 +33,7 @@ defmodule SlinkWeb.Router do
     get "/info", ToolsController, :info
 
     scope "/" do
+      # todo should be dev-ops route
       pipe_through [:require_authenticated_api_user]
 
       get "/info/builder", ToolsController, :build_info

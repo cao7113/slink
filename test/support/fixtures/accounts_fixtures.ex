@@ -58,6 +58,7 @@ defmodule Slink.AccountsFixtures do
   end
 
   def extract_user_token(fun) do
+    # fun.(fn token -> "[TOKEN]#{token}[TOKEN]" end)
     {:ok, captured_email} = fun.(&"[TOKEN]#{&1}[TOKEN]")
     [_, token | _] = String.split(captured_email.text_body, "[TOKEN]")
     token
