@@ -8,24 +8,11 @@ email = "a1@b.c"
 password = "123456123456"
 api_token = "dev_api_token---kC6IkpcQRO4VvuVFgszZRnvDDSU"
 
-links = [
-  %{
-    title: "Phoenix Framework",
-    url: "https://phoenixframework.org/"
-  },
-  %{
-    title: "Overview — Phoenix v1.8.0",
-    url: "https://hexdocs.pm/phoenix/overview.html"
-  },
-  %{
-    title: "phoenixframework/phoenix: Peace of mind from prototype to production",
-    url: "https://github.com/phoenixframework/phoenix"
-  },
-  %{
-    title: "Elixir Programming Language Forum - Elixir Programming Language Forum",
-    url: "https://elixirforum.com/"
-  }
-]
+# json data from: mix links.dump
+links =
+  Path.join(__DIR__, "links.json")
+  |> File.read!()
+  |> Jason.decode!()
 
 info = %{
   email: email,

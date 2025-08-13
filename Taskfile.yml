@@ -31,6 +31,7 @@ tasks:
       # iex(slink@mac.local)1>
       - iex --name slink --cookie slink -S mix phx.server
   fmt: mix format
+  reset: mix reset
 
   ## AI
   td: |
@@ -51,7 +52,6 @@ tasks:
     cmds:
       - pgcli slink_dev
   db.mig: mix ecto.migrate
-  db.reset: mix reset
   # task db.down -- 1
   db.down: mix ecto.rollback --step -- {{.CLI_ARGS}}
   db.down1: task db.down -- 1

@@ -45,11 +45,12 @@ Add the live routes to your browser scope in lib/slink_web/router.ex:
 Ensure the routes are defined in a block that sets the `:current_scope` assign.
 ```
 
-## My links page for normal user
+## Link usages for link visitor
+
+## My links
 
 actions:
 - CRUD
-- edit note
 
 ```
 $ mix phx.gen.live Links Link links --web my --no-context title url user_id:integer

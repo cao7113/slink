@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Phoenix Framework",
+    "url": "https://phoenixframework.org/"
+  },
+  {
+    "title": "Overview — Phoenix v1.8.0",
+    "url": "https://hexdocs.pm/phoenix/overview.html"
+  },
+  {
+    "title": "phoenixframework/phoenix: Peace of mind from prototype to production",
+    "url": "https://github.com/phoenixframework/phoenix"
+  },
+  {
+    "title": "Elixir Programming Language Forum - Elixir Programming Language Forum",
+    "url": "https://elixirforum.com/"
+  },
+  {
+    "title": "HexDocs",
+    "url": "https://hexdocs.pm/"
+  },
+  {
+    "title": "Elixir Documentation - The Elixir programming language",
+    "url": "https://elixir-lang.org/docs.html"
+  },
+  {
+    "title": "The Elixir programming language",
+    "url": "https://elixir-lang.org/"
+  },
+  {
+    "title": "Blog - The Elixir programming language",
+    "url": "https://elixir-lang.org/blog/"
+  },
+  {
+    "title": "Introduction — Elixir v1.18.4",
+    "url": "https://hexdocs.pm/elixir/introduction.html"
+  }
+]
