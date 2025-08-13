@@ -32,7 +32,12 @@ tasks:
       - iex --name slink --cookie slink -S mix phx.server
   fmt: mix format
 
-  # Links
+  ## AI
+  td: |
+    # curl -v http://localhost:4000/tidewave/mcp
+    echo '{"jsonrpc":"2.0","id":1,"method":"ping"}' | /Users/rj/dev/elab/mcp-proxy http://localhost:4000/tidewave/mcp # --debug
+
+  ## Links
   link.create: |
     curl -X POST \
       -H "Content-Type: application/json" \

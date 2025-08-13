@@ -38,8 +38,3 @@ u1 = User.find(1)
 
 ## Helpers
 alias ProcessHelper, as: Ph
-
-## Tailwind
-# get tailwind version
-# iex> Tailwind.latest_version
-# tailwind cli at: _build/tailwind* after run: mix tailwind.install

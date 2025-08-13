@@ -1,5 +1,15 @@
 # Tidewave ai
 
+- https://hexdocs.pm/tidewave/mcp.html
+
+## Uage
+
+```
+execute_sql_query
+// not work now??
+select 1;
+```
+
 ## Configure IDE
 
 ```
@@ -29,7 +39,7 @@ Update: mix.exs
  38  38   |    [
      39 + |      {:tidewave, "~> 0.3", only: [:dev]},
  39  40   |      {:bcrypt_elixir, "~> 3.0"},
- 40  41   |      {:phoenix, "~> 1.8.0-rc.4", override: true},
+ 40  41   |      {:phoenix, "~> 1.8.0", override: true},
        ...|
 
 

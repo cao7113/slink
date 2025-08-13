@@ -2,10 +2,30 @@
 
 alias Slink.Accounts
 alias Slink.Accounts.UserToken
+alias Slink.Links
 
 email = "a1@b.c"
 password = "123456123456"
 api_token = "dev_api_token---kC6IkpcQRO4VvuVFgszZRnvDDSU"
+
+links = [
+  %{
+    title: "Phoenix Framework",
+    url: "https://phoenixframework.org/"
+  },
+  %{
+    title: "Overview — Phoenix v1.8.0",
+    url: "https://hexdocs.pm/phoenix/overview.html"
+  },
+  %{
+    title: "phoenixframework/phoenix: Peace of mind from prototype to production",
+    url: "https://github.com/phoenixframework/phoenix"
+  },
+  %{
+    title: "Elixir Programming Language Forum - Elixir Programming Language Forum",
+    url: "https://elixirforum.com/"
+  }
+]
 
 info = %{
   email: email,
@@ -48,3 +68,14 @@ dev_user =
   end
 
 IO.puts("dev-user=#{dev_user.id} created with info #{info |> inspect(pretty: true)}!")
+
+user_scope = Accounts.Scope.for_user(dev_user)
+
+## Links
+
+links
+|> Enum.each(fn link ->
+  Links.create_link(user_scope, link)
+end)
+
+IO.puts("#{Enum.count(links)} links created!")

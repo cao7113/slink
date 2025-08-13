@@ -2,7 +2,7 @@
 
 ## API Prefix
 
-- https://hexdocs.pm/phoenix/1.8.0-rc.4/Mix.Tasks.Phx.Gen.Json.html#module-api-prefix
+- https://hexdocs.pm/phoenix/1.8.0/Mix.Tasks.Phx.Gen.Json.html#module-api-prefix
 
 ```
 config :slink,
@@ -19,7 +19,7 @@ mix phx.gen.json Links Link links title url --web api # --no-context
 
 ## Links API
 
-https://hexdocs.pm/phoenix/1.8.0-rc.4/Mix.Tasks.Phx.Gen.Json.html
+https://hexdocs.pm/phoenix/1.8.0/Mix.Tasks.Phx.Gen.Json.html
 
 ```
 mix phx.gen.json Links Link links title url # user_id:integer
@@ -45,7 +45,7 @@ Remember to update your repository by running migrations:
 
 ## API token
 
-https://hexdocs.pm/phoenix/1.8.0-rc.4/api_authentication.html#adding-api-functions-to-the-context
+https://hexdocs.pm/phoenix/1.8.0/api_authentication.html#adding-api-functions-to-the-context
 
 ```
 user = User.find(1)

@@ -1,7 +1,7 @@
 # Phx liveview
 
-- https://hexdocs.pm/phoenix/1.8.0-rc.4/live_view.html
-- https://hexdocs.pm/phoenix/1.8.0-rc.4/Mix.Tasks.Phx.Gen.Live.html
+- https://hexdocs.pm/phoenix/1.8.0/live_view.html
+- https://hexdocs.pm/phoenix/1.8.0/Mix.Tasks.Phx.Gen.Live.html
 - https://hexdocs.pm/phoenix_live_view/welcome.html#what-is-a-liveview
 
 LiveViews are processes that receive events, update their state, and render updates to a page as diffs.

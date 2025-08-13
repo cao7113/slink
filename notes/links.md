@@ -6,19 +6,18 @@ links table
 - title
 - url
 - user_id: as contributor
--------
-- tags
-- owner_type: nil(public), user, org
-- owner_id
 
-unique with {url, owner_type, owner_id}???
+unique url
 
-my_links table
+link_usages table
 - title
 - link_id
 - user_id
 - note
 - favor_at
+- last_visit_at
+- total_visit_times
+- tags array
 
 ## Public links show
 
