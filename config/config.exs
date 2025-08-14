@@ -16,7 +16,7 @@ config :flop, repo: Slink.Repo
 config :slink,
   build_mode: config_env(),
   build_time: DateTime.utc_now(:second),
-  source_url: Mix.Project.config()[:source_url],
+  scm_url: Mix.Project.config()[:scm_url],
   commit_id: System.get_env("GIT_COMMIT_ID", ""),
   commit_time: System.get_env("GIT_COMMIT_TIME", "")
 

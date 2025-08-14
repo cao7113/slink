@@ -93,6 +93,10 @@ defmodule SlinkWeb do
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
+
+      # Builder info
+      import Builder,
+        only: [is_dev?: 0, is_prod?: 0, is_test?: 0]
     end
   end
 

@@ -7,7 +7,7 @@
 
 ==============================
 
-Hi dev@a.b,
+Hi a1@b.c,
 
 You can confirm your account by visiting the URL below:
 
@@ -21,7 +21,7 @@ If you didn't create an account with us, please ignore this.
 
 ==============================
 
-Hi dev@a.b,
+Hi a1@b.c,
 
 You can log into your account by visiting the URL below:
 

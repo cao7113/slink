@@ -22,6 +22,8 @@ defmodule SlinkWeb.Router do
     pipe_through :browser
 
     get "/home", PageController, :home
+    get "/daisyui", PageController, :daisyui
+    get "/flash", PageController, :flash
   end
 
   # API

@@ -1,7 +1,7 @@
 defmodule Builder do
   def app, do: Application.get_application(__MODULE__)
   def vsn, do: Application.spec(app(), :vsn) |> to_string()
-  def source_url, do: Application.get_env(app(), :source_url)
+  def scm_url, do: Application.get_env(app(), :scm_url)
 
   ## Build Info
 
@@ -9,7 +9,7 @@ defmodule Builder do
     %{
       app: app(),
       version: vsn(),
-      source_url: source_url(),
+      scm_url: scm_url(),
       build_mode: build_mode(),
       build_time: build_time(),
       system: System.build_info(),
@@ -20,6 +20,10 @@ defmodule Builder do
 
   def build_mode, do: Application.get_env(app(), :build_mode)
   def build_time, do: Application.get_env(app(), :build_time) |> to_string
+
+  def is_dev?, do: build_mode() == :dev
+  def is_prod?, do: build_mode() == :prod
+  def is_test?, do: build_mode() == :test
 
   # put into standalone hex pkg?
   def commit do

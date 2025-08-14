@@ -34,5 +34,17 @@
   {
     "title": "Introduction — Elixir v1.18.4",
     "url": "https://hexdocs.pm/elixir/introduction.html"
+  },
+  {
+    "title": "Components — Tailwind CSS Components ( version 5 update is here )",
+    "url": "https://daisyui.com/components/"
+  },
+  {
+    "title": "Responsive design - Core concepts - Tailwind CSS",
+    "url": "https://tailwindcss.com/docs/responsive-design"
+  },
+  {
+    "title": "Phoenix.LiveView — Phoenix LiveView v1.1.3",
+    "url": "https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html"
   }
 ]

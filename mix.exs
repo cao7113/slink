@@ -1,7 +1,7 @@
 defmodule Slink.MixProject do
   use Mix.Project
 
-  @source_url "https://github.com/cao7113/slink"
+  @scm_url "https://github.com/cao7113/slink"
   # automatically bump version on release by git_ops
   @version "0.3.1"
 
@@ -18,7 +18,7 @@ defmodule Slink.MixProject do
       listeners: [Phoenix.CodeReloader],
       name: "Shareup links",
       docs: docs(),
-      source_url: @source_url,
+      scm_url: @scm_url,
       preferred_cli_env: prefered_cli_env()
     ]
   end
@@ -128,7 +128,7 @@ defmodule Slink.MixProject do
   defp docs do
     [
       main: "readme",
-      source_url: @source_url,
+      scm_url: @scm_url,
       source_ref: "v#{@version}",
       extras: [
         "README.md"

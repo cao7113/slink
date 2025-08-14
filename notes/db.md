@@ -1,4 +1,13 @@
-# DB ops
+# DB & Data
+
+# Schema & Migrations
+
+- deps/phoenix/lib/mix/tasks/phx.gen.schema.ex
+- https://hexdocs.pm/ecto_sql/Mix.Tasks.Ecto.Gen.Migration.html
+
+```
+mix ecto.gen.migration add_unique_index_to_links_url --no-compile
+```
 
 ## Reset sequence last-value
 
@@ -7,7 +16,7 @@ SELECT setval('links_id_seq', COALESCE((SELECT MAX(id) FROM links), 0));
 SELECT * FROM pg_sequences WHERE sequencename = 'links_id_seq';
 ```
 
-## connections
+## Connections
 
 ```
 # get pg version

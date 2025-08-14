@@ -1,4 +1,6 @@
-# Email Adapters
+# Email & Notifier
+
+## Adapters
 
 - https://github.com/gen-smtp/gen_smtp
 

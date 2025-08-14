@@ -12,7 +12,7 @@ defmodule SlinkWeb.My.UserTokenLive.Index do
           Cateated API token ID={@user_token.id}!
           Keep it in safe place JUST NOW, only ONCE!!!
           <.button variant="primary" phx-click={JS.push("toggle_api_token")}>
-            <.icon name="hero-plus" /> Toggle Visibility
+            Toggle Visibility
           </.button>
         </div>
         <div class="alert alert-success">
