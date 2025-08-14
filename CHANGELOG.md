@@ -5,6 +5,21 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.2 (2025-08-14)
+
+
+
+
+### Bug Fixes:
+
+* improve navbar layout by remove auth menu to app-layout by Ryn Cao
+
+### Improvements:
+
+* seed dev links and fix docs by Ryn Cao
+
+* add phx1.8 AGENTS.md by Ryn Cao
+
 ## v0.3.1 (2025-08-11)
 
 
