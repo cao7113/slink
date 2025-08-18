@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.3 (2025-08-18)
+
+
+
+
+### Bug Fixes:
+
+* add basic user-link by Ryn Cao
+
 ## v0.3.2 (2025-08-14)
 
 
