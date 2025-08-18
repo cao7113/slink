@@ -22,18 +22,6 @@ defmodule SlinkWeb.Api.LinkControllerTest do
     {:ok, unauthed_conn: unauthed_conn, conn: conn}
   end
 
-  describe "index" do
-    test "lists all links", %{conn: conn} do
-      conn = get(conn, ~p"/api/links")
-      assert json_response(conn, 200)["data"] == []
-    end
-
-    test "lists all links with unauthorized connection", %{unauthed_conn: conn} do
-      conn = get(conn, ~p"/api/links")
-      assert json_response(conn, 200)["data"] == []
-    end
-  end
-
   describe "create link" do
     @describetag capture_log: true
 
@@ -65,6 +53,18 @@ defmodule SlinkWeb.Api.LinkControllerTest do
       %{
         "message" => "Unauthorized user to continue!"
       } = json_response(conn, 401)
+    end
+  end
+
+  describe "index" do
+    test "lists all links", %{conn: conn} do
+      conn = get(conn, ~p"/api/links")
+      assert json_response(conn, 200)["data"] == []
+    end
+
+    test "lists all links with unauthorized connection", %{unauthed_conn: conn} do
+      conn = get(conn, ~p"/api/links")
+      assert json_response(conn, 200)["data"] == []
     end
   end
 

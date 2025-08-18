@@ -12,6 +12,91 @@ defmodule SlinkWeb.Layouts do
   embed_templates "layouts/*"
 
   @doc """
+  App layout top navbar
+  """
+  attr :current_scope, :map,
+    default: nil,
+    doc: "the current [scope](https://hexdocs.pm/phoenix/scopes.html)"
+
+  def app_navbar(assigns) do
+    ~H"""
+    <ul class="flex flex-column items-center">
+      <li>
+        <.link href={~p"/links"} class="btn btn-ghost">Links</.link>
+      </li>
+
+      <li :if={is_dev?()}>
+        <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
+          <div tabindex="0" class="btn btn-ghost m-1">Dev</div>
+
+          <ul
+            tabindex="0"
+            class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm"
+          >
+            <li>
+              <.link href="/dev/dashboard">Dashboard</.link>
+            </li>
+            <li>
+              <.link href="/dev/mailbox">Mailbox</.link>
+            </li>
+            <li>
+              <.link href={Builder.scm_url()} target="_blank">Code</.link>
+            </li>
+            <li>
+              <.link href={~p"/daisyui"}>DaisyUI Play</.link>
+            </li>
+            <li>
+              <.link href={~p"/home"}>Raw Home</.link>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <%= if @current_scope do %>
+        <li>
+          <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
+            <div tabindex="0" class="btn btn-ghost m-1">
+              {@current_scope.user.email}
+            </div>
+            <ul
+              tabindex="0"
+              class="dropdown-content menu bg-base-100 rounded-box z-1 w-30 p-2 shadow-sm"
+            >
+              <li>
+                <.link href={~p"/my/user_links"}>User Links</.link>
+              </li>
+              <li>
+                <.link href={~p"/my/links"}>My Links</.link>
+              </li>
+              <li>
+                <.link href={~p"/my/user_tokens"}>User Tokens</.link>
+              </li>
+              <li>
+                <.link href={~p"/users/settings"}>Settings</.link>
+              </li>
+              <li>
+                <.link href={~p"/users/log-out"} method="delete">Log out</.link>
+              </li>
+            </ul>
+          </div>
+        </li>
+      <% else %>
+        <li>
+          <.link href={~p"/users/register"} class="btn btn-ghost">Register</.link>
+        </li>
+        <li>
+          <.link href={~p"/users/log-in"} class="btn btn-ghost">Log in</.link>
+        </li>
+      <% end %>
+
+      <li>
+        <.theme_toggle />
+      </li>
+    </ul>
+    """
+  end
+
+  @doc """
   Renders your app layout.
 
   This function is typically invoked from every template,
@@ -35,90 +120,21 @@ defmodule SlinkWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
+    <header class="navbar px-4 sm:px-4 lg:px-8">
       <div class="flex-1">
         <a href="/" class="flex-1 flex w-fit items-center gap-2">
           <%!-- <img src={~p"/images/logo.svg"} width="36" /> --%>
           <span class="text-md font-semibold">Slink</span>
-          <span class="text-sm font-semibold">v{Application.spec(:slink, :vsn)}</span>
+          <span class="text-sm">v{Application.spec(:slink, :vsn)}</span>
         </a>
       </div>
       <div class="flex-none">
-        <ul class="flex flex-column items-center">
-          <li>
-            <.link href={~p"/links"} class="btn btn-ghost">Links</.link>
-          </li>
-          <li :if={is_dev?()}>
-            <div class="dropdown dropdown-bottom dropdown-center dropdown-hover">
-              <div tabindex="0" class="btn btn-ghost m-1">Dev</div>
-
-              <ul
-                tabindex="0"
-                class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm"
-              >
-                <li>
-                  <.link href="/dev/dashboard">Dashboard</.link>
-                </li>
-                <li>
-                  <.link href="/dev/mailbox">Mailbox</.link>
-                </li>
-                <li>
-                  <.link href={Builder.scm_url()} target="_blank">Code</.link>
-                </li>
-                <li>
-                  <.link href={~p"/daisyui"}>DaisyUI Play</.link>
-                </li>
-                <li>
-                  <.link href={~p"/home"}>Raw Home</.link>
-                </li>
-              </ul>
-            </div>
-          </li>
-
-          <%= if @current_scope do %>
-            <li>
-              <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
-                <div tabindex="0" class="btn btn-ghost m-1">
-                  {@current_scope.user.email}
-                </div>
-                <ul
-                  tabindex="0"
-                  class="dropdown-content menu bg-base-100 rounded-box z-1 w-30 p-2 shadow-sm"
-                >
-                  <li>
-                    <.link href={~p"/my/links"}>My Links</.link>
-                  </li>
-                  <li>
-                    <.link href={~p"/my/user_tokens"}>My Tokens</.link>
-                  </li>
-                </ul>
-              </div>
-            </li>
-
-            <li>
-              <.link href={~p"/users/settings"} class="btn btn-ghost">Settings</.link>
-            </li>
-          <% else %>
-            <li>
-              <.link href={~p"/users/register"} class="btn btn-ghost">Register</.link>
-            </li>
-            <li>
-              <.link href={~p"/users/log-in"} class="btn btn-ghost">Log in</.link>
-            </li>
-          <% end %>
-
-          <li>
-            <.theme_toggle />
-          </li>
-          <li :if={@current_scope}>
-            <.link href={~p"/users/log-out"} method="delete" class="btn btn-ghost">Log out</.link>
-          </li>
-        </ul>
+        <.app_navbar current_scope={@current_scope} />
       </div>
     </header>
 
-    <main class="px-4 pt-6 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-3xl space-y-4">
+    <main class="px-4 pt-4 sm:pt-2 sm:px-4 lg:px-8">
+      <div class="mx-auto max-w-4xl space-y-1">
         {render_slot(@inner_block)}
       </div>
     </main>

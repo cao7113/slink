@@ -2,6 +2,7 @@ defmodule SlinkWeb.LinkLive.Index do
   use SlinkWeb, :live_view
 
   alias Slink.Links
+  alias Slink.UserLinks
   require Logger
 
   # configured in router.ex
@@ -20,6 +21,7 @@ defmodule SlinkWeb.LinkLive.Index do
     {:ok,
      socket
      |> assign(:page_title, "Listing Links")
+     |> assign(:inline_note, false)
      |> assign(:search_form, search_form)
      |> assign(page: 1, per_page: @per_page)
      |> stream_items(query: params["query"] || "")}
@@ -56,7 +58,44 @@ defmodule SlinkWeb.LinkLive.Index do
     end
   end
 
-  @impl true
+  def handle_event("open_link", %{"id" => id}, socket) do
+    scope = socket.assigns.current_scope
+    {:ok, log} = Links.create_link_log(scope, %{link_id: id, event: "opened"})
+    Logger.debug("opened link #{log |> inspect}")
+    {:noreply, socket}
+  end
+
+  def handle_event("toggle_favor", %{"id" => id}, socket) do
+    link = Links.get_link!(id)
+    scope = socket.assigns.current_scope
+    {:ok, ulink} = UserLinks.toggle_favor(scope, link)
+    link = %{link | my_ulink: ulink}
+    socket = stream_insert(socket, :links, link, update_only: true)
+    {:noreply, socket}
+  end
+
+  def handle_event("toggle_inline_note", %{}, socket) do
+    query = socket.assigns.search_form.params["query"]
+
+    socket =
+      socket
+      |> assign(:inline_note, !socket.assigns.inline_note)
+      |> stream_items(query: query)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("update_note", %{"id" => id, "value" => new_note}, socket) do
+    link = Links.get_link!(id)
+    scope = socket.assigns.current_scope
+    {:ok, ulink} = UserLinks.update_note(scope, link, new_note)
+    link = %{link | my_ulink: ulink}
+    socket = stream_insert(socket, :links, link, update_only: true)
+    # query = socket.assigns.search_form.params["query"]
+    # socket = stream_items(socket, query: query)
+    {:noreply, socket}
+  end
+
   def handle_event("delete", %{"id" => id}, socket) do
     link = Links.get_link!(socket.assigns.current_scope, id)
     # NOTE: publish delete event handled by handle_info()
@@ -82,8 +121,7 @@ defmodule SlinkWeb.LinkLive.Index do
     new_page = Keyword.get(opts, :page, 1) |> get_page()
 
     total_count = Links.search_links_count(query)
-
-    items = Links.search_links(query, page: new_page, per_page: per_page)
+    items = Links.search_links(socket, query, page: new_page, per_page: per_page)
 
     socket =
       socket
@@ -118,57 +156,7 @@ defmodule SlinkWeb.LinkLive.Index do
   # def render(assigns) do
   #   ~H"""
   #   <Layouts.app flash={@flash} current_scope={@current_scope}>
-  #     <.form for={@search_form} phx-change="search">
-  #       <.input
-  #         type="search"
-  #         field={@search_form[:query]}
-  #         placeholder="Search title or url..."
-  #         phx-debounce="350"
-  #         class="w-full input"
-  #         autofocus
-  #       />
-  #     </.form>
-
-  #     <.header>
-  #       Links({@links_count})
-  #       <:actions>
-  #         <.button :if={@current_scope} variant="primary" navigate={~p"/links/new"}>
-  #           <.icon name="hero-plus" /> New Link
-  #         </.button>
-  #       </:actions>
-  #     </.header>
-
-  #     <.table
-  #       id="links"
-  #       rows={@streams.links}
-  #       row_click={fn {_id, link} -> JS.navigate(~p"/links/#{link}") end}
-  #     >
-  #       <:col :let={{_id, link}} label="#">{link.list_index}</:col>
-  #       <:col :let={{_id, link}} label="ID">{link.id}</:col>
-  #       <:col :let={{_id, link}} label="Title">{link.title}</:col>
-  #       <:col :let={{_id, link}} label="Url">
-  #         <.link href={link.url} target="_blank">{link.url}</.link>
-  #       </:col>
-  #       <:col :let={{_id, link}} label="Updated At">{link.updated_at}</:col>
-  #       <:col :let={{_id, link}} label="User">{link.user_id}</:col>
-  #       <:action :let={{_id, link}} :if={@current_scope}>
-  #         <div class="sr-only">
-  #           <.link navigate={~p"/links/#{link}"}>Show</.link>
-  #         </div>
-  #         <.link :if={@current_scope.user.id == link.user_id} navigate={~p"/links/#{link}/edit"}>
-  #           Edit
-  #         </.link>
-  #       </:action>
-  #       <:action :let={{id, link}} :if={@current_scope}>
-  #         <.link
-  #           :if={@current_scope.user.id == link.user_id}
-  #           phx-click={JS.push("delete", value: %{id: link.id}) |> hide("##{id}")}
-  #           data-confirm="Are you sure?"
-  #         >
-  #           Delete
-  #         </.link>
-  #       </:action>
-  #     </.table>
+  #     <span>Nothing here, already moved into index.html.heex!</span>
   #   </Layouts.app>
   #   """
   # end

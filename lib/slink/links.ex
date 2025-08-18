@@ -6,8 +6,10 @@ defmodule Slink.Links do
   import Ecto.Query, warn: false
   alias Slink.Repo
 
-  alias Slink.Links.Link
   alias Slink.Accounts.Scope
+  alias Slink.Links.Link
+  alias Slink.Links.UserLink
+  alias Slink.Links.LinkLog
 
   require Logger
 
@@ -49,9 +51,12 @@ defmodule Slink.Links do
       [%Link{}, ...]
 
   """
-
   def list_links(%Scope{} = scope) do
-    Repo.all_by(Link, user_id: scope.user.id)
+    Link
+    |> where(user_id: ^scope.user.id)
+    |> order_by(desc: :updated_at)
+    |> limit(@default_per_page)
+    |> Repo.all()
   end
 
   def list_links(_) do
@@ -61,103 +66,7 @@ defmodule Slink.Links do
     |> Repo.all()
   end
 
-  ## Flop helpers
-
-  @doc """
-  Cursor-based run handler in batch https://hexdocs.pm/flop/Flop.html#module-pagination
-  Prefer this when in large datasets using forward (first/after)
-
-  Options:
-  - first: 200
-  - after: nil
-  - handler: fn _ -> nil end
-  - node: nil, remote node
-  """
-  def batch_run_with_cursor(opts \\ []) do
-    flop = %Flop{
-      first: Keyword.get(opts, :first, @default_batch_size),
-      after: Keyword.get(opts, :after, nil),
-      order_by: [:id],
-      order_directions: [:asc]
-    }
-
-    handler =
-      Keyword.get(opts, :handler, fn items ->
-        Enum.map(items, & &1.id) |> Enum.join(",") |> IO.puts()
-      end)
-
-    node = Keyword.get(opts, :node, nil)
-
-    do_flop_run(node, Link, flop, for: Link)
-    |> do_batch_run_with_cursor(handler, flop, node)
-  end
-
-  defp do_batch_run_with_cursor(run_resp, handler, flop, node)
-
-  defp do_batch_run_with_cursor({result, %{has_next_page?: false} = _meta}, handler, _flop, _node) do
-    handler.(result)
-  end
-
-  defp do_batch_run_with_cursor(
-         {result, %{end_cursor: end_cursor, has_next_page?: true} = _meta},
-         handler,
-         flop,
-         node
-       ) do
-    handler.(result)
-    next_flop = flop |> Map.put(:after, end_cursor)
-    next_resp = do_flop_run(node, Link, next_flop, for: Link)
-    do_batch_run_with_cursor(next_resp, handler, next_flop, node)
-  end
-
-  defp do_flop_run(nil, query, flop, opts) do
-    Flop.run(query, flop, opts)
-  end
-
-  # support remote call
-  defp do_flop_run(node, query, flop, opts) do
-    :erpc.call(node, Flop, :run, [query, flop, opts], 10000)
-  end
-
-  @doc """
-  Page-based run handler in batch https://hexdocs.pm/flop/Flop.html#module-pagination
-  NOTE: always triger total-count query in each batch
-  """
-  def batch_run_with_paged(opts \\ []) do
-    flop = %Flop{
-      page: Keyword.get(opts, :page, 1),
-      page_size: Keyword.get(opts, :page_size, @default_batch_size),
-      order_by: [:id],
-      order_directions: [:asc]
-    }
-
-    handler =
-      Keyword.get(opts, :handler, fn items ->
-        Enum.map(items, & &1.id) |> Enum.join(",") |> IO.puts()
-      end)
-
-    Flop.run(Link, flop, for: Link)
-    |> do_batch_run_with_paged(handler, flop)
-  end
-
-  defp do_batch_run_with_paged(run_resp, handler, flop)
-
-  defp do_batch_run_with_paged({result, %{has_next_page?: false} = _meta}, handler, _flop) do
-    handler.(result)
-  end
-
-  defp do_batch_run_with_paged(
-         {result, %{next_page: next_page, has_next_page?: true} = _meta},
-         handler,
-         flop
-       ) do
-    handler.(result)
-    next_flop = %{flop | page: next_page}
-    next_resp = Flop.run(Link, next_flop, for: Link)
-    do_batch_run_with_paged(next_resp, handler, next_flop)
-  end
-
-  ## Naive impl. search, deprecated sinc 2025.8+
+  ## Search logic
 
   def search_links_count(nil), do: search_links_count("")
 
@@ -169,28 +78,58 @@ defmodule Slink.Links do
   @doc """
   Search links by url or title
   """
-  def search_links(query, opts \\ [])
-  def search_links(nil, opts), do: search_links("", opts)
+  def search_links(socket, query, opts \\ [])
+  def search_links(socket, nil, opts), do: search_links(socket, "", opts)
 
-  def search_links(query, opts) when is_binary(query) do
-    query
-    |> String.trim()
-    |> do_search_links(opts)
+  def search_links(socket, query, opts) when is_binary(query) do
+    query = query |> String.trim()
+
+    do_search_links(socket, query, opts)
     |> Enum.with_index(fn link, idx ->
       %{link | list_index: idx + 1}
     end)
   end
 
-  def do_search_links(query, opts \\ []) when is_binary(query) do
+  def do_search_links(socket, query, opts \\ []) when is_binary(query) do
     page = Keyword.get(opts, :page, 1)
     per_page = Keyword.get(opts, :per_page, @default_per_page)
     offset = (page - 1) * per_page
 
-    build_search_query(query)
-    |> order_by([l], desc: l.updated_at, desc: l.id)
+    build_search_query(socket, query)
     |> offset(^offset)
     |> limit(^per_page)
     |> Repo.all()
+  end
+
+  def build_search_query(socket, "") do
+    scope = socket.assigns.current_scope
+
+    if scope do
+      from(l in Link,
+        left_join: ul in UserLink,
+        on: l.id == ul.link_id and ul.user_id == ^scope.user.id,
+        order_by: [desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id],
+        select: %{l | my_ulink: ul}
+      )
+    else
+      build_search_query("")
+    end
+  end
+
+  def build_search_query(socket, query) when is_binary(query) do
+    scope = socket.assigns.current_scope
+
+    if scope do
+      from(l in Link,
+        left_join: ul in UserLink,
+        on: l.id == ul.link_id and ul.user_id == ^scope.user.id,
+        where: ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"),
+        order_by: [desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id],
+        select: %{l | my_ulink: ul}
+      )
+    else
+      build_search_query(query)
+    end
   end
 
   def build_search_query("") do
@@ -222,6 +161,16 @@ defmodule Slink.Links do
 
   def get_link!(_, id) do
     Repo.get_by!(Link, id: id)
+  end
+
+  def get_link!(id), do: get_link!(nil, id)
+
+  def get_or_create_link(%Scope{} = scope, %{url: url, title: _title} = attrs) do
+    Repo.get_by(Link, url: url)
+    |> case do
+      %Link{} = link -> {:ok, link}
+      nil -> create_link(scope, attrs)
+    end
   end
 
   @doc """
@@ -305,5 +254,125 @@ defmodule Slink.Links do
     true = link.user_id == scope.user.id
 
     Link.changeset(link, attrs, scope)
+  end
+
+  ## Flop helpers
+
+  @doc """
+  Cursor-based run handler in batch https://hexdocs.pm/flop/Flop.html#module-pagination
+  Prefer this when in large datasets using forward (first/after)
+
+  Options:
+  - first: 200
+  - after: nil
+  - handler: fn _ -> nil end
+  - node: nil, remote node
+  """
+  def batch_run_with_cursor(opts \\ []) do
+    flop = %Flop{
+      first: Keyword.get(opts, :first, @default_batch_size),
+      after: Keyword.get(opts, :after, nil),
+      order_by: [:id],
+      order_directions: [:asc]
+    }
+
+    handler =
+      Keyword.get(opts, :handler, fn items ->
+        Enum.map(items, & &1.id) |> Enum.join(",") |> IO.puts()
+      end)
+
+    node = Keyword.get(opts, :node)
+
+    do_flop_run(node, Link, flop, for: Link)
+    |> do_batch_run_with_cursor(handler, flop, node)
+  end
+
+  defp do_batch_run_with_cursor(run_resp, handler, flop, node)
+
+  defp do_batch_run_with_cursor({result, %{has_next_page?: false} = _meta}, handler, _flop, _node) do
+    handler.(result)
+  end
+
+  defp do_batch_run_with_cursor(
+         {result, %{end_cursor: end_cursor, has_next_page?: true} = _meta},
+         handler,
+         flop,
+         node
+       ) do
+    handler.(result)
+    next_flop = flop |> Map.put(:after, end_cursor)
+    next_resp = do_flop_run(node, Link, next_flop, for: Link)
+    do_batch_run_with_cursor(next_resp, handler, next_flop, node)
+  end
+
+  defp do_flop_run(nil, query, flop, opts) do
+    Flop.run(query, flop, opts)
+  end
+
+  # support remote call
+  defp do_flop_run(node, query, flop, opts) do
+    :erpc.call(node, Flop, :run, [query, flop, opts], 10000)
+  end
+
+  @doc """
+  Page-based run handler in batch https://hexdocs.pm/flop/Flop.html#module-pagination
+  NOTE: always triger total-count query in each batch
+  """
+  def batch_run_with_paged(opts \\ []) do
+    flop = %Flop{
+      page: Keyword.get(opts, :page, 1),
+      page_size: Keyword.get(opts, :page_size, @default_batch_size),
+      order_by: [:id],
+      order_directions: [:asc]
+    }
+
+    handler =
+      Keyword.get(opts, :handler, fn items ->
+        Enum.map(items, & &1.id) |> Enum.join(",") |> IO.puts()
+      end)
+
+    Flop.run(Link, flop, for: Link)
+    |> do_batch_run_with_paged(handler, flop)
+  end
+
+  defp do_batch_run_with_paged(run_resp, handler, flop)
+
+  defp do_batch_run_with_paged({result, %{has_next_page?: false} = _meta}, handler, _flop) do
+    handler.(result)
+  end
+
+  defp do_batch_run_with_paged(
+         {result, %{next_page: next_page, has_next_page?: true} = _meta},
+         handler,
+         flop
+       ) do
+    handler.(result)
+    next_flop = %{flop | page: next_page}
+    next_resp = Flop.run(Link, next_flop, for: Link)
+    do_batch_run_with_paged(next_resp, handler, next_flop)
+  end
+
+  ## Link logs
+
+  @doc """
+  Creates a link_log.
+
+  ## Examples
+
+      iex> create_link_log(scope, %{field: value})
+      {:ok, %LinkLog{}}
+
+      iex> create_link_log(scope, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_link_log(scope, attrs) do
+    with {:ok, link_log = %LinkLog{}} <-
+           %LinkLog{}
+           |> LinkLog.changeset(attrs, scope)
+           |> Repo.insert() do
+      # broadcast(scope, {:created, link_log})
+      {:ok, link_log}
+    end
   end
 end

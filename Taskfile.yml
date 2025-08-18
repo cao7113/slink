@@ -53,19 +53,18 @@ tasks:
       - pgcli slink_dev
   db.mig: mix ecto.migrate
   # task db.down -- 1
-  db.down: mix ecto.rollback --step -- {{.CLI_ARGS}}
+  db.down: mix ecto.rollback --step {{.CLI_ARGS}}
   db.down1: task db.down -- 1
 
   ## Git ops
-  ops: |
-    mix git_ops.project_info
-    # mix eh.git.ops.types
+  ops: mix git_ops.project_info
   ops.up: |
     mix git_ops.release --yes
     git push --follow-tags
     # fly deploy
   ops.up.rel: mix git_ops.release
   ops.up.tag: git push --follow-tags
+  ops.types: mix eh.git.ops.types
   ops.init: mix git_ops.release --initial
   ops.setup: |
     # run after add igniter dep in mix.exs

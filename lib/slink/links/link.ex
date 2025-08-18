@@ -21,8 +21,15 @@ defmodule Slink.Links.Link do
   schema "links" do
     field :title, :string
     field :url, :string
-    field :user_id, :id
+    # field :user_id, :id
+
+    belongs_to :user, Slink.Accounts.User
+    has_many :user_links, Slink.Links.UserLink, foreign_key: :link_id
+
+    # list show index in one page
     field :list_index, :integer, virtual: true
+    # attach current-scope user_link
+    field :my_ulink, :map, virtual: true
 
     timestamps(type: :utc_datetime)
   end
@@ -32,6 +39,8 @@ defmodule Slink.Links.Link do
     link
     |> cast(attrs, [:title, :url])
     |> validate_required([:title, :url])
+    |> validate_length(:title, min: 3, max: 200)
+    |> validate_length(:url, min: 3, max: 255)
     |> put_change(:user_id, user_scope.user.id)
     |> unique_constraint(:url, name: "links_url_index")
   end

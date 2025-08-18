@@ -7,11 +7,6 @@ defmodule SlinkWeb.Api.LinkController do
   action_fallback SlinkWeb.FallbackController
   require Logger
 
-  def index(conn, _params) do
-    links = Links.list_links(conn.assigns.current_scope)
-    render(conn, :index, links: links)
-  end
-
   def create(conn, %{"link" => link_params}) do
     Logger.info("Creating link with params: #{link_params |> inspect}!")
 
@@ -27,6 +22,11 @@ defmodule SlinkWeb.Api.LinkController do
         Logger.info("create link failed: #{err |> inspect}")
         err
     end
+  end
+
+  def index(conn, _params) do
+    links = Links.list_links(conn.assigns.current_scope)
+    render(conn, :index, links: links)
   end
 
   def show(conn, %{"id" => id}) do

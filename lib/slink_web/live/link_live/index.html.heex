@@ -5,7 +5,7 @@
       field={@search_form[:query]}
       placeholder="Search title or url..."
       phx-debounce="300"
-      class="w-full input"
+      class="input input-lg w-3/4"
       autofocus
     />
   </.form>
@@ -13,6 +13,13 @@
   <.header>
     Links({@links_count})
     <:actions>
+      <.link
+        :if={@current_scope}
+        class="btn btn-accent"
+        phx-click={JS.push("toggle_inline_note")}
+      >
+        Toggle inline note
+      </.link>
       <.button :if={@current_scope} variant="primary" navigate={~p"/links/new"}>
         <.icon name="hero-plus" /> New Link
       </.button>
@@ -33,18 +40,62 @@
       <div class="card bg-base-100 shadow-md p-2 rounded-box">
         <div class="flex justify-between items-start mb-2">
           <h3 class="card-title font-semibold text-xl flex items-center">
-            <.link navigate={~p"/links/#{link}"}>{link.title}</.link>
+            <.link navigate={~p"/links/#{link}"}>
+              {link.title}
+            </.link>
           </h3>
         </div>
+
         <div class="flex items-center mb-3">
           <.link
             href={link.url}
             target="_blank"
             class="link link-hover text-blue-600 truncate max-w-[80%]"
+            phx-click={JS.push("open_link", value: %{id: link.id})}
           >
-            <span class="badge">#{link.list_index}</span> {link.url}
+            {link.url}
           </.link>
         </div>
+
+        <div :if={@current_scope}>
+          <%= if link.my_ulink do %>
+            <span class="text-sm text-gray-500">
+              Last visit(#{link.my_ulink.total_visit_times}): {link.my_ulink.last_visit_at}
+            </span>
+          <% end %>
+
+          <%= if link.my_ulink && link.my_ulink.favor_at do %>
+            <span class="text-sm text-gray-500">FavorAt: {link.my_ulink.favor_at}</span>
+            <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
+              Unfavor
+            </.button>
+          <% else %>
+            <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
+              Favor
+            </.button>
+          <% end %>
+
+          <div :if={@inline_note}>
+            <%= if link.my_ulink && link.my_ulink.note do %>
+              <textarea
+                type="textarea"
+                class="textarea textarea-sm textarea-accent w-3/4"
+                label="Note"
+                placeholder="Note here"
+                phx-blur={JS.push("update_note", value: %{id: link.id})}
+              >{link.my_ulink.note}</textarea>
+            <% else %>
+              <textarea
+                type="textarea"
+                class="textarea textarea-sm textarea-accent w-3/4"
+                label="Note"
+                placeholder="Note here"
+                phx-blur={JS.push("update_note", value: %{id: link.id})}
+              ></textarea>
+            <% end %>
+          </div>
+        </div>
+
         <div class="text-sm text-gray-500">
           <span class="text-sm text-gray-500">ID: {link.id}</span>
           <span class="i-carbon-calendar mr-1"></span>

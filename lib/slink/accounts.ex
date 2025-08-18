@@ -10,6 +10,8 @@ defmodule Slink.Accounts do
   ## Utils
 
   def check_password(%User{} = user, pass), do: User.valid_password?(user, pass)
+  def scope_for(%User{} = user), do: Scope.for_user(user)
+  def user_scope(id) when is_integer(id), do: id |> find_user() |> scope_for()
 
   ## My UserToken
 
@@ -150,6 +152,7 @@ defmodule Slink.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+  def find_user(id), do: get_user!(id)
 
   ## User registration
 
@@ -169,6 +172,20 @@ defmodule Slink.Accounts do
     %User{}
     |> User.email_changeset(attrs)
     |> Repo.insert()
+  end
+
+  def register_confirmed_user_with_password(email, password) do
+    # register user
+    {:ok, user} = register_user(%{email: email})
+
+    # confirm user email by magic link
+    magic_token = get_login_magic_link_token(user)
+    login_user_by_magic_link(magic_token)
+
+    # set password
+    {:ok, {new_user, _}} = update_user_password(user, %{password: password})
+    # true = User.valid_password?(new_user, password)
+    new_user
   end
 
   ## Settings
