@@ -2,17 +2,18 @@
 
 alias Slink.Accounts
 alias Slink.Accounts.UserToken
-alias Slink.Links
+# alias Slink.Links
+alias Slink.UserLinks
 
 email = "a1@b.c"
+email2 = "a2@b.c"
 password = "123456123456"
 api_token = "dev_api_token---kC6IkpcQRO4VvuVFgszZRnvDDSU"
 
-# json data from: mix links.dump
-links =
-  Path.join(__DIR__, "links.json")
-  |> File.read!()
-  |> Jason.decode!()
+# mix links.dump
+links_data_file = Path.join(__DIR__, "links.json")
+
+## Accounts data
 
 info = %{
   email: email,
@@ -24,16 +25,7 @@ user = Accounts.get_user_by_email(email)
 
 dev_user =
   if !user do
-    # register user
-    {:ok, user} = Accounts.register_user(%{email: email})
-
-    # confirm user email by magic link
-    magic_token = Accounts.get_login_magic_link_token(user)
-    Accounts.login_user_by_magic_link(magic_token)
-
-    # set password
-    {:ok, {new_user, _}} = Accounts.update_user_password(user, %{password: password})
-    # true = User.valid_password?(new_user, password)
+    user = Accounts.register_confirmed_user_with_password(email, password)
 
     # create api-token
     api_token
@@ -49,20 +41,29 @@ dev_user =
         Accounts.create_user_api_token_with_secret(user, secret)
     end
 
-    new_user
+    user
   else
     user
   end
 
 IO.puts("dev-user=#{dev_user.id} created with info #{info |> inspect(pretty: true)}!")
 
+Accounts.register_confirmed_user_with_password(email2, password)
+
 user_scope = Accounts.Scope.for_user(dev_user)
 
-## Links
+## Links data
+
+links =
+  links_data_file
+  |> File.read!()
+  |> Jason.decode!(keys: :atoms)
 
 links
-|> Enum.each(fn link ->
-  Links.create_link(user_scope, link)
+|> Enum.each(fn attrs ->
+  attrs = Map.take(attrs, [:title, :url])
+  # Links.create_link(user_scope, attrs)
+  UserLinks.collect_user_link(user_scope, attrs)
 end)
 
 IO.puts("#{Enum.count(links)} links created!")

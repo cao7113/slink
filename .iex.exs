@@ -15,6 +15,11 @@ alias Slink.Accounts.Scope, as: Sc
 ## Links
 alias Slink.Links
 alias Slink.Links.Link
+alias Slink.Links.UserLink
+alias Slink.Links.UserLink, as: Ulink
+alias Slink.Links.LinkLog
+alias Slink.UserLinks
+alias Slink.UserLinks, as: Ulinks
 
 # Web
 alias SlinkWeb, as: Web
@@ -29,12 +34,11 @@ alias Builder, as: B
 alias Slink.Factory
 alias Slink.Factory, as: F
 
-## Data
-u1 = User.find(1)
-
-## Ops API
-# A.create_user_api_token(A.get_user!(1))
-# UserAuth.get_login_magic_link_url(User.find(1))
-
 ## Helpers
 alias ProcessHelper, as: Ph
+
+## Data & Ops
+u1 = user1 = Accounts.find_user(1)
+s1 = scope1 = Accounts.user_scope(1)
+# A.create_user_api_token(A.find_user(1))
+# UserAuth.get_login_magic_link_url(A.find_user(1))

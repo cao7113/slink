@@ -20,7 +20,7 @@ defmodule Mix.Tasks.Links.Dump do
           limit: @limit
       )
       |> Enum.map(fn link ->
-        link |> Map.from_struct() |> Map.take([:title, :url])
+        link |> Map.from_struct() |> Map.take([:id, :title, :url])
       end)
       |> Jason.encode!(pretty: true)
 

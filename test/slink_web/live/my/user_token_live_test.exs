@@ -11,7 +11,7 @@ defmodule SlinkWeb.My.UserTokenLiveTest do
       {:ok, _index_live, html} = live(conn, ~p"/my/user_tokens")
 
       assert html =~ "Listing My tokens"
-      assert html =~ "My Tokens"
+      assert html =~ "User Tokens"
     end
 
     test "create api-token", %{conn: conn} do
