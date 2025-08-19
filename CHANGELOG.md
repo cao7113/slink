@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.4 (2025-08-19)
+
+
+
+
+### Bug Fixes:
+
+* add basic pin link by Ryn Cao
+
 ## v0.3.3 (2025-08-18)
 
 
