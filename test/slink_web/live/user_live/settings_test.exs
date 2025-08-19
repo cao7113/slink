@@ -50,7 +50,7 @@ defmodule SlinkWeb.UserLive.SettingsTest do
 
       result =
         lv
-        |> form("#email_form", %{
+        |> form("#profile_form", %{
           "user" => %{"email" => new_email}
         })
         |> render_submit()
@@ -64,7 +64,7 @@ defmodule SlinkWeb.UserLive.SettingsTest do
 
       result =
         lv
-        |> element("#email_form")
+        |> element("#profile_form")
         |> render_change(%{
           "action" => "update_email",
           "user" => %{"email" => "with spaces"}
@@ -79,7 +79,7 @@ defmodule SlinkWeb.UserLive.SettingsTest do
 
       result =
         lv
-        |> form("#email_form", %{
+        |> form("#profile_form", %{
           "user" => %{"email" => user.email}
         })
         |> render_submit()

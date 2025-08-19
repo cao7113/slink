@@ -413,4 +413,10 @@ defmodule Slink.Accounts do
       end
     end)
   end
+
+  ## Profile
+
+  def change_profile(user, attrs \\ %{}, opts \\ []) do
+    User.profile_changeset(user, attrs, opts)
+  end
 end

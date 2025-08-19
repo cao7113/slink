@@ -90,6 +90,9 @@ defmodule SlinkWeb.Router do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
 
+      live "/users/profile", UserLive.Profile, :edit
+      # live "/users/profile/confirm-email/:token", UserLive.Profile, :confirm_email
+
       scope "/my", My do
         live "/links", LinkLive.Index, :index
         live "/links/new", LinkLive.Form, :new

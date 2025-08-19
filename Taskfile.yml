@@ -52,9 +52,9 @@ tasks:
     cmds:
       - pgcli slink_dev
   db.mig: mix ecto.migrate
-  # task db.down -- 1
-  db.down: mix ecto.rollback --step {{.CLI_ARGS}}
-  db.down1: task db.down -- 1
+  # task db.back -- 1
+  db.back: mix ecto.rollback --step {{.CLI_ARGS}}
+  db.back1: task db.back -- 1
 
   ## Git ops
   ops: mix git_ops.project_info

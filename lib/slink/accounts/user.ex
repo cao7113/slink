@@ -4,6 +4,11 @@ defmodule Slink.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
+    # profile
+    field :name, :string
+    field :bio, :string
+    field :site, :string
+
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
@@ -11,6 +16,13 @@ defmodule Slink.Accounts.User do
     field :authenticated_at, :utc_datetime, virtual: true
 
     timestamps(type: :utc_datetime)
+  end
+
+  def profile_changeset(user, attrs, _opts \\ []) do
+    user
+    |> cast(attrs, [:name, :bio, :site])
+    |> unsafe_validate_unique(:name, Slink.Repo)
+    |> unique_constraint(:name)
   end
 
   @doc """

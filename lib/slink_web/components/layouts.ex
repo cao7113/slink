@@ -56,7 +56,7 @@ defmodule SlinkWeb.Layouts do
         <li>
           <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
             <div tabindex="0" class="btn btn-ghost m-1">
-              {@current_scope.user.email}
+              {@current_scope.user.name || @current_scope.user.email}
             </div>
             <ul
               tabindex="0"
@@ -70,6 +70,9 @@ defmodule SlinkWeb.Layouts do
               </li>
               <li>
                 <.link href={~p"/my/user_tokens"}>User Tokens</.link>
+              </li>
+              <li>
+                <.link href={~p"/users/profile"}>Profile</.link>
               </li>
               <li>
                 <.link href={~p"/users/settings"}>Settings</.link>
