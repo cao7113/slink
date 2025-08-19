@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.5 (2025-08-19)
+
+
+
+
+### Bug Fixes:
+
+* add basic user profile by Ryn Cao
+
 ## v0.3.4 (2025-08-19)
 
 
