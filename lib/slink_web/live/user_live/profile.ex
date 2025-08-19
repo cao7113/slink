@@ -9,8 +9,8 @@ defmodule SlinkWeb.UserLive.Profile do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="text-center">
         <.header>
-          Account Profile
-          <:subtitle>Manage your account name, bio and site settings</:subtitle>
+          User Profile
+          <:subtitle>Manage your user name, bio and site settings</:subtitle>
         </.header>
       </div>
 

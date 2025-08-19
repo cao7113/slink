@@ -3,7 +3,6 @@ defmodule Slink.Repo.Migrations.AddNameToUsers do
 
   def change do
     alter table(:users) do
-      # , null: false
       add :name, :string
       add :bio, :text
       add :site, :string

@@ -1,7 +1,7 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
   <ul :if={@current_scope}>
     <li :for={ulink <- @pin_user_links}>
-      <.link href={ulink.link.url} target="_blank">
+      <.link href={ulink.link.url} class="link link-info" target="_blank">
         <p class="truncate w-100">{ulink.link.title}</p>
       </.link>
     </li>
