@@ -12,15 +12,19 @@ defmodule SlinkWeb.LinkLive.Index do
 
   @impl true
   def mount(params, _session, socket) do
+    scope = socket.assigns.current_scope
+
     if connected?(socket) do
-      Links.subscribe_links(socket.assigns.current_scope)
+      Links.subscribe_links(scope)
     end
 
     search_form = to_form(params)
+    pin_user_links = if scope, do: UserLinks.top_pinned_user_links(scope), else: []
 
     {:ok,
      socket
      |> assign(:page_title, "Listing Links")
+     |> assign(:pin_user_links, pin_user_links)
      |> assign(:inline_note, false)
      |> assign(:search_form, search_form)
      |> assign(page: 1, per_page: @per_page)
@@ -69,6 +73,15 @@ defmodule SlinkWeb.LinkLive.Index do
     link = Links.get_link!(id)
     scope = socket.assigns.current_scope
     {:ok, ulink} = UserLinks.toggle_favor(scope, link)
+    link = %{link | my_ulink: ulink}
+    socket = stream_insert(socket, :links, link, update_only: true)
+    {:noreply, socket}
+  end
+
+  def handle_event("toggle_pin", %{"id" => id}, socket) do
+    link = Links.get_link!(id)
+    scope = socket.assigns.current_scope
+    {:ok, ulink} = UserLinks.toggle_pin(scope, link)
     link = %{link | my_ulink: ulink}
     socket = stream_insert(socket, :links, link, update_only: true)
     {:noreply, socket}

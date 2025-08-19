@@ -7,6 +7,7 @@ defmodule Slink.Links.UserLink do
     field :title, :string
     field :note, :string
     field :favor_at, :utc_datetime
+    field :pin_at, :utc_datetime
     field :last_visit_at, :utc_datetime
     field :total_visit_times, :integer
     # field :link_id, :id
@@ -22,7 +23,7 @@ defmodule Slink.Links.UserLink do
     old_total_visit_times = user_link.total_visit_times || 0
 
     user_link
-    |> cast(attrs, [:link_id, :title, :note, :favor_at])
+    |> cast(attrs, [:link_id, :title, :note, :favor_at, :pin_at])
     |> validate_required([:title, :link_id])
     |> validate_length(:title, min: 3, max: 200)
     |> put_change(:user_id, user_scope.user.id)

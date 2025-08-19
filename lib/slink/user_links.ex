@@ -46,6 +46,17 @@ defmodule Slink.UserLinks do
     Repo.all_by(UserLink, user_id: scope.user.id)
   end
 
+  def top_pinned_user_links(%Scope{} = scope, top_limit \\ 10) do
+    query =
+      from ul in UserLink,
+        where: ul.user_id == ^scope.user.id and not is_nil(ul.pin_at),
+        order_by: [desc_nulls_last: ul.pin_at, desc: ul.id],
+        preload: [:link],
+        limit: ^top_limit
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single user_link.
 
@@ -110,6 +121,19 @@ defmodule Slink.UserLinks do
           %{favor_at: nil}
         else
           %{favor_at: DateTime.utc_now(:second)}
+        end
+
+      update_user_link(scope, ulink, attrs)
+    end
+  end
+
+  def toggle_pin(%Scope{} = scope, %Link{} = link) do
+    with {:ok, ulink} <- collect_user_link(scope, link) do
+      attrs =
+        if ulink.pin_at do
+          %{pin_at: nil}
+        else
+          %{pin_at: DateTime.utc_now(:second)}
         end
 
       update_user_link(scope, ulink, attrs)

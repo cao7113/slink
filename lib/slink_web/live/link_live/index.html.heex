@@ -1,4 +1,12 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
+  <ul :if={@current_scope}>
+    <li :for={ulink <- @pin_user_links}>
+      <.link href={ulink.link.url} target="_blank">
+        <p class="truncate w-100">{ulink.link.title}</p>
+      </.link>
+    </li>
+  </ul>
+
   <.form for={@search_form} phx-change="search">
     <.input
       type="search"
@@ -72,6 +80,17 @@
           <% else %>
             <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
               Favor
+            </.button>
+          <% end %>
+
+          <%= if link.my_ulink && link.my_ulink.pin_at do %>
+            <span class="text-sm text-gray-500">PinAt: {link.my_ulink.pin_at}</span>
+            <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})}>
+              Unpin
+            </.button>
+          <% else %>
+            <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})}>
+              Pin
             </.button>
           <% end %>
 

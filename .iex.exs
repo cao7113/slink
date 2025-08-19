@@ -36,6 +36,7 @@ alias Slink.Factory, as: F
 
 ## Helpers
 alias ProcessHelper, as: Ph
+alias SchemaMigration, as: Mig
 
 ## Data & Ops
 u1 = user1 = Accounts.find_user(1)
