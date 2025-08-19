@@ -7,6 +7,8 @@ defmodule Slink.Accounts do
   alias Slink.Repo
   alias Slink.Accounts.{User, UserToken, UserNotifier, Scope}
 
+  require Logger
+
   ## Utils
 
   def check_password(%User{} = user, pass), do: User.valid_password?(user, pass)
@@ -421,8 +423,16 @@ defmodule Slink.Accounts do
   end
 
   ## Admin
+
+  def admin_confirm_words(%User{email: email} = _user) do
+    "confirm-to-grant-#{email}-as-admin"
+  end
+
   def grant_admin_role!(user, attrs \\ %{}, confirm) do
-    if confirm != "admin", do: raise("Require confirm when granting admin role")
+    if confirm != admin_confirm_words(user),
+      do: raise("Require confirm words when granting admin role!")
+
+    Logger.warning("Granted user-#{user.id}-#{user.email} as admin!")
 
     user
     |> User.admin_changeset(attrs)
