@@ -419,4 +419,18 @@ defmodule Slink.Accounts do
   def change_profile(user, attrs \\ %{}, opts \\ []) do
     User.profile_changeset(user, attrs, opts)
   end
+
+  ## Admin
+  def grant_admin_role!(user, attrs \\ %{}, confirm) do
+    if confirm != "admin", do: raise("Require confirm when granting admin role")
+
+    user
+    |> User.admin_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def list_users(_scope) do
+    query = from u in User, order_by: [desc: u.updated_at, desc: u.id]
+    Repo.all(query)
+  end
 end

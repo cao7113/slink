@@ -56,7 +56,19 @@ defmodule SlinkWeb.Layouts do
         <li>
           <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
             <div tabindex="0" class="btn btn-ghost m-1">
-              {@current_scope.user.name || @current_scope.user.email}
+              <%= if @current_scope.user.avatar_url do %>
+                <div class="avatar avatar-sm rounded-full">
+                  <div class="w-8 rounded-full">
+                    <img
+                      src={@current_scope.user.avatar_url}
+                      alt={@current_scope.user.name || @current_scope.user.email}
+                    />
+                  </div>
+                </div>
+                <span class="sm">{@current_scope.user.name || @current_scope.user.email}</span>
+              <% else %>
+                {@current_scope.user.name || @current_scope.user.email}
+              <% end %>
             </div>
             <ul
               tabindex="0"
@@ -83,6 +95,23 @@ defmodule SlinkWeb.Layouts do
             </ul>
           </div>
         </li>
+        <%= if @current_scope.user.admin_role == "admin" do %>
+          <li>
+            <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
+              <div tabindex="0" class="btn btn-ghost m-1">
+                Admin
+              </div>
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-1 w-30 p-2 shadow-sm"
+              >
+                <li>
+                  <.link href={~p"/admin/users"}>Users</.link>
+                </li>
+              </ul>
+            </div>
+          </li>
+        <% end %>
       <% else %>
         <li>
           <.link href={~p"/users/register"} class="btn btn-ghost">Register</.link>

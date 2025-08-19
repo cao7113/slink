@@ -37,6 +37,11 @@ defmodule SlinkWeb.UserLive.Profile do
           type="text"
           label="Site"
         />
+        <.input
+          field={@profile_form[:avatar_url]}
+          type="text"
+          label="Avatar URL"
+        />
         <.button variant="primary" phx-disable-with="Changing...">Change Profile</.button>
       </.form>
     </Layouts.app>

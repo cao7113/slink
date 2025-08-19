@@ -8,6 +8,8 @@ defmodule Slink.Accounts.User do
     field :name, :string
     field :bio, :string
     field :site, :string
+    field :avatar_url, :string
+    field :admin_role, :string
 
     field :email, :string
     field :password, :string, virtual: true, redact: true
@@ -20,9 +22,15 @@ defmodule Slink.Accounts.User do
 
   def profile_changeset(user, attrs, _opts \\ []) do
     user
-    |> cast(attrs, [:name, :bio, :site])
+    |> cast(attrs, [:name, :bio, :site, :avatar_url])
     |> unsafe_validate_unique(:name, Slink.Repo)
     |> unique_constraint(:name)
+  end
+
+  def admin_changeset(user, attrs \\ %{}) do
+    user
+    |> cast(attrs, [:name, :bio, :site, :avatar_url])
+    |> put_change(:admin_role, "admin")
   end
 
   @doc """

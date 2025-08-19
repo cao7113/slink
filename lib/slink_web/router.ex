@@ -23,7 +23,6 @@ defmodule SlinkWeb.Router do
 
     get "/home", PageController, :home
     get "/daisyui", PageController, :daisyui
-    get "/flash", PageController, :flash
   end
 
   # API
@@ -91,7 +90,6 @@ defmodule SlinkWeb.Router do
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
 
       live "/users/profile", UserLive.Profile, :edit
-      # live "/users/profile/confirm-email/:token", UserLive.Profile, :confirm_email
 
       scope "/my", My do
         live "/links", LinkLive.Index, :index
@@ -130,5 +128,20 @@ defmodule SlinkWeb.Router do
 
     post "/users/log-in", UserSessionController, :create
     delete "/users/log-out", UserSessionController, :delete
+  end
+
+  ## Admin routes
+
+  scope "/", SlinkWeb do
+    pipe_through [:browser, :require_authenticated_admin_user]
+
+    live_session :require_authenticated_admin_user,
+      on_mount: [{SlinkWeb.UserAuth, :require_authenticated_admin_user}] do
+      scope "/admin", Admin do
+        ## Users
+        live "/users", UserLive.Index, :index
+        live "/users/:id", UserLive.Show, :show
+      end
+    end
   end
 end
