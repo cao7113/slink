@@ -173,6 +173,9 @@ defmodule Slink.Accounts do
   def register_user(attrs) do
     %User{}
     |> User.email_changeset(attrs)
+    |> Ecto.Changeset.prepare_changes(fn cs ->
+      Ecto.Changeset.put_change(cs, :name, Ecto.Changeset.get_change(cs, :email))
+    end)
     |> Repo.insert()
   end
 
