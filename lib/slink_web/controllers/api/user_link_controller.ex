@@ -6,11 +6,22 @@ defmodule SlinkWeb.Api.UserLinkController do
 
   action_fallback SlinkWeb.FallbackController
 
+  require Logger
+
   def collect(conn, %{"link" => link_params}) do
-    link_params = Maper.atomlize_keys(link_params, ~w[title url note])
+    link_params = Maper.atomlize_keys(link_params, ~w[title url tags note])
+    # compatible old slink-collector
+    link_params =
+      link_params |> Map.put_new(:input_tags, (link_params[:tags] || []) |> Enum.join(","))
+
+    Logger.info("Collecting link with params: #{link_params |> inspect}!")
 
     with {:ok, %UserLink{} = user_link} <-
            UserLinks.collect_user_link(conn.assigns.current_scope, link_params) do
+      Logger.info(
+        "Collected link with ID: #{user_link.id} with params: #{link_params |> inspect}!"
+      )
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/user_links/#{user_link}")

@@ -10,6 +10,7 @@ defmodule Slink.Links.UserLink do
     field :pin_at, :utc_datetime
     field :last_visit_at, :utc_datetime
     field :total_visit_times, :integer
+
     # field :link_id, :id
     # field :user_id, :id
     belongs_to :link, Slink.Links.Link

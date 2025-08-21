@@ -18,8 +18,14 @@ defmodule Slink.MixProject do
       listeners: [Phoenix.CodeReloader],
       name: "Shareup links",
       docs: docs(),
-      scm_url: @scm_url,
-      preferred_cli_env: prefered_cli_env()
+      scm_url: @scm_url
+    ]
+  end
+
+  def cli do
+    [
+      # default_task: "phx.server",
+      preferred_envs: preferred_cli_env()
     ]
   end
 
@@ -111,18 +117,26 @@ defmodule Slink.MixProject do
       "ecto.reset.force": ["ecto.drop --force-drop", "ecto.setup"],
       "dev.init": ["run run/dev/seed.exs"],
       "dev.reset": ["ecto.reset.force", "dev.init"],
+      reset: ["dev.reset"],
       "test.reset": ["ecto.reset.force"],
-      reset: ["dev.reset", "test.reset"],
+      "test.demo": &test_task/1,
       routes: ["phx.routes"]
     ]
   end
 
-  def prefered_cli_env do
+  def preferred_cli_env do
     [
       "dev.init": :dev,
       "dev.reset": :dev,
-      "test.reset": :test
+      "test.reset": :test,
+      "test.demo": :test
     ]
+  end
+
+  def test_task(_args) do
+    IO.puts("#" |> String.duplicate(40))
+    IO.puts("##  Mix.env(): #{Mix.env()}")
+    IO.puts("")
   end
 
   defp docs do

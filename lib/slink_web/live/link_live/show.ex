@@ -32,6 +32,11 @@ defmodule SlinkWeb.LinkLive.Show do
             {@link.url}
           </.link>
         </:item>
+        <:item title="Tags">
+          <%= for tag <- @link.tags do %>
+            <span class="badge badge-accent">{tag.name}</span>
+          <% end %>
+        </:item>
         <:item title="User">{@link.user_id}</:item>
         <:item title="Inserted At">{@link.inserted_at}</:item>
         <:item title="Updated At">{@link.updated_at}</:item>
@@ -49,7 +54,7 @@ defmodule SlinkWeb.LinkLive.Show do
     {:ok,
      socket
      |> assign(:page_title, "Show Link")
-     |> assign(:link, Links.get_link!(nil, id))}
+     |> assign(:link, Links.get_link!(nil, id) |> Slink.Repo.preload(:tags))}
   end
 
   @impl true

@@ -95,6 +95,7 @@ defmodule SlinkWeb.Layouts do
             </ul>
           </div>
         </li>
+
         <%= if @current_scope.user.admin_role == "admin" do %>
           <li>
             <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
@@ -107,6 +108,9 @@ defmodule SlinkWeb.Layouts do
               >
                 <li>
                   <.link href={~p"/admin/users"}>Users</.link>
+                </li>
+                <li>
+                  <.link href={~p"/admin/tags"}>Tags</.link>
                 </li>
               </ul>
             </div>

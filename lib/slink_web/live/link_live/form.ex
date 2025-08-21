@@ -16,6 +16,7 @@ defmodule SlinkWeb.LinkLive.Form do
       <.form for={@form} id="link-form" phx-change="validate" phx-submit="save">
         <.input field={@form[:title]} type="text" label="Title" />
         <.input field={@form[:url]} type="text" label="Url" />
+        <.input field={@form[:input_tags]} type="text" label="Tags(comma separated)" />
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Link</.button>
           <.button navigate={return_path(@current_scope, @return_to, @link)}>Cancel</.button>
@@ -37,7 +38,11 @@ defmodule SlinkWeb.LinkLive.Form do
   defp return_to(_), do: "index"
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    link = Links.get_link!(socket.assigns.current_scope, id)
+    link =
+      Links.get_link!(socket.assigns.current_scope, id)
+      |> Slink.Repo.preload(:tags)
+
+    link = %{link | input_tags: Slink.Tags.tags_string(link.tags)}
 
     socket
     |> assign(:page_title, "Edit Link")

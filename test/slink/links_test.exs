@@ -102,6 +102,48 @@ defmodule Slink.LinksTest do
     end
   end
 
+  describe "links with tags" do
+    # @describetag :try
+
+    alias Slink.Links.Link
+    import Slink.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Slink.LinksFixtures
+
+    test "insert with tags" do
+      scope = user_scope_fixture()
+
+      attrs = %{
+        url: Slink.LinksFixtures.unique_link_url(),
+        title: "Test title",
+        input_tags: "tag1, tag2"
+      }
+
+      %{tags: tags} =
+        link =
+        Link.changeset(%Link{}, attrs, scope)
+        |> Slink.Repo.insert!()
+        |> Slink.Repo.preload(:tags)
+
+      assert length(tags) == 2
+
+      %{tags: [tag]} =
+        link
+        |> Ecto.Changeset.change()
+        |> Link.tags_changeset("tag1", scope)
+        |> Repo.update!()
+        |> Repo.preload(:tags)
+
+      assert tag.name == "tag1"
+
+      %{tags: []} =
+        link
+        |> Ecto.Changeset.change()
+        |> Link.tags_changeset("", scope)
+        |> Repo.update!()
+        |> Repo.preload(:tags)
+    end
+  end
+
   describe "create attrs" do
     @describetag :try
 

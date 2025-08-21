@@ -91,7 +91,7 @@ defmodule Slink.UserLinks do
     do: do_collect_user_link(scope, link, %{})
 
   def collect_user_link(%Scope{} = scope, %{} = attrs) do
-    link_attrs = Map.take(attrs, [:title, :url])
+    link_attrs = Map.take(attrs, [:title, :url, :input_tags])
 
     with {:ok, link} <- Links.get_or_create_link(scope, link_attrs) do
       do_collect_user_link(scope, link, attrs)

@@ -435,11 +435,11 @@ defmodule Slink.Accounts do
     if confirm != admin_confirm_words(user),
       do: raise("Require confirm words when granting admin role!")
 
-    Logger.warning("Granted user-#{user.id}-#{user.email} as admin!")
+    Logger.warning("Granted user-id=#{user.id} email=#{user.email} as admin!")
 
     user
     |> User.admin_changeset(attrs)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   def list_users(_scope) do
