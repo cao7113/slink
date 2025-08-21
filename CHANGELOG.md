@@ -5,6 +5,19 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.7 (2025-08-21)
+
+
+
+
+### Bug Fixes:
+
+* add basic link-tag by Ryn Cao
+
+### Improvements:
+
+* set user name default to email when register by Ryn Cao
+
 ## v0.3.6 (2025-08-19)
 
 
