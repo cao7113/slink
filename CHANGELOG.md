@@ -5,6 +5,19 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.8 (2025-08-21)
+
+
+
+
+### Bug Fixes:
+
+* missing preload tags by Ryn Cao
+
+### Improvements:
+
+* improve user profile by Ryn Cao
+
 ## v0.3.7 (2025-08-21)
 
 
