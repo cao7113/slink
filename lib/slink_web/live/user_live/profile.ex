@@ -24,7 +24,6 @@ defmodule SlinkWeb.UserLive.Profile do
           field={@profile_form[:name]}
           type="text"
           label="Name"
-          autocomplete="username"
           required
         />
         <.input
@@ -33,14 +32,19 @@ defmodule SlinkWeb.UserLive.Profile do
           label="Bio"
         />
         <.input
+          field={@profile_form[:avatar_url]}
+          type="text"
+          label="Avatar URL"
+        />
+        <.input
           field={@profile_form[:site]}
           type="text"
           label="Site"
         />
         <.input
-          field={@profile_form[:avatar_url]}
+          field={@profile_form[:github_url]}
           type="text"
-          label="Avatar URL"
+          label="Github URL"
         />
         <.button variant="primary" phx-disable-with="Changing...">Change Profile</.button>
       </.form>

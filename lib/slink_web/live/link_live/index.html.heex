@@ -118,9 +118,10 @@
 
         <div class="text-sm text-gray-500">
           <span class="text-sm text-gray-500">ID: {link.id}</span>
+          <span class="mx-2">•</span>
           <span class="i-carbon-calendar mr-1"></span> Updated at: {link.updated_at}
           <span class="mx-2">•</span>
-          <span class="i-carbon-user mr-1"></span> User: {link.user_id}
+          <span class="i-carbon-user mr-1">User: {link.user.name}</span>
         </div>
 
         <div :if={@current_scope && @inline_note}>

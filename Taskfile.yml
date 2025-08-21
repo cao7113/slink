@@ -31,7 +31,9 @@ tasks:
       # iex(slink@mac.local)1>
       - iex --name slink --cookie slink -S mix phx.server
   fmt: mix format
-  reset: mix reset
+  reset: |
+    mix reset
+    mix test.reset
 
   ## AI
   td: |

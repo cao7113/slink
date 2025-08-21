@@ -6,10 +6,11 @@ defmodule Slink.Accounts.User do
   schema "users" do
     # profile
     field :name, :string
-    field :bio, :string
-    field :site, :string
     field :avatar_url, :string
     field :admin_role, :string
+    field :bio, :string
+    field :site, :string
+    field :github_url, :string
 
     field :email, :string
     field :password, :string, virtual: true, redact: true
@@ -22,7 +23,7 @@ defmodule Slink.Accounts.User do
 
   def profile_changeset(user, attrs, _opts \\ []) do
     user
-    |> cast(attrs, [:name, :bio, :site, :avatar_url])
+    |> cast(attrs, [:name, :bio, :site, :avatar_url, :github_url])
     |> unsafe_validate_unique(:name, Slink.Repo)
     |> unique_constraint(:name)
   end

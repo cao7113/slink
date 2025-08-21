@@ -110,7 +110,7 @@ defmodule Slink.Links do
         on: l.id == ul.link_id and ul.user_id == ^scope.user.id,
         order_by: [desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id],
         select: %{l | my_ulink: ul},
-        preload: [:tags]
+        preload: [:tags, :user]
       )
     else
       build_search_query("")
@@ -127,7 +127,7 @@ defmodule Slink.Links do
         where: ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"),
         order_by: [desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id],
         select: %{l | my_ulink: ul},
-        preload: [:tags]
+        preload: [:tags, :user]
       )
     else
       build_search_query(query)
@@ -137,7 +137,7 @@ defmodule Slink.Links do
   def build_search_query("") do
     from(l in Link,
       order_by: [desc: l.updated_at, desc: l.id],
-      preload: [:tags]
+      preload: [:tags, :user]
     )
   end
 
@@ -145,7 +145,7 @@ defmodule Slink.Links do
     from(l in Link,
       where: ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"),
       order_by: [desc: l.updated_at, desc: l.id],
-      preload: [:tags]
+      preload: [:tags, :user]
     )
   end
 
