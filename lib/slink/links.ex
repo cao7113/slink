@@ -109,7 +109,8 @@ defmodule Slink.Links do
         left_join: ul in UserLink,
         on: l.id == ul.link_id and ul.user_id == ^scope.user.id,
         order_by: [desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id],
-        select: %{l | my_ulink: ul}
+        select: %{l | my_ulink: ul},
+        preload: [:tags]
       )
     else
       build_search_query("")
@@ -125,7 +126,8 @@ defmodule Slink.Links do
         on: l.id == ul.link_id and ul.user_id == ^scope.user.id,
         where: ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"),
         order_by: [desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id],
-        select: %{l | my_ulink: ul}
+        select: %{l | my_ulink: ul},
+        preload: [:tags]
       )
     else
       build_search_query(query)
@@ -133,11 +135,18 @@ defmodule Slink.Links do
   end
 
   def build_search_query("") do
-    from(l in Link)
+    from(l in Link,
+      order_by: [desc: l.updated_at, desc: l.id],
+      preload: [:tags]
+    )
   end
 
   def build_search_query(query) when is_binary(query) do
-    from(l in Link, where: ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
+    from(l in Link,
+      where: ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"),
+      order_by: [desc: l.updated_at, desc: l.id],
+      preload: [:tags]
+    )
   end
 
   @doc """
@@ -374,5 +383,19 @@ defmodule Slink.Links do
       # broadcast(scope, {:created, link_log})
       {:ok, link_log}
     end
+  end
+
+  ## with tags
+
+  def list_with_tags(%Scope{} = _scope, tag_name) do
+    query =
+      from(l in Link,
+        join: t in assoc(l, :tags),
+        where: t.name == ^tag_name,
+        preload: [:tags],
+        limit: 10
+      )
+
+    query |> Repo.all()
   end
 end

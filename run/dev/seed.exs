@@ -2,13 +2,14 @@
 
 alias Slink.Accounts
 alias Slink.Accounts.UserToken
-# alias Slink.Links
 alias Slink.UserLinks
+alias Slink.Tags
 
 email = "a1@b.c"
 email2 = "a2@b.c"
 password = "123456123456"
 api_token = "dev_api_token---kC6IkpcQRO4VvuVFgszZRnvDDSU"
+tags = ~w[elixir phoenix web3 crypto]
 
 # mix links.dump
 links_data_file = Path.join(__DIR__, "links.json")
@@ -26,6 +27,10 @@ user = Accounts.get_user_by_email(email)
 dev_user =
   if !user do
     user = Accounts.register_confirmed_user_with_password(email, password)
+
+    %{admin_role: "admin"} =
+      user =
+      Accounts.grant_admin_role!(user, Accounts.admin_confirm_words(user))
 
     # create api-token
     api_token
@@ -67,3 +72,12 @@ links
 end)
 
 IO.puts("#{Enum.count(links)} links created!")
+
+## Tags data
+
+tags
+|> Enum.each(fn tag ->
+  Tags.create_tag(user_scope, %{name: tag})
+end)
+
+IO.puts("#{Enum.count(tags)} tags created!")

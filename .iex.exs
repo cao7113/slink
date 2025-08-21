@@ -20,6 +20,8 @@ alias Slink.Links.UserLink, as: Ulink
 alias Slink.Links.LinkLog
 alias Slink.UserLinks
 alias Slink.UserLinks, as: Ulinks
+alias Slink.Tags
+alias Slink.Tags.Tag
 
 # Web
 alias SlinkWeb, as: Web

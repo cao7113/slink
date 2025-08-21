@@ -41,6 +41,11 @@ defmodule Slink.AccountsFixtures do
     user
   end
 
+  def admin_user_fixture(attrs \\ %{}) do
+    user = user_fixture(attrs)
+    Accounts.grant_admin_role!(user, Accounts.admin_confirm_words(user))
+  end
+
   def user_scope_fixture do
     user = user_fixture()
     user_scope_fixture(user)
