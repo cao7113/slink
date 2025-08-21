@@ -70,7 +70,7 @@ defmodule SlinkWeb.LinkLive.Index do
   end
 
   def handle_event("toggle_favor", %{"id" => id}, socket) do
-    link = Links.get_link!(id)
+    link = Links.get_link_with_tags!(id)
     scope = socket.assigns.current_scope
     {:ok, ulink} = UserLinks.toggle_favor(scope, link)
     link = %{link | my_ulink: ulink}
@@ -79,11 +79,22 @@ defmodule SlinkWeb.LinkLive.Index do
   end
 
   def handle_event("toggle_pin", %{"id" => id}, socket) do
-    link = Links.get_link!(id)
+    link = Links.get_link_with_tags!(id)
     scope = socket.assigns.current_scope
     {:ok, ulink} = UserLinks.toggle_pin(scope, link)
     link = %{link | my_ulink: ulink}
     socket = stream_insert(socket, :links, link, update_only: true)
+    {:noreply, socket}
+  end
+
+  def handle_event("update_note", %{"id" => id, "value" => new_note}, socket) do
+    link = Links.get_link_with_tags!(id)
+    scope = socket.assigns.current_scope
+    {:ok, ulink} = UserLinks.update_note(scope, link, new_note)
+    link = %{link | my_ulink: ulink}
+    socket = stream_insert(socket, :links, link, update_only: true)
+    # query = socket.assigns.search_form.params["query"]
+    # socket = stream_items(socket, query: query)
     {:noreply, socket}
   end
 
@@ -95,17 +106,6 @@ defmodule SlinkWeb.LinkLive.Index do
       |> assign(:inline_note, !socket.assigns.inline_note)
       |> stream_items(query: query)
 
-    {:noreply, socket}
-  end
-
-  def handle_event("update_note", %{"id" => id, "value" => new_note}, socket) do
-    link = Links.get_link!(id)
-    scope = socket.assigns.current_scope
-    {:ok, ulink} = UserLinks.update_note(scope, link, new_note)
-    link = %{link | my_ulink: ulink}
-    socket = stream_insert(socket, :links, link, update_only: true)
-    # query = socket.assigns.search_form.params["query"]
-    # socket = stream_items(socket, query: query)
     {:noreply, socket}
   end
 

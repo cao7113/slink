@@ -174,6 +174,14 @@ defmodule Slink.Links do
 
   def get_link!(id), do: get_link!(nil, id)
 
+  def get_link_with_tags!(id) do
+    Repo.get_by!(Link, id: id)
+    |> Repo.preload(:tags)
+
+    # from(l in Link, where: l.id == ^id, preload: [:tags])
+    # |> Repo.one()
+  end
+
   def get_or_create_link(%Scope{} = scope, %{url: url, title: _title} = attrs) do
     Repo.get_by(Link, url: url)
     |> case do

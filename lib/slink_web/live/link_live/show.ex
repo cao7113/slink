@@ -54,7 +54,7 @@ defmodule SlinkWeb.LinkLive.Show do
     {:ok,
      socket
      |> assign(:page_title, "Show Link")
-     |> assign(:link, Links.get_link!(nil, id) |> Slink.Repo.preload(:tags))}
+     |> assign(:link, Links.get_link_with_tags!(id))}
   end
 
   @impl true
