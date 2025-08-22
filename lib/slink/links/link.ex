@@ -76,14 +76,14 @@ defmodule Slink.Links.Link do
     link
     |> cast(attrs, [:title, :url, :input_tags])
     |> validate_required([:title, :url])
-    |> validate_length(:title, min: 3, max: 200)
-    |> validate_length(:url, min: 3, max: 255)
-    |> put_change(:user_id, user_scope.user.id)
+    |> validate_length(:title, min: 2, max: 200)
+    |> validate_length(:url, min: 5, max: 255)
     |> unique_constraint(:url, name: "links_url_index")
     |> prepare_changes(fn cs ->
-      # input_tags = cs.params["tags"] || cs.params[:tags]
-      # cs |> Map.from_struct() |> dbg
       input_tags = cs.changes[:input_tags]
+      # todo
+      # check name length
+      # keep tags order
 
       if input_tags do
         cs |> tags_changeset(input_tags, user_scope)
@@ -91,6 +91,7 @@ defmodule Slink.Links.Link do
         cs
       end
     end)
+    |> put_change(:user_id, user_scope.user.id)
   end
 
   def tags_changeset(cs, input_tags, user_scope) do
@@ -134,6 +135,7 @@ defmodule Slink.Links.Link do
       on_conflict: :nothing
     )
 
+    # fix: order lost
     Repo.all(from t in Tag, where: t.name in ^names)
   end
 end

@@ -43,6 +43,18 @@ defmodule Slink.TagsTest do
       assert {:error, %Ecto.Changeset{}} = Tags.create_tag(scope, @invalid_attrs)
     end
 
+    test "get_or_create_tag/2 " do
+      scope = user_scope_fixture()
+      suffix = System.unique_integer()
+      name = "test-tag#{suffix}"
+      name2 = "TEST-tag#{suffix}"
+
+      {:ok, %Tag{id: id1, name: name1}} = Tags.get_or_create_tag(scope, name)
+      {:ok, %Tag{id: id2, name: name2}} = Tags.get_or_create_tag(scope, name2)
+      assert id1 == id2
+      assert name1 === name2
+    end
+
     test "update_tag/3 with valid data updates the tag" do
       scope = user_scope_fixture()
       tag = tag_fixture(scope)

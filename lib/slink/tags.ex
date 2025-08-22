@@ -75,6 +75,31 @@ defmodule Slink.Tags do
     Repo.get_by!(Tag, id: id, user_id: scope.user.id)
   end
 
+  def get_tag!(id), do: Repo.get_by!(Tag, id: id)
+
+  def get_by_name(name) when is_binary(name), do: Repo.get_by(Tag, name: name)
+
+  def get_or_create_tag(%Scope{} = scope, name) do
+    case Repo.get_by(Tag, name: name) do
+      nil -> create_tag(scope, %{name: name})
+      tag -> {:ok, tag}
+    end
+  end
+
+  def upsert_tag(%Scope{} = scope, name) do
+    Tag.changeset(%Tag{}, %{name: name}, scope)
+    |> Repo.insert(
+      on_conflict: {:replace, [:updated_at]},
+      # on_conflict: :nothing,
+      # https://hexdocs.pm/ecto/3.13.2/Ecto.Repo.html#c:insert/2-upserts
+      # Specify read_after_writes: true in your schema for choosing fields that are read from the database after every operation.
+      # Or pass returning: true to insert to read all fields back.
+      # (Note that it will only read from the database if at least one field is updated).
+      returning: true,
+      conflict_target: :name
+    )
+  end
+
   @doc """
   Creates a tag.
 

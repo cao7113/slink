@@ -2,8 +2,12 @@
 
 alias Slink.Accounts
 alias Slink.Accounts.UserToken
+alias Slink.Links
 alias Slink.UserLinks
 alias Slink.Tags
+alias Slink.Repo
+
+import Ecto.Query
 
 email = "a1@b.c"
 email2 = "a2@b.c"
@@ -78,6 +82,13 @@ IO.puts("#{Enum.count(links)} links created!")
 tags
 |> Enum.each(fn tag ->
   Tags.create_tag(user_scope, %{name: tag})
+end)
+
+## Auto tagging
+from(l in Links.Link)
+|> Repo.all()
+|> Enum.each(fn link ->
+  Links.auto_add_tag(user_scope, link)
 end)
 
 IO.puts("#{Enum.count(tags)} tags created!")

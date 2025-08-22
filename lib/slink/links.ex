@@ -10,6 +10,8 @@ defmodule Slink.Links do
   alias Slink.Links.Link
   alias Slink.Links.UserLink
   alias Slink.Links.LinkLog
+  alias Slink.Links.LinkTag
+  alias Slink.Tags
 
   require Logger
 
@@ -393,17 +395,89 @@ defmodule Slink.Links do
     end
   end
 
-  ## with tags
+  def create_link_tag(scope, attrs) do
+    with {:ok, link_tag = %LinkTag{}} <-
+           %LinkTag{}
+           |> LinkTag.changeset(attrs, scope)
+           |> Repo.insert() do
+      # broadcast(scope, {:created, link_tag})
+      {:ok, link_tag}
+    end
+  end
+
+  ## Tag related helpers
 
   def list_with_tags(%Scope{} = _scope, tag_name) do
     query =
       from(l in Link,
         join: t in assoc(l, :tags),
         where: t.name == ^tag_name,
-        preload: [:tags],
+        preload: [:tags, :user],
         limit: 10
       )
 
     query |> Repo.all()
+  end
+
+  def tags_of(%Link{} = link) do
+    %{tags: tags} = link |> Repo.preload(:tags)
+    tags
+  end
+
+  def tags_string_of(%Link{} = link) do
+    link |> tags_of |> Tags.tags_string()
+  end
+
+  def add_tag(%Link{} = link, tag_name, %Scope{} = scope) do
+    with {:ok, tag} <- Tags.get_or_create_tag(scope, tag_name) do
+      attrs = %{link_id: link.id, tag_id: tag.id}
+      create_link_tag(scope, attrs)
+    end
+  end
+
+  def remove_tag(%Link{id: link_id}, tag_name) do
+    if tag = Tags.get_by_name(tag_name) do
+      from(lt in LinkTag, where: lt.link_id == ^link_id and lt.tag_id == ^tag.id)
+      |> Repo.delete_all()
+    end
+  end
+
+  # auto tagging
+
+  @title_rules %{
+    "elixir" => ~r/elixir|phoenix|hexdocs/i,
+    "webui" => ~r/css/i
+  }
+  @url_rules %{
+    "github" => ~r/github\.com/i,
+    "elixir" => ~r/hexdocs\.pm/i
+  }
+
+  def auto_add_tag(%Scope{} = scope, %Link{title: title, url: url} = link) do
+    tags = []
+
+    tags =
+      Enum.reduce(@title_rules, tags, fn {tag, reg}, acc ->
+        if Regex.match?(reg, title) do
+          acc ++ [tag]
+        else
+          acc
+        end
+      end)
+
+    tags =
+      Enum.reduce(@url_rules, tags, fn {tag, reg}, acc ->
+        if Regex.match?(reg, url) do
+          acc ++ [tag]
+        else
+          acc
+        end
+      end)
+
+    tags
+    |> Enum.uniq()
+    |> Enum.each(&add_tag(link, &1, scope))
+
+    tags_string_of(link)
   end
 end
