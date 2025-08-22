@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.9 (2025-08-22)
+
+
+
+
+### Improvements:
+
+* modify tag name as citext and add unique constraint by Ryn Cao
+
 ## v0.3.8 (2025-08-21)
 
 
