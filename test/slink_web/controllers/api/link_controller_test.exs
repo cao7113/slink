@@ -6,7 +6,7 @@ defmodule SlinkWeb.Api.LinkControllerTest do
 
   @create_attrs %{
     title: "some title",
-    url: "some url"
+    url: "http://some.url"
   }
   @update_attrs %{
     title: "some updated title",
@@ -34,7 +34,7 @@ defmodule SlinkWeb.Api.LinkControllerTest do
       assert %{
                "id" => ^id,
                "title" => "some title",
-               "url" => "some url"
+               "url" => "http://some.url"
              } = json_response(conn, 200)["data"]
 
       # create again with same url
@@ -78,7 +78,7 @@ defmodule SlinkWeb.Api.LinkControllerTest do
       assert %{
                "id" => ^id,
                "title" => "some title",
-               "url" => "some url"
+               "url" => "http://some.url"
              } = json_response(conn, 200)["data"]
     end
   end

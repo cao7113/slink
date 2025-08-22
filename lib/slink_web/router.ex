@@ -147,6 +147,12 @@ defmodule SlinkWeb.Router do
         live "/tags/new", TagLive.Form, :new
         live "/tags/:id", TagLive.Show, :show
         live "/tags/:id/edit", TagLive.Form, :edit
+
+        ## Sites
+        live "/sites", SiteLive.Index, :index
+        live "/sites/new", SiteLive.Form, :new
+        live "/sites/:id", SiteLive.Show, :show
+        live "/sites/:id/edit", SiteLive.Form, :edit
       end
     end
   end

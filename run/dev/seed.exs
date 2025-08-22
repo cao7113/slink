@@ -88,7 +88,7 @@ end)
 from(l in Links.Link)
 |> Repo.all()
 |> Enum.each(fn link ->
-  Links.auto_add_tag(user_scope, link)
+  Links.Tagger.auto_add_tag(user_scope, link)
 end)
 
 IO.puts("#{Enum.count(tags)} tags created!")

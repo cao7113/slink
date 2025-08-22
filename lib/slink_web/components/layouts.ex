@@ -24,7 +24,9 @@ defmodule SlinkWeb.Layouts do
       <li>
         <.link href={~p"/links"} class="btn btn-ghost">Links</.link>
       </li>
-
+      <li>
+        <.link href={Builder.scm_url()} target="_blank" class="btn btn-ghost">Code</.link>
+      </li>
       <li :if={is_dev?()}>
         <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
           <div tabindex="0" class="btn btn-ghost m-1">Dev</div>
@@ -38,9 +40,6 @@ defmodule SlinkWeb.Layouts do
             </li>
             <li>
               <.link href="/dev/mailbox">Mailbox</.link>
-            </li>
-            <li>
-              <.link href={Builder.scm_url()} target="_blank">Code</.link>
             </li>
             <li>
               <.link href={~p"/daisyui"}>DaisyUI Play</.link>
@@ -111,6 +110,9 @@ defmodule SlinkWeb.Layouts do
                 </li>
                 <li>
                   <.link href={~p"/admin/tags"}>Tags</.link>
+                </li>
+                <li>
+                  <.link href={~p"/admin/sites"}>Sites</.link>
                 </li>
               </ul>
             </div>

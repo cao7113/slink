@@ -8,7 +8,7 @@ defmodule SlinkWeb.Api.UserLinkControllerTest do
 
   @create_attrs %{
     title: "some title",
-    url: "some url",
+    url: "http://some.url",
     note: "some note"
   }
   @update_attrs %{

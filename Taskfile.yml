@@ -1,11 +1,11 @@
 # https://taskfile.dev/usage/
 version: "3"
 vars:
+  DEV_API_HOST: http://localhost:4000
+  FLY_API_HOST: https://slink.fly.dev
   LOCAL_MAGIC_COOKIE: slink
   DOCKER_IMG_NAME: slink
   DOCKER_CONTAINER_NAME: slink
-  DEV_API_HOST: http://localhost:4000
-  FLY_API_HOST: https://slink.fly.dev
 includes:
   # task f:iex
   flyio:
@@ -31,9 +31,13 @@ tasks:
       # iex(slink@mac.local)1>
       - iex --name slink --cookie slink -S mix phx.server
   fmt: mix format
-  reset: |
-    mix reset
-    mix test.reset
+
+  reset:
+    aliases: [r]
+    cmds:
+      - |
+        mix reset
+        mix test.reset
 
   ## AI
   td: |

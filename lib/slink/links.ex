@@ -10,8 +10,9 @@ defmodule Slink.Links do
   alias Slink.Links.Link
   alias Slink.Links.UserLink
   alias Slink.Links.LinkLog
-  alias Slink.Links.LinkTag
   alias Slink.Tags
+  alias Slink.Links.LinkTag
+  alias Slink.Sites
 
   require Logger
 
@@ -53,16 +54,10 @@ defmodule Slink.Links do
       [%Link{}, ...]
 
   """
-  def list_links(%Scope{} = scope) do
+  # def list_links(%Scope{} = scope) do
+  def list_links(_scope) do
     Link
-    |> where(user_id: ^scope.user.id)
-    |> order_by(desc: :updated_at)
-    |> limit(@default_per_page)
-    |> Repo.all()
-  end
-
-  def list_links(_) do
-    Link
+    # |> where(user_id: ^scope.user.id)
     |> order_by(desc: :updated_at)
     |> limit(@default_per_page)
     |> Repo.all()
@@ -210,7 +205,8 @@ defmodule Slink.Links do
            |> Link.changeset(attrs, scope)
            |> Repo.insert() do
       broadcast(scope, {:created, link})
-      {:ok, link}
+      # todo use pubsub to split concern
+      fill_site(scope, link)
     end
   end
 
@@ -407,13 +403,27 @@ defmodule Slink.Links do
 
   ## Tag related helpers
 
-  def list_with_tags(%Scope{} = _scope, tag_name) do
+  def list_links_by_tag(%Scope{} = _scope, tag_name, limit \\ @default_per_page) do
     query =
       from(l in Link,
         join: t in assoc(l, :tags),
         where: t.name == ^tag_name,
         preload: [:tags, :user],
-        limit: 10
+        limit: ^limit
+      )
+
+    query |> Repo.all()
+  end
+
+  # hot tags in links todo
+  def hot_tags(limit \\ 10) do
+    query =
+      from(l in Link,
+        join: t in assoc(l, :tags),
+        group_by: t.name,
+        order_by: [desc: count(t.id)],
+        limit: ^limit,
+        select: %{tag_name: t.name, count: count(t.id)}
       )
 
     query |> Repo.all()
@@ -442,42 +452,46 @@ defmodule Slink.Links do
     end
   end
 
-  # auto tagging
+  ## Site
 
-  @title_rules %{
-    "elixir" => ~r/elixir|phoenix|hexdocs/i,
-    "webui" => ~r/css/i
-  }
-  @url_rules %{
-    "github" => ~r/github\.com/i,
-    "elixir" => ~r/hexdocs\.pm/i
-  }
+  # hot sites in links todo
+  def hot_sites(limit \\ 10) do
+    query =
+      from(l in Link,
+        join: s in assoc(l, :site),
+        group_by: s.name,
+        order_by: [desc: count(s.id)],
+        limit: ^limit,
+        select: %{site_name: s.name, links_count: count(s.id)}
+      )
 
-  def auto_add_tag(%Scope{} = scope, %Link{title: title, url: url} = link) do
-    tags = []
-
-    tags =
-      Enum.reduce(@title_rules, tags, fn {tag, reg}, acc ->
-        if Regex.match?(reg, title) do
-          acc ++ [tag]
-        else
-          acc
-        end
-      end)
-
-    tags =
-      Enum.reduce(@url_rules, tags, fn {tag, reg}, acc ->
-        if Regex.match?(reg, url) do
-          acc ++ [tag]
-        else
-          acc
-        end
-      end)
-
-    tags
-    |> Enum.uniq()
-    |> Enum.each(&add_tag(link, &1, scope))
-
-    tags_string_of(link)
+    query |> Repo.all()
   end
+
+  def fill_sites(%Scope{} = scope) do
+    from(l in Link, where: is_nil(l.site_id))
+    |> Repo.all()
+    |> Enum.each(&fill_site(scope, &1))
+  end
+
+  def fill_site(%Scope{} = scope, %Link{url: url, site_id: nil} = link) do
+    site_url = Sites.get_site_url(url)
+    site = Sites.get_by_url(site_url)
+
+    site =
+      if site do
+        site
+      else
+        site_name = Sites.get_site_name(site_url)
+
+        {:ok, site} =
+          Sites.create_site(scope, %{url: site_url, name: site_name})
+
+        site
+      end
+
+    update_link(scope, link, %{site_id: site.id})
+  end
+
+  def fill_site(_, link), do: {:ok, link}
 end

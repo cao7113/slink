@@ -28,10 +28,10 @@ defmodule Slink.Links.Link do
     field :title, :string
     field :url, :string
 
+    belongs_to :site, Slink.Sites.Site
     # field :user_id, :id
     belongs_to :user, Slink.Accounts.User
     has_many :user_links, Slink.Links.UserLink, foreign_key: :link_id
-    # many_to_many :tags, Tag, join_through: "link_tags", on_replace: :delete
     many_to_many :tags, Tag, join_through: LinkTag, on_replace: :delete
 
     # list show index in one page
@@ -74,7 +74,7 @@ defmodule Slink.Links.Link do
   """
   def changeset(link, attrs, user_scope) do
     link
-    |> cast(attrs, [:title, :url, :input_tags])
+    |> cast(attrs, [:title, :url, :input_tags, :site_id])
     |> validate_required([:title, :url])
     |> validate_length(:title, min: 2, max: 200)
     |> validate_length(:url, min: 5, max: 255)
@@ -94,9 +94,10 @@ defmodule Slink.Links.Link do
     |> put_change(:user_id, user_scope.user.id)
   end
 
+  ## todo move to Links.
+  #
   def tags_changeset(cs, input_tags, user_scope) do
-    cs
-    |> put_assoc(:tags, parse_tags(input_tags, user_scope))
+    cs |> put_assoc(:tags, parse_tags(input_tags, user_scope))
   end
 
   # https://hexdocs.pm/ecto/3.13.2/constraints-and-upserts.html

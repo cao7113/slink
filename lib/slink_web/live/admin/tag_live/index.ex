@@ -21,6 +21,7 @@ defmodule SlinkWeb.Admin.TagLive.Index do
         rows={@streams.tags}
         row_click={fn {_id, tag} -> JS.navigate(~p"/admin/tags/#{tag}") end}
       >
+        <:col :let={{_id, tag}} label="ID">{tag.id}</:col>
         <:col :let={{_id, tag}} label="Name">{tag.name}</:col>
         <:col :let={{_id, tag}} label="Group">{tag.group}</:col>
         <:col :let={{_id, tag}} label="User">{tag.user_id}</:col>

@@ -7,7 +7,7 @@ defmodule Slink.LinksFixtures do
   @doc """
   Generate a unique link url.
   """
-  def unique_link_url, do: "some url#{System.unique_integer([:positive])}"
+  def unique_link_url, do: "http://some.url.test/#{System.unique_integer()}"
 
   @doc """
   Generate a link.

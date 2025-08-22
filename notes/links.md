@@ -122,3 +122,45 @@ tags table
 link_tags table
 - link_id
 - tag_id
+
+## Link Site
+
+sites table
+- name
+- url
+- intro
+- logo_url
+- category
+
+```
+$ mix phx.gen.live --web admin Site sites name url logo_url category intro:text
+* creating lib/slink_web/live/admin/site_live/show.ex
+* creating lib/slink_web/live/admin/site_live/index.ex
+* creating lib/slink_web/live/admin/site_live/form.ex
+* creating test/slink_web/live/admin/site_live_test.exs
+* creating lib/slink/sites/site.ex
+* creating priv/repo/migrations/20250822073358_create_sites.exs
+* creating lib/slink/sites.ex
+* injecting lib/slink/sites.ex
+* creating test/slink/sites_test.exs
+* injecting test/slink/sites_test.exs
+* creating test/support/fixtures/sites_fixtures.ex
+* injecting test/support/fixtures/sites_fixtures.ex
+
+Add the live routes to your Admin :browser scope in lib/slink_web/router.ex:
+
+    scope "/admin", SlinkWeb.Admin do
+      pipe_through :browser
+      ...
+
+      live "/sites", SiteLive.Index, :index
+      live "/sites/new", SiteLive.Form, :new
+      live "/sites/:id", SiteLive.Show, :show
+      live "/sites/:id/edit", SiteLive.Form, :edit
+    end
+
+
+Remember to update your repository by running migrations:
+
+    $ mix ecto.migrate
+```

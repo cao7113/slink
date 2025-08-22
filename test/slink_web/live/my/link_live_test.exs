@@ -4,7 +4,7 @@ defmodule SlinkWeb.My.LinkLiveTest do
   import Phoenix.LiveViewTest
   import Slink.LinksFixtures
 
-  @create_attrs %{title: "some title", url: "some url"}
+  @create_attrs %{title: "some title", url: "http://some.url"}
   @update_attrs %{title: "some updated title", url: "some updated url"}
   @invalid_attrs %{title: nil, url: nil}
 

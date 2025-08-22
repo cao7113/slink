@@ -22,6 +22,8 @@ alias Slink.UserLinks
 alias Slink.UserLinks, as: Ulinks
 alias Slink.Tags
 alias Slink.Tags.Tag
+alias Slink.Sites
+alias Slink.Sites.Site
 
 # Web
 alias SlinkWeb, as: Web

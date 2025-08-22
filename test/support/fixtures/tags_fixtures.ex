@@ -5,9 +5,9 @@ defmodule Slink.TagsFixtures do
   """
 
   @doc """
-  Generate a unique link url.
+  Generate a unique tag name.
   """
-  def unique_tag_name, do: "some tag#{System.unique_integer([:positive])}"
+  def unique_tag_name, do: "some tag#{System.unique_integer()}"
 
   @doc """
   Generate a tag.

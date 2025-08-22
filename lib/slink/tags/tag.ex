@@ -19,13 +19,12 @@ defmodule Slink.Tags.Tag do
     tag
     |> cast(attrs, [:name, :group])
     |> validate_required([:name])
-    |> check_name_length()
+    |> validate_name_length()
     |> unique_constraint(:name, name: "tags_name_index")
     |> put_change(:user_id, user_scope.user.id)
   end
 
-  def check_name_length(cs) do
-    cs
-    |> validate_length(:name, min: 2, max: 60)
+  def validate_name_length(cs) do
+    cs |> validate_length(:name, min: 2, max: 60)
   end
 end
