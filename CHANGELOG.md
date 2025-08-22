@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.10 (2025-08-22)
+
+
+
+
+### Improvements:
+
+* add link site and hot sites and hot tags by Ryn Cao
+
 ## v0.3.9 (2025-08-22)
 
 
