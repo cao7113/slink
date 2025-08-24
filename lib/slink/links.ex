@@ -179,6 +179,11 @@ defmodule Slink.Links do
     # |> Repo.one()
   end
 
+  def get_link_with_resources(link_id) do
+    Repo.get_by!(Link, id: link_id)
+    |> Repo.preload([:user, :tags])
+  end
+
   def get_or_create_link(%Scope{} = scope, %{url: url, title: _title} = attrs) do
     Repo.get_by(Link, url: url)
     |> case do
@@ -469,7 +474,7 @@ defmodule Slink.Links do
   end
 
   def fill_sites(%Scope{} = scope) do
-    from(l in Link, where: is_nil(l.site_id))
+    from(l in Link, where: is_nil(l.site_id), order_by: [desc: l.id])
     |> Repo.all()
     |> Enum.each(&fill_site(scope, &1))
   end

@@ -2,17 +2,25 @@ defmodule Mix.Tasks.Tailwind.Info do
   @moduledoc """
   Get tailwind info
 
-    ##  mix tailwind.install
-    tailwind cli at: _build/tailwind*
+  ##  mix tailwind.install
+  The executable is kept at _build/tailwind-TARGET. Where TARGET is your system target architecture.
+
+  ## Know exact using version, ref below for actual used version!
+  - config.exs
+  - _build/tailwind-macos-arm64 --help
+  - priv/static/assets/css/app.css
   """
 
   use Mix.Task
 
-  def run(_) do
-    info =
-      %{version: Tailwind.latest_version()}
+  @app :slink
 
-    info
+  def run(_) do
+    [
+      version: Application.get_env(:tailwind, :version, Tailwind.latest_version()),
+      profile: Application.get_env(:tailwind, @app, :default),
+      changes: "https://github.com/tailwindlabs/tailwindcss/blob/main/CHANGELOG.md"
+    ]
     |> IO.inspect(
       label: "tailwind info",
       pretty: true

@@ -21,7 +21,7 @@ defmodule Slink.Sites.Site do
     site
     |> cast(attrs, [:name, :url, :logo_url, :category, :intro])
     |> validate_required([:name, :url])
-    |> validate_length(:name, min: 2, max: 60)
+    |> validate_length(:name, min: 1, max: 60)
     |> validate_length(:url, min: 4, max: 60)
     |> unique_constraint(:name, name: "sites_name_index")
     |> unique_constraint(:url, name: "sites_url_index")

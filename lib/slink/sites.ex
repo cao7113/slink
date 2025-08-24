@@ -166,7 +166,9 @@ defmodule Slink.Sites do
       port: _port
     } = URI.parse(site_url)
 
-    [_tld | [dom | _]] = host |> String.split(".") |> Enum.reverse()
-    dom
+    host
+    |> String.replace("www.", "")
+    |> String.replace(".com", "")
+    |> String.replace(".", "-")
   end
 end
