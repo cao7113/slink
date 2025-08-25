@@ -11,14 +11,14 @@ defmodule Slink.TagsTest do
 
     @invalid_attrs %{name: nil, group: nil}
 
-    test "list_tags/1 returns all scoped tags" do
-      scope = user_scope_fixture()
-      other_scope = user_scope_fixture()
-      tag = tag_fixture(scope)
-      other_tag = tag_fixture(other_scope)
-      assert Tags.list_tags(scope) == [tag]
-      assert Tags.list_tags(other_scope) == [other_tag]
-    end
+    # test "list_tags/1 returns all scoped tags" do
+    #   scope = user_scope_fixture()
+    #   other_scope = user_scope_fixture()
+    #   tag = tag_fixture(scope)
+    #   other_tag = tag_fixture(other_scope)
+    #   assert Tags.list_tags(scope) == [tag]
+    #   assert Tags.list_tags(other_scope) == [other_tag]
+    # end
 
     test "get_tag!/2 returns the tag with given id" do
       scope = user_scope_fixture()

@@ -40,16 +40,8 @@ defmodule Slink.Tags do
       [%Tag{}, ...]
 
   """
-  def list_tags(%Scope{} = scope) do
-    Repo.all_by(Tag, user_id: scope.user.id)
-  end
-
-  def list_tags(_) do
-    list_tags()
-  end
-
-  def list_tags() do
-    from(t in Tag, limit: 100, order_by: [desc: t.updated_at, desc: t.id])
+  def list_tags(%Scope{} = _scope) do
+    from(t in Tag, order_by: [desc: t.updated_at, desc: t.id], limit: 100)
     |> Repo.all()
   end
 

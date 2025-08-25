@@ -42,7 +42,7 @@ defmodule Slink.Sites do
   """
   def list_sites(%Scope{} = _scope) do
     # Repo.all_by(Site, user_id: scope.user.id)
-    from(s in Site, order_by: [desc: s.updated_at], limit: 100)
+    from(s in Site, order_by: [desc: s.updated_at, desc: s.id], limit: 100)
     |> Repo.all()
   end
 

@@ -54,7 +54,7 @@ defmodule SlinkWeb.Admin.TagLive.Index do
     {:ok,
      socket
      |> assign(:page_title, "Listing Tags")
-     |> stream(:tags, Tags.list_tags())}
+     |> stream(:tags, Tags.list_tags(socket.assigns.current_scope))}
   end
 
   @impl true

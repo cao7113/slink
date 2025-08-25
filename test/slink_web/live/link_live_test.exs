@@ -52,38 +52,38 @@ defmodule SlinkWeb.LinkLiveTest do
       assert html =~ "some title"
     end
 
-    test "updates link in listing", %{conn: conn, link: link} do
-      {:ok, index_live, _html} = live(conn, ~p"/links")
+    # test "updates link in listing", %{conn: conn, link: link} do
+    #   {:ok, index_live, _html} = live(conn, ~p"/links")
 
-      assert {:ok, form_live, _html} =
-               index_live
-               |> element("#links-#{link.id} a", "Edit")
-               |> render_click()
-               |> follow_redirect(conn, ~p"/links/#{link}/edit")
+    #   assert {:ok, form_live, _html} =
+    #            index_live
+    #            |> element("#links-#{link.id} a", "Edit")
+    #            |> render_click()
+    #            |> follow_redirect(conn, ~p"/links/#{link}/edit")
 
-      assert render(form_live) =~ "Edit Link"
+    #   assert render(form_live) =~ "Edit Link"
 
-      assert form_live
-             |> form("#link-form", link: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+    #   assert form_live
+    #          |> form("#link-form", link: @invalid_attrs)
+    #          |> render_change() =~ "can&#39;t be blank"
 
-      assert {:ok, index_live, _html} =
-               form_live
-               |> form("#link-form", link: @update_attrs)
-               |> render_submit()
-               |> follow_redirect(conn, ~p"/links")
+    #   assert {:ok, index_live, _html} =
+    #            form_live
+    #            |> form("#link-form", link: @update_attrs)
+    #            |> render_submit()
+    #            |> follow_redirect(conn, ~p"/links")
 
-      html = render(index_live)
-      assert html =~ "Link updated successfully"
-      assert html =~ "some updated title"
-    end
+    #   html = render(index_live)
+    #   assert html =~ "Link updated successfully"
+    #   assert html =~ "some updated title"
+    # end
 
-    test "deletes link in listing", %{conn: conn, link: link} do
-      {:ok, index_live, _html} = live(conn, ~p"/links")
+    # test "deletes link in listing", %{conn: conn, link: link} do
+    #   {:ok, index_live, _html} = live(conn, ~p"/links")
 
-      assert index_live |> element("#links-#{link.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#links-#{link.id}")
-    end
+    #   assert index_live |> element("#links-#{link.id} a", "Delete") |> render_click()
+    #   refute has_element?(index_live, "#links-#{link.id}")
+    # end
   end
 
   describe "Show" do

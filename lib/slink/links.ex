@@ -428,7 +428,7 @@ defmodule Slink.Links do
         group_by: t.name,
         order_by: [desc: count(t.id)],
         limit: ^limit,
-        select: %{tag_name: t.name, count: count(t.id)}
+        select: %{name: t.name, count: count(t.id)}
       )
 
     query |> Repo.all()
@@ -467,7 +467,7 @@ defmodule Slink.Links do
         group_by: s.name,
         order_by: [desc: count(s.id)],
         limit: ^limit,
-        select: %{site_name: s.name, links_count: count(s.id)}
+        select: %{name: s.name, count: count(s.id)}
       )
 
     query |> Repo.all()

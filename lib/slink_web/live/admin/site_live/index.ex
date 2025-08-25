@@ -23,7 +23,9 @@ defmodule SlinkWeb.Admin.SiteLive.Index do
       >
         <:col :let={{_id, site}} label="ID">{site.id}</:col>
         <:col :let={{_id, site}} label="Name">{site.name}</:col>
-        <:col :let={{_id, site}} label="Url">{site.url}</:col>
+        <:col :let={{_id, site}} label="Url">
+          <.link href={site.url} class="link" target="_blank">{site.url}</.link>
+        </:col>
         <:col :let={{_id, site}} label="Category">{site.category}</:col>
         <:col :let={{_id, site}} label="Inserted/Updated">{site.inserted_at}/{site.updated_at}</:col>
         <:action :let={{_id, site}}>

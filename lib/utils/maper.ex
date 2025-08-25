@@ -6,26 +6,23 @@ defmodule Maper do
   @doc """
   Atomize map keys
   """
-  def atomlize_keys(%{} = map, opts \\ []) do
-    permits = Keyword.get(opts, :permits, Map.keys(map))
+  def atomlize_keys(%{} = map, permits \\ nil) do
+    permits = if is_list(permits), do: permits, else: Map.keys(map)
 
-    new_map =
-      map
-      |> Map.take(permits)
-      |> Enum.map(fn
-        {k, v} when is_binary(k) -> {String.to_atom(k), v}
-        kv -> kv
-      end)
-      |> Enum.into(%{})
-
-    new_map
+    map
+    |> Map.take(permits)
+    |> Enum.map(fn
+      {k, v} when is_binary(k) -> {String.to_atom(k), v}
+      kv -> kv
+    end)
+    |> Enum.into(%{})
   end
 
   @doc """
   Stringize map keys
   """
-  def stringize_keys(%{} = map, opts \\ []) do
-    permits = Keyword.get(opts, :permits, Map.keys(map))
+  def stringize_keys(%{} = map, permits \\ nil) do
+    permits = if is_list(permits), do: permits, else: Map.keys(map)
 
     map
     |> Map.take(permits)

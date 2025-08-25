@@ -22,7 +22,8 @@ defmodule SlinkWeb.Router do
     pipe_through :browser
 
     get "/home", PageController, :home
-    get "/daisyui", PageController, :daisyui
+    get "/pages/tailwind", PageController, :tailwind
+    get "/pages/daisyui", PageController, :daisyui
   end
 
   # API

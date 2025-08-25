@@ -23,7 +23,9 @@ defmodule SlinkWeb.Admin.SiteLive.Show do
       <.list>
         <:item title="ID">{@site.id}</:item>
         <:item title="Name">{@site.name}</:item>
-        <:item title="Url">{@site.url}</:item>
+        <:item title="Url">
+          <.link class="link" href={@site.url}>{@site.url}</.link>
+        </:item>
         <:item title="Logo url">{@site.logo_url}</:item>
         <:item title="Category">{@site.category}</:item>
         <:item title="Intro">{@site.intro}</:item>

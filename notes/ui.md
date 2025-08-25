@@ -14,7 +14,9 @@
 - https://github.com/phoenixframework/tailwind
 - https://github.com/tailwindlabs/tailwindcss
 - https://github.com/tailwindlabs/tailwindcss/blob/main/CHANGELOG.md
+- https://tailwindcss.com/docs/adding-custom-styles
 
+- https://zed.dev/docs/languages/tailwindcss
 - https://tailwindcss.com/docs/editor-setup#zed
 - https://daisyui.com/docs/editor/cursor/
 
