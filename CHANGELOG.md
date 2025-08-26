@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.13 (2025-08-26)
+
+
+
+
+### Bug Fixes:
+
+* last page stream reset and add hot tag search by click by Ryn Cao
+
 ## v0.3.12 (2025-08-26)
 
 
