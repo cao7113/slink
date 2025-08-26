@@ -86,7 +86,9 @@ defmodule Slink.Links.Link do
       # keep tags order
 
       if input_tags do
-        cs |> tags_changeset(input_tags, user_scope)
+        cs
+        |> tags_changeset(input_tags, user_scope)
+        |> put_change(:updated_at, DateTime.utc_now(:second))
       else
         cs
       end

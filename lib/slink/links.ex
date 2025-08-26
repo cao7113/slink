@@ -18,6 +18,7 @@ defmodule Slink.Links do
 
   @default_per_page 20
   @default_batch_size 200
+  @link_resource_list [:user, :tags, :site]
 
   @doc """
   Subscribes to scoped notifications about any link changes.
@@ -110,7 +111,7 @@ defmodule Slink.Links do
     build_search_query(user, query, tag_id: tag_id, site_id: site_id)
     |> offset(^offset)
     |> limit(^per_page)
-    |> preload([:tags, :user, :site])
+    |> preload(^@link_resource_list)
     |> Repo.all()
     |> Enum.with_index(fn link, idx ->
       %{link | list_index: idx + 1}
@@ -229,17 +230,9 @@ defmodule Slink.Links do
 
   def get_link!(id), do: get_link!(nil, id)
 
-  def get_link_with_tags!(id) do
-    Repo.get_by!(Link, id: id)
-    |> Repo.preload(:tags)
-
-    # from(l in Link, where: l.id == ^id, preload: [:tags])
-    # |> Repo.one()
-  end
-
   def get_link_with_resources(link_id) do
     Repo.get_by!(Link, id: link_id)
-    |> Repo.preload([:user, :tags])
+    |> Repo.preload(@link_resource_list)
   end
 
   def get_or_create_link(%Scope{} = scope, %{url: url, title: _title} = attrs) do
@@ -478,7 +471,7 @@ defmodule Slink.Links do
     query |> Repo.all()
   end
 
-  def hot_tags(limit \\ 10) do
+  def hot_tags(limit \\ 15) do
     query =
       from(l in Link,
         join: t in assoc(l, :tags),
@@ -516,7 +509,7 @@ defmodule Slink.Links do
 
   ## Sites
 
-  def hot_sites(limit \\ 10) do
+  def hot_sites(limit \\ 15) do
     query =
       from(l in Link,
         join: s in assoc(l, :site),
