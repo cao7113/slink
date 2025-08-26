@@ -112,10 +112,11 @@ defmodule SlinkWeb.LinkLive.Index do
 
   def handle_event("toggle_the_tag_id", %{"id" => id}, socket) do
     query = socket.assigns.search_form.params["query"]
+    new_id = if socket.assigns.the_tag_id == id, do: nil, else: id
 
     socket =
       socket
-      |> assign(:the_tag_id, id)
+      |> assign(:the_tag_id, new_id)
       |> stream_items(query: query)
 
     {:noreply, socket}
@@ -123,10 +124,11 @@ defmodule SlinkWeb.LinkLive.Index do
 
   def handle_event("toggle_the_site_id", %{"id" => id}, socket) do
     query = socket.assigns.search_form.params["query"]
+    new_id = if socket.assigns.the_site_id == id, do: nil, else: id
 
     socket =
       socket
-      |> assign(:the_site_id, id)
+      |> assign(:the_site_id, new_id)
       |> stream_items(query: query)
 
     {:noreply, socket}
@@ -187,7 +189,7 @@ defmodule SlinkWeb.LinkLive.Index do
       [] ->
         socket
         |> assign(end_of_timeline?: at == -1)
-        |> stream(:links, [], reset: true)
+        |> stream(:links, [])
 
       [_ | _] = items ->
         socket
