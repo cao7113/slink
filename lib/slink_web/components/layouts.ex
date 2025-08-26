@@ -175,7 +175,7 @@ defmodule SlinkWeb.Layouts do
     </header>
 
     <main class="px-4 pt-4 sm:pt-2 sm:px-4 lg:px-8">
-      <div class="mr-auto max-w-4xl space-y-1">
+      <div class="mx-auto max-w-4xl space-y-1">
         {render_slot(@inner_block)}
       </div>
     </main>

@@ -1,21 +1,5 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
   <div class="flex">
-    <div class="w-40 flex-none pr-4 pt-16 mr-20">
-      <h2>Hot tags</h2>
-      <ul class="menu menu-vertical bg-base-100 w-56 rounded-box">
-        <li :for={tag <- Links.hot_tags()}>
-          <span class="badge badge-info mt-1">{tag.name}({tag.count}) </span>
-        </li>
-      </ul>
-
-      <h2>Hot sites</h2>
-      <ul class="menu menu-vertical bg-base-100 w-56 rounded-box">
-        <li :for={site <- Links.hot_sites()}>
-          <span class="badge badge-info mt-1">{site.name}({site.count}) </span>
-        </li>
-      </ul>
-    </div>
-
     <div class="flex-1 min-w-full">
       <ul :if={@current_scope}>
         <li :for={ulink <- @pin_user_links}>
@@ -140,6 +124,8 @@
               <span class="i-carbon-calendar mr-1"></span> Updated at: {link.updated_at}
               <span class="mx-2">•</span>
               <span class="i-carbon-user mr-1">User: {link.user.name}</span>
+              <span class="mx-2">•</span>
+              <span class="i-carbon-user mr-1">Site: {link.site && link.site.name}</span>
             </div>
 
             <div :if={@current_scope && @inline_note}>
@@ -167,6 +153,50 @@
       <div :if={@end_of_timeline?} class="mt-1 text-[20px] text-center">
         🎉 Reached the end 🎉
       </div>
+    </div>
+
+    <div class="w-40 flex-none pr-4 pt-16 mr-20">
+      <h2>Hot tags</h2>
+      <ul class="menu menu-vertical bg-base-100 w-56 rounded-box">
+        <li :for={tag <- Links.hot_tags()}>
+          <%= if tag.id == @the_tag_id do %>
+            <.link
+              class="badge badge-primary"
+              phx-click={JS.push("toggle_the_tag_id", value: %{id: tag.id})}
+            >
+              {tag.name}({tag.count})
+            </.link>
+          <% else %>
+            <.link
+              class="badge badge-accent"
+              phx-click={JS.push("toggle_the_tag_id", value: %{id: tag.id})}
+            >
+              {tag.name}({tag.count})
+            </.link>
+          <% end %>
+        </li>
+      </ul>
+
+      <h2>Hot sites</h2>
+      <ul class="menu menu-vertical bg-base-100 w-56 rounded-box">
+        <li :for={site <- Links.hot_sites()}>
+          <%= if site.id == @the_site_id do %>
+            <.link
+              class="badge badge-primary"
+              phx-click={JS.push("toggle_the_site_id", value: %{id: site.id})}
+            >
+              {site.name}({site.count})
+            </.link>
+          <% else %>
+            <.link
+              class="badge badge-accent"
+              phx-click={JS.push("toggle_the_site_id", value: %{id: site.id})}
+            >
+              {site.name}({site.count})
+            </.link>
+          <% end %>
+        </li>
+      </ul>
     </div>
   </div>
 </Layouts.app>

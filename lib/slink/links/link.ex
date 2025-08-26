@@ -28,11 +28,11 @@ defmodule Slink.Links.Link do
     field :title, :string
     field :url, :string
 
-    belongs_to :site, Slink.Sites.Site
     # field :user_id, :id
     belongs_to :user, Slink.Accounts.User
     has_many :user_links, Slink.Links.UserLink, foreign_key: :link_id
     many_to_many :tags, Tag, join_through: LinkTag, on_replace: :delete
+    belongs_to :site, Slink.Sites.Site
 
     # list show index in one page
     field :list_index, :integer, virtual: true

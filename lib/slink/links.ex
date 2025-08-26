@@ -64,86 +64,144 @@ defmodule Slink.Links do
   end
 
   ## Search logic
+  # - query keyword
+  # - tag
+  # - site
+  # - pined
+  # - favored
+  # - hot
+  # - latest
 
-  def search_links_count(nil), do: search_links_count("")
+  # sort by
+  # - id
+  # - updated_at
+  # - collected_count
+  # - favor_count
 
-  def search_links_count(query) when is_binary(query) do
-    build_search_query(query)
+  def search_links_count(info) do
+    query = Keyword.get(info, :q, "") |> String.trim()
+
+    tag_id = Keyword.get(info, :tag_id)
+    site_id = Keyword.get(info, :site_id)
+
+    build_search_query(nil, query, order_by: false, tag_id: tag_id, site_id: site_id)
     |> Repo.aggregate(:count, :id)
   end
 
   @doc """
-  Search links by url or title
+  Search links with related resources
+  info keys:
+  - q: query keyword
+  - current_user: user in current scope, maybe nil
+  - page: page number
+  - per_page: page size per page
+  - tag_id: related tag id
   """
-  def search_links(socket, query, opts \\ [])
-  def search_links(socket, nil, opts), do: search_links(socket, "", opts)
+  def search_links(info \\ []) do
+    user = Keyword.get(info, :current_user)
+    query = Keyword.get(info, :q, "") |> String.trim()
+    page = Keyword.get(info, :page, 1)
+    per_page = Keyword.get(info, :per_page, @default_per_page)
+    offset = (page - 1) * per_page
 
-  def search_links(socket, query, opts) when is_binary(query) do
-    query = query |> String.trim()
+    tag_id = Keyword.get(info, :tag_id)
+    site_id = Keyword.get(info, :site_id)
 
-    do_search_links(socket, query, opts)
+    build_search_query(user, query, tag_id: tag_id, site_id: site_id)
+    |> offset(^offset)
+    |> limit(^per_page)
+    |> preload([:tags, :user, :site])
+    |> Repo.all()
     |> Enum.with_index(fn link, idx ->
       %{link | list_index: idx + 1}
     end)
   end
 
-  def do_search_links(socket, query, opts \\ []) when is_binary(query) do
-    page = Keyword.get(opts, :page, 1)
-    per_page = Keyword.get(opts, :per_page, @default_per_page)
-    offset = (page - 1) * per_page
+  def build_search_query(user, query, opts \\ [])
 
-    build_search_query(socket, query)
-    |> offset(^offset)
-    |> limit(^per_page)
-    |> Repo.all()
-  end
+  # for public
+  def build_search_query(nil, query, opts) when is_binary(query) do
+    q = from(l in Link)
 
-  def build_search_query(socket, "") do
-    scope = socket.assigns.current_scope
+    tag_id = Keyword.get(opts, :tag_id)
 
-    if scope do
-      from(l in Link,
-        left_join: ul in UserLink,
-        on: l.id == ul.link_id and ul.user_id == ^scope.user.id,
-        order_by: [desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id],
-        select: %{l | my_ulink: ul},
-        preload: [:tags, :user]
-      )
-    else
-      build_search_query("")
+    q =
+      if tag_id do
+        from(l in q,
+          join: t in assoc(l, :tags),
+          on: t.id == ^tag_id
+        )
+      else
+        q
+      end
+
+    site_id = Keyword.get(opts, :site_id)
+
+    q =
+      if site_id do
+        from(l in q,
+          join: s in assoc(l, :site),
+          on: s.id == ^site_id
+        )
+      else
+        q
+      end
+
+    q =
+      case query do
+        "" -> q
+        _ -> q |> where([l], ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
+      end
+
+    Keyword.get(opts, :order_by, true)
+    |> case do
+      false -> q
+      _ -> q |> order_by([l], desc: l.updated_at, desc: l.id)
     end
   end
 
-  def build_search_query(socket, query) when is_binary(query) do
-    scope = socket.assigns.current_scope
-
-    if scope do
+  def build_search_query(user, query, opts) when is_binary(query) do
+    q =
       from(l in Link,
         left_join: ul in UserLink,
-        on: l.id == ul.link_id and ul.user_id == ^scope.user.id,
-        where: ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"),
-        order_by: [desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id],
-        select: %{l | my_ulink: ul},
-        preload: [:tags, :user]
+        # https://hexdocs.pm/ecto/3.13.2/Ecto.Query.html#module-named-bindings
+        as: :ul,
+        on: l.id == ul.link_id and ul.user_id == ^user.id
       )
-    else
-      build_search_query(query)
-    end
-  end
 
-  def build_search_query("") do
-    from(l in Link,
-      order_by: [desc: l.updated_at, desc: l.id],
-      preload: [:tags, :user]
-    )
-  end
+    q =
+      case query do
+        "" -> q
+        _ -> q |> where([l], ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
+      end
 
-  def build_search_query(query) when is_binary(query) do
-    from(l in Link,
-      where: ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"),
-      order_by: [desc: l.updated_at, desc: l.id],
-      preload: [:tags, :user]
-    )
+    tag_id = Keyword.get(opts, :tag_id)
+
+    q =
+      if tag_id do
+        from(l in q,
+          join: t in assoc(l, :tags),
+          on: t.id == ^tag_id
+        )
+      else
+        q
+      end
+
+    site_id = Keyword.get(opts, :site_id)
+
+    q =
+      if site_id do
+        from(l in q,
+          join: s in assoc(l, :site),
+          on: s.id == ^site_id
+        )
+      else
+        q
+      end
+
+    q
+    |> order_by([l, ul: ul], desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id)
+    |> select([l, ul: ul], %{l | my_ulink: ul})
   end
 
   @doc """
@@ -420,15 +478,14 @@ defmodule Slink.Links do
     query |> Repo.all()
   end
 
-  # hot tags in links todo
   def hot_tags(limit \\ 10) do
     query =
       from(l in Link,
         join: t in assoc(l, :tags),
-        group_by: t.name,
+        group_by: [t.id, t.name],
         order_by: [desc: count(t.id)],
         limit: ^limit,
-        select: %{name: t.name, count: count(t.id)}
+        select: %{id: t.id, name: t.name, count: count(t.id)}
       )
 
     query |> Repo.all()
@@ -457,17 +514,16 @@ defmodule Slink.Links do
     end
   end
 
-  ## Site
+  ## Sites
 
-  # hot sites in links todo
   def hot_sites(limit \\ 10) do
     query =
       from(l in Link,
         join: s in assoc(l, :site),
-        group_by: s.name,
+        group_by: [s.id, s.name],
         order_by: [desc: count(s.id)],
         limit: ^limit,
-        select: %{name: s.name, count: count(s.id)}
+        select: %{id: s.id, name: s.name, count: count(s.id)}
       )
 
     query |> Repo.all()

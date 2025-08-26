@@ -27,8 +27,10 @@ defmodule SlinkWeb.LinkLive.Index do
      |> assign(:pin_user_links, pin_user_links)
      |> assign(:inline_note, false)
      |> assign(:search_form, search_form)
+     |> assign(:the_tag_id, nil)
+     |> assign(:the_site_id, nil)
      |> assign(page: 1, per_page: @per_page)
-     |> stream_items(query: params["query"] || "")}
+     |> stream_items(query: params["query"])}
   end
 
   @impl true
@@ -94,8 +96,6 @@ defmodule SlinkWeb.LinkLive.Index do
     {:ok, ulink} = UserLinks.update_note(scope, link, new_note)
     link = %{link | my_ulink: ulink}
     socket = stream_insert(socket, :links, link, update_only: true)
-    # query = socket.assigns.search_form.params["query"]
-    # socket = stream_items(socket, query: query)
     {:noreply, socket}
   end
 
@@ -105,6 +105,28 @@ defmodule SlinkWeb.LinkLive.Index do
     socket =
       socket
       |> assign(:inline_note, !socket.assigns.inline_note)
+      |> stream_items(query: query)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("toggle_the_tag_id", %{"id" => id}, socket) do
+    query = socket.assigns.search_form.params["query"]
+
+    socket =
+      socket
+      |> assign(:the_tag_id, id)
+      |> stream_items(query: query)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("toggle_the_site_id", %{"id" => id}, socket) do
+    query = socket.assigns.search_form.params["query"]
+
+    socket =
+      socket
+      |> assign(:the_site_id, id)
       |> stream_items(query: query)
 
     {:noreply, socket}
@@ -130,12 +152,25 @@ defmodule SlinkWeb.LinkLive.Index do
   Stream items with pagination
   """
   def stream_items(socket, opts \\ []) do
-    %{per_page: per_page, page: cur_page} = socket.assigns
-    query = Keyword.get(opts, :query, "")
+    query = Keyword.get(opts, :query)
+    query = if query, do: query, else: ""
+
+    %{per_page: per_page, page: cur_page, the_tag_id: tag_id, the_site_id: site_id} =
+      socket.assigns
+
     new_page = Keyword.get(opts, :page, 1) |> get_page()
 
-    total_count = Links.search_links_count(query)
-    items = Links.search_links(socket, query, page: new_page, per_page: per_page)
+    search_info = [
+      current_user: socket.assigns.current_scope && socket.assigns.current_scope.user,
+      q: query,
+      tag_id: tag_id,
+      site_id: site_id,
+      page: new_page,
+      per_page: per_page
+    ]
+
+    total_count = Links.search_links_count(search_info)
+    items = Links.search_links(search_info)
 
     socket =
       socket
@@ -152,7 +187,7 @@ defmodule SlinkWeb.LinkLive.Index do
       [] ->
         socket
         |> assign(end_of_timeline?: at == -1)
-        |> stream(:links, [])
+        |> stream(:links, [], reset: true)
 
       [_ | _] = items ->
         socket
