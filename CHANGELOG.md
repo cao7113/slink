@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.14 (2025-08-26)
+
+
+
+
+### Bug Fixes:
+
+* link related resource and touch link updated_at when tagging by Ryn Cao
+
 ## v0.3.13 (2025-08-26)
 
 
