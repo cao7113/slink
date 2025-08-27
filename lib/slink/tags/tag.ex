@@ -6,10 +6,11 @@ defmodule Slink.Tags.Tag do
   schema "tags" do
     field :name, :string
     field :group, :string
+
     # field :user_id, :id
     belongs_to :user, Slink.Accounts.User
-    # many_to_many :links, Slink.Links.Link, join_through: "link_tags"
     many_to_many :links, Slink.Links.Link, join_through: Slink.Links.LinkTag
+    field :links_count, :integer, virtual: true
 
     timestamps(type: :utc_datetime)
   end
@@ -25,6 +26,6 @@ defmodule Slink.Tags.Tag do
   end
 
   def validate_name_length(cs) do
-    cs |> validate_length(:name, min: 2, max: 60)
+    cs |> validate_length(:name, min: 1, max: 60)
   end
 end

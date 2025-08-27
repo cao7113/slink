@@ -45,6 +45,18 @@ defmodule Slink.Tags do
     |> Repo.all()
   end
 
+  def search_tags(q, limit \\ 50) when is_binary(q) do
+    from(t in Tag)
+    |> join(:left, [t], l in assoc(t, :links))
+    |> where([t], like(t.name, ^"#{q}%"))
+    |> group_by([t], [t.id])
+    |> order_by([t], desc: t.updated_at, desc: count(t.id), desc: t.id)
+    |> limit(^limit)
+    # count maybe not exact(virutal +1)!!! with null left join
+    |> select([t], %{t | links_count: count(t.id)})
+    |> Repo.all()
+  end
+
   def tags_string(tags) when is_list(tags) do
     tags |> Enum.map(& &1.name) |> Enum.join(", ")
   end

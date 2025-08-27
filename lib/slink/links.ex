@@ -459,18 +459,6 @@ defmodule Slink.Links do
 
   ## Tag related helpers
 
-  def list_links_by_tag(%Scope{} = _scope, tag_name, limit \\ @default_per_page) do
-    query =
-      from(l in Link,
-        join: t in assoc(l, :tags),
-        where: t.name == ^tag_name,
-        preload: [:tags, :user],
-        limit: ^limit
-      )
-
-    query |> Repo.all()
-  end
-
   def hot_tags(limit \\ 15) do
     query =
       from(l in Link,
@@ -493,6 +481,16 @@ defmodule Slink.Links do
     link |> tags_of |> Tags.tags_string()
   end
 
+  def list_links_by_tag_name(tag_name, limit \\ @default_per_page) do
+    from(l in Link,
+      join: t in assoc(l, :tags),
+      where: t.name == ^tag_name,
+      preload: ^@link_resource_list,
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
   def add_tag(%Link{} = link, tag_name, %Scope{} = scope) do
     with {:ok, tag} <- Tags.get_or_create_tag(scope, tag_name) do
       attrs = %{link_id: link.id, tag_id: tag.id}
@@ -505,6 +503,50 @@ defmodule Slink.Links do
       from(lt in LinkTag, where: lt.link_id == ^link_id and lt.tag_id == ^tag.id)
       |> Repo.delete_all()
     end
+  end
+
+  def migrate_tag!(old_tag_name, new_tag_name)
+      when is_binary(old_tag_name) and is_binary(new_tag_name) do
+    old_tag = Tags.get_by_name(old_tag_name)
+
+    if is_nil(old_tag) do
+      raise "Not found tag for name: #{old_tag_name}"
+    end
+
+    new_tag = Tags.get_by_name(new_tag_name)
+
+    if is_nil(new_tag) do
+      raise "Not found tag for name: #{new_tag_name}"
+    end
+
+    migrate_tag(old_tag.id, new_tag.id)
+  end
+
+  def migrate_tag(old_tag_id, new_tag_id)
+      when is_integer(old_tag_id) and is_integer(new_tag_id) do
+    cnt =
+      LinkTag
+      |> where([lt], lt.tag_id == ^old_tag_id)
+      |> Repo.all()
+      |> Enum.reduce(0, fn lt, acc ->
+        Logger.debug("Processing link tag with #{lt |> inspect}")
+
+        if Repo.get_by(LinkTag, link_id: lt.link_id, tag_id: new_tag_id) do
+          {:ok, _} = Repo.delete(lt)
+          acc
+        else
+          {:ok, _} =
+            Ecto.Changeset.change(lt, %{tag_id: new_tag_id})
+            |> Repo.update()
+
+          acc + 1
+        end
+      end)
+
+    {:ok,
+     %{
+       migrated_count: cnt
+     }}
   end
 
   ## Sites

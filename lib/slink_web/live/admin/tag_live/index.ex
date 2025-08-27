@@ -7,6 +7,16 @@ defmodule SlinkWeb.Admin.TagLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
+      <.form for={@search_form} phx-change="search">
+        <.input
+          type="search"
+          field={@search_form[:query]}
+          placeholder="Search tag name..."
+          phx-debounce="300"
+          class="input input-lg w-3/4"
+        />
+      </.form>
+
       <.header>
         Listing Tags
         <:actions>
@@ -24,12 +34,15 @@ defmodule SlinkWeb.Admin.TagLive.Index do
         <:col :let={{_id, tag}} label="ID">{tag.id}</:col>
         <:col :let={{_id, tag}} label="Name">{tag.name}</:col>
         <:col :let={{_id, tag}} label="Group">{tag.group}</:col>
+        <:col :let={{_id, tag}} label="Links Count">{tag.links_count}</:col>
         <:col :let={{_id, tag}} label="User">{tag.user_id}</:col>
         <:col :let={{_id, tag}} label="Inserted/Updated">{tag.inserted_at}/{tag.updated_at}</:col>
         <:action :let={{_id, tag}}>
           <div class="sr-only">
             <.link navigate={~p"/admin/tags/#{tag}"}>Show</.link>
           </div>
+
+          <.link navigate={~p"/admin/tags/#{tag}/migrate"}>Migrate</.link>
           <.link navigate={~p"/admin/tags/#{tag}/edit"}>Edit</.link>
         </:action>
         <:action :let={{id, tag}}>
@@ -46,18 +59,34 @@ defmodule SlinkWeb.Admin.TagLive.Index do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     if connected?(socket) do
       Tags.subscribe_tags(socket.assigns.current_scope)
     end
 
+    search_form = to_form(params)
+    q = (params["query"] || "") |> String.trim()
+
     {:ok,
      socket
      |> assign(:page_title, "Listing Tags")
-     |> stream(:tags, Tags.list_tags(socket.assigns.current_scope))}
+     |> assign(:search_form, search_form)
+     |> stream(:tags, Tags.search_tags(q))}
   end
 
   @impl true
+  def handle_event("search", params, socket) do
+    search_form = to_form(params)
+    q = (params["query"] || "") |> String.trim()
+
+    socket =
+      socket
+      |> assign(:search_form, search_form)
+      |> stream(:tags, Tags.search_tags(q), reset: true)
+
+    {:noreply, socket}
+  end
+
   def handle_event("delete", %{"id" => id}, socket) do
     tag = Tags.get_tag!(socket.assigns.current_scope, id)
     {:ok, _} = Tags.delete_tag(socket.assigns.current_scope, tag)

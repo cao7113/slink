@@ -7,6 +7,16 @@ defmodule SlinkWeb.Admin.SiteLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
+      <.form for={@search_form} phx-change="search">
+        <.input
+          type="search"
+          field={@search_form[:query]}
+          placeholder="Search site name or url..."
+          phx-debounce="300"
+          class="input input-lg w-3/4"
+        />
+      </.form>
+
       <.header>
         Listing Sites
         <:actions>
@@ -48,18 +58,34 @@ defmodule SlinkWeb.Admin.SiteLive.Index do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     if connected?(socket) do
       Sites.subscribe_sites(socket.assigns.current_scope)
     end
 
+    search_form = to_form(params)
+    q = (params["query"] || "") |> String.trim()
+
     {:ok,
      socket
      |> assign(:page_title, "Listing Sites")
-     |> stream(:sites, Sites.list_sites(socket.assigns.current_scope))}
+     |> assign(:search_form, search_form)
+     |> stream(:sites, Sites.search_sites(q))}
   end
 
   @impl true
+  def handle_event("search", params, socket) do
+    search_form = to_form(params)
+    q = (params["query"] || "") |> String.trim()
+
+    socket =
+      socket
+      |> assign(:search_form, search_form)
+      |> stream(:sites, Sites.search_sites(q), reset: true)
+
+    {:noreply, socket}
+  end
+
   def handle_event("delete", %{"id" => id}, socket) do
     site = Sites.get_site!(socket.assigns.current_scope, id)
     {:ok, _} = Sites.delete_site(socket.assigns.current_scope, site)

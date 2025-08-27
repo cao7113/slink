@@ -81,8 +81,7 @@ defmodule Slink.Links.Link do
     |> unique_constraint(:url, name: "links_url_index")
     |> prepare_changes(fn cs ->
       input_tags = cs.changes[:input_tags]
-      # todo
-      # check name length
+      # todo check name length
       # keep tags order
 
       if input_tags do

@@ -46,6 +46,14 @@ defmodule Slink.Sites do
     |> Repo.all()
   end
 
+  def search_sites(q) when is_binary(q) do
+    from(s in Site)
+    |> where([s], ilike(s.name, ^"%#{q}%") or ilike(s.url, ^"%#{q}%"))
+    |> order_by([s], desc: s.updated_at, desc: s.id)
+    |> limit(50)
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single site.
 
