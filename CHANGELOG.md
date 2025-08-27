@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.15 (2025-08-27)
+
+
+
+
+### Improvements:
+
+* add admin tag search and migrate and site search by Ryn Cao
+
 ## v0.3.14 (2025-08-26)
 
 
