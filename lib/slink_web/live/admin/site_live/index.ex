@@ -18,7 +18,7 @@ defmodule SlinkWeb.Admin.SiteLive.Index do
       </.form>
 
       <.header>
-        Listing Sites
+        Listing Sites({@streams.sites |> Enum.count()})
         <:actions>
           <.button variant="primary" navigate={~p"/admin/sites/new"}>
             <.icon name="hero-plus" /> New Site

@@ -18,7 +18,7 @@ defmodule SlinkWeb.Admin.TagLive.Index do
       </.form>
 
       <.header>
-        Listing Tags
+        Listing Tags({@streams.tags |> Enum.count()})
         <:actions>
           <.button variant="primary" navigate={~p"/admin/tags/new"}>
             <.icon name="hero-plus" /> New Tag

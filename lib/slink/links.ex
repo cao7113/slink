@@ -230,9 +230,14 @@ defmodule Slink.Links do
 
   def get_link!(id), do: get_link!(nil, id)
 
-  def get_link_with_resources(link_id) do
-    Repo.get_by!(Link, id: link_id)
-    |> Repo.preload(@link_resource_list)
+  def get_link_by_url(url), do: Repo.get_by(Link, url: url)
+
+  def get_link_with_resources(%Link{} = link), do: Repo.preload(link, @link_resource_list)
+
+  def get_link_with_resources(link_id) when is_integer(link_id) or is_binary(link_id) do
+    Link
+    |> Repo.get_by!(id: link_id)
+    |> get_link_with_resources()
   end
 
   def get_or_create_link(%Scope{} = scope, %{url: url, title: _title} = attrs) do

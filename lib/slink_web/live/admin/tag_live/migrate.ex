@@ -11,7 +11,7 @@ defmodule SlinkWeb.Admin.TagLive.Migrate do
       <.header>
         {@page_title}
         <:subtitle>
-          Migrate Current tag: <span class="text-red-600">{@tag.name}</span>(tag-id={@tag.id})
+          Migrate Current tag: <span class="text-red-600">{@tag.name}</span>(id={@tag.id})
           links to another tag.
         </:subtitle>
         <:actions>
@@ -35,12 +35,13 @@ defmodule SlinkWeb.Admin.TagLive.Migrate do
           type="text"
           label="Target Tag"
           class="input"
+          phx-debounce="blur"
           required
           autofocus
         />
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Tag</.button>
-          <.button navigate={return_path(@current_scope, @return_to, @tag)}>Cancel</.button>
+          <.button navigate={return_path(@current_scope, @return_to, @tag)}>Back</.button>
         </footer>
       </.form>
     </Layouts.app>
