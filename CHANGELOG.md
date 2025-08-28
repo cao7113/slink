@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.16 (2025-08-28)
+
+
+
+
+### Improvements:
+
+* add admin tags count and phx-debounce=blur by Ryn Cao
+
 ## v0.3.15 (2025-08-27)
 
 
