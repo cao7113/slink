@@ -12,7 +12,6 @@ defmodule SlinkWeb.PageController do
 
   def daisyui(conn, _params) do
     conn
-    # |> put_flash(:info, "This is a flash message")
     |> render(:daisyui)
   end
 end

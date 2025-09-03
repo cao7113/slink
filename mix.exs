@@ -115,6 +115,7 @@ defmodule Slink.MixProject do
       precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"],
       # Helpers
       "ecto.reset.force": ["ecto.drop --force-drop", "ecto.setup"],
+      "dev.db.init": ["ecto.drop --force-drop", "ecto.create"],
       "dev.init": ["run run/dev/seed.exs"],
       "dev.reset": ["ecto.reset.force", "dev.init"],
       reset: ["dev.reset"],

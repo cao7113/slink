@@ -161,10 +161,9 @@ defmodule SlinkWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-4 lg:px-8">
+    <header class="navbar fixed px-4 z-10 sm:px-4 lg:px-8">
       <div class="flex-1">
         <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <%!-- <img src={~p"/images/logo.svg"} width="36" /> --%>
           <span class="text-md font-semibold">Slink</span>
           <span class="text-sm">v{Application.spec(:slink, :vsn)}</span>
         </a>
@@ -174,8 +173,8 @@ defmodule SlinkWeb.Layouts do
       </div>
     </header>
 
-    <main class="px-4 pt-4 sm:pt-2 sm:px-4 lg:px-8">
-      <div class="mx-auto max-w-4xl space-y-1">
+    <main class="px-4 sm:pt-2 sm:px-4 lg:px-8">
+      <div class="mx-auto max-w-4xl mt-12 space-y-1">
         {render_slot(@inner_block)}
       </div>
     </main>

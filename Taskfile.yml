@@ -61,6 +61,10 @@ tasks:
   # task db.back -- 1
   db.back: mix ecto.rollback --step {{.CLI_ARGS}}
   db.back1: task db.back -- 1
+  db.fly: |
+    mix dev.db.init
+    mix run run/fly-db-local-restore.exs
+    mix run run/dev/seed.exs
 
   ## Git ops
   ops: mix git_ops.project_info

@@ -20,7 +20,22 @@
       </.form>
 
       <.header>
-        Links({@links_count})
+        <div class="flex flex-rows">
+          <span class="text-xl font-bold p-2">Links({@links_count})</span>
+          <span :for={kind <- ["latest", "favored", "pinned", "collected"]}>
+            <.link
+              class="link link-info divider"
+              phx-click={JS.push("change_kind", value: %{kind: kind})}
+            >
+              <%= if @kind == kind do %>
+                <span class="capitalize text-red-400">{kind}</span>
+              <% else %>
+                <span class="capitalize">{kind}</span>
+              <% end %>
+            </.link>
+          </span>
+        </div>
+
         <:actions>
           <.link
             :if={@current_scope}
@@ -95,17 +110,6 @@
                 <.icon name="hero-trash" class="size-3" />
               </.link>
 
-              <%= if link.my_ulink && link.my_ulink.favor_at do %>
-                <span class="text-sm text-gray-500">Favor: {link.my_ulink.favor_at}</span>
-                <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
-                  Unfavor
-                </.button>
-              <% else %>
-                <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
-                  <.icon name="hero-star" class="size-3" />
-                </.button>
-              <% end %>
-
               <%= if link.my_ulink && link.my_ulink.pin_at do %>
                 <span class="text-sm text-gray-500">Pin: {link.my_ulink.pin_at}</span>
                 <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})}>
@@ -116,6 +120,17 @@
                   <.icon name="hero-map-pin" class="size-3" />
                 </.button>
               <% end %>
+
+              <%= if link.my_ulink && link.my_ulink.favor_at do %>
+                <span class="text-sm text-gray-500">Favor: {link.my_ulink.favor_at}</span>
+                <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
+                  Unfavor
+                </.button>
+              <% else %>
+                <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
+                  <.icon name="hero-star" class="size-3" />
+                </.button>
+              <% end %>
             </div>
 
             <div class="text-sm text-gray-500">
@@ -123,7 +138,7 @@
               <span class="mx-2">•</span>
               <span class="i-carbon-calendar mr-1"></span> Updated at: {link.updated_at}
               <span class="mx-2">•</span>
-              <span class="i-carbon-user mr-1">User: {link.user.name}</span>
+              <span class="i-carbon-user mr-1">User: <strong>{link.user.name}</strong></span>
               <span class="mx-2">•</span>
               <span class="i-carbon-user mr-1">Site: {link.site && link.site.name}</span>
             </div>
@@ -155,7 +170,7 @@
       </div>
     </div>
 
-    <div class="w-40 flex-none pr-4 pt-16 mr-20">
+    <div class="flex-none fixed top-8 right-50 w-40 mt-10 ml-4">
       <h2>Hot tags</h2>
       <ul class="menu menu-vertical bg-base-100 w-56 rounded-box">
         <li :for={tag <- Links.hot_tags()}>
@@ -168,7 +183,7 @@
             </.link>
           <% else %>
             <.link
-              class="badge badge-accent"
+              class="badge badge-accent  hover:bg-primary truncate"
               phx-click={JS.push("toggle_the_tag_id", value: %{id: tag.id})}
             >
               {tag.name}({tag.count})
@@ -189,7 +204,7 @@
             </.link>
           <% else %>
             <.link
-              class="badge badge-accent"
+              class="badge badge-accent hover:bg-primary truncate"
               phx-click={JS.push("toggle_the_site_id", value: %{id: site.id})}
             >
               {site.name}({site.count})

@@ -19,14 +19,14 @@ defmodule SlinkWeb.LinkLive.Index do
     end
 
     search_form = to_form(params)
-    pin_user_links = if scope, do: UserLinks.top_pinned_user_links(scope), else: []
 
     {:ok,
      socket
      |> assign(:page_title, "Listing Links")
-     |> assign(:pin_user_links, pin_user_links)
+     |> assign(:pin_user_links, get_top_pinned_links(scope))
      |> assign(:inline_note, false)
      |> assign(:search_form, search_form)
+     |> assign(:kind, "latest")
      |> assign(:the_tag_id, nil)
      |> assign(:the_site_id, nil)
      |> assign(page: 1, per_page: @per_page)
@@ -64,6 +64,17 @@ defmodule SlinkWeb.LinkLive.Index do
     end
   end
 
+  def handle_event("change_kind", %{"kind" => kind}, socket) do
+    query = socket.assigns.search_form.params["query"]
+
+    socket =
+      socket
+      |> assign(:kind, kind)
+      |> stream_items(query: query)
+
+    {:noreply, socket}
+  end
+
   def handle_event("open_link", %{"id" => id}, socket) do
     scope = socket.assigns.current_scope
     {:ok, log} = Links.create_link_log(scope, %{link_id: id, event: "opened"})
@@ -81,12 +92,16 @@ defmodule SlinkWeb.LinkLive.Index do
   end
 
   def handle_event("toggle_pin", %{"id" => id}, socket) do
-    # todo
     link = Links.get_link_with_resources(id)
     scope = socket.assigns.current_scope
     {:ok, ulink} = UserLinks.toggle_pin(scope, link)
     link = %{link | my_ulink: ulink}
-    socket = stream_insert(socket, :links, link, update_only: true)
+
+    socket =
+      socket
+      |> assign(:pin_user_links, get_top_pinned_links(scope))
+      |> stream_insert(:links, link, update_only: true)
+
     {:noreply, socket}
   end
 
@@ -157,14 +172,16 @@ defmodule SlinkWeb.LinkLive.Index do
     query = Keyword.get(opts, :query)
     query = if query, do: query, else: ""
 
-    %{per_page: per_page, page: cur_page, the_tag_id: tag_id, the_site_id: site_id} =
+    %{per_page: per_page, page: cur_page, the_tag_id: tag_id, the_site_id: site_id, kind: kind} =
       socket.assigns
 
     new_page = Keyword.get(opts, :page, 1) |> get_page()
 
+    # socket.assigns is a map
     search_info = [
-      current_user: socket.assigns.current_scope && socket.assigns.current_scope.user,
+      current_scope: socket.assigns.current_scope,
       q: query,
+      kind: kind,
       tag_id: tag_id,
       site_id: site_id,
       page: new_page,
@@ -202,6 +219,10 @@ defmodule SlinkWeb.LinkLive.Index do
   def get_page(nil), do: 1
   def get_page(page) when is_integer(page) and page >= 1, do: page
   def get_page(page) when is_binary(page), do: page |> String.to_integer() |> get_page()
+
+  def get_top_pinned_links(scope) do
+    if scope, do: UserLinks.top_pinned_user_links(scope), else: []
+  end
 
   # @impl true
   # def render(assigns) do

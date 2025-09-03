@@ -78,7 +78,7 @@ defmodule SlinkWeb.Admin.TagLive.Migrate do
         end
       else
         socket
-        |> put_flash(:error, "Invalid tag name #{target_tag_name}")
+        |> put_flash(:error, "Non-exist target tag name #{target_tag_name}")
       end
 
     {:noreply, assign(socket, form: to_form(params, action: :validate))}

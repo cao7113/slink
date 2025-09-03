@@ -65,50 +65,33 @@ defmodule Slink.Links do
   end
 
   ## Search logic
-  # - query keyword
-  # - tag
-  # - site
-  # - pined
-  # - favored
-  # - hot
-  # - latest
-
-  # sort by
-  # - id
-  # - updated_at
-  # - collected_count
-  # - favor_count
 
   def search_links_count(info) do
-    query = Keyword.get(info, :q, "") |> String.trim()
+    opts = info |> Keyword.put(:order_by, false)
+    scope = Keyword.get(info, :current_scope)
 
-    tag_id = Keyword.get(info, :tag_id)
-    site_id = Keyword.get(info, :site_id)
-
-    build_search_query(nil, query, order_by: false, tag_id: tag_id, site_id: site_id)
+    build_search_query(scope, opts)
     |> Repo.aggregate(:count, :id)
   end
 
   @doc """
   Search links with related resources
   info keys:
+  - current_scope: current scope, maybe nil
   - q: query keyword
-  - current_user: user in current scope, maybe nil
+  - tag_id: related tag id
+  - site_id: related site id
+  - kind: one of ["latest", "pinned", "favored", "collected"]
   - page: page number
   - per_page: page size per page
-  - tag_id: related tag id
   """
-  def search_links(info \\ []) do
-    user = Keyword.get(info, :current_user)
-    query = Keyword.get(info, :q, "") |> String.trim()
+  def search_links(info \\ []) when is_list(info) do
+    scope = Keyword.get(info, :current_scope)
     page = Keyword.get(info, :page, 1)
     per_page = Keyword.get(info, :per_page, @default_per_page)
     offset = (page - 1) * per_page
 
-    tag_id = Keyword.get(info, :tag_id)
-    site_id = Keyword.get(info, :site_id)
-
-    build_search_query(user, query, tag_id: tag_id, site_id: site_id)
+    build_search_query(scope, info)
     |> offset(^offset)
     |> limit(^per_page)
     |> preload(^@link_resource_list)
@@ -118,14 +101,22 @@ defmodule Slink.Links do
     end)
   end
 
-  def build_search_query(user, query, opts \\ [])
+  def build_search_query(scope, opts) do
+    kind = Keyword.get(opts, :kind, "latest")
+    query = Keyword.get(opts, :q, "") |> String.trim()
+    tag_id = Keyword.get(opts, :tag_id)
+    site_id = Keyword.get(opts, :site_id)
+    order_by = Keyword.get(opts, :order_by, true)
 
-  # for public
-  def build_search_query(nil, query, opts) when is_binary(query) do
     q = from(l in Link)
 
-    tag_id = Keyword.get(opts, :tag_id)
+    q =
+      case query do
+        "" -> q
+        _ -> q |> where([l], ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
+      end
 
+    # tag support
     q =
       if tag_id do
         from(l in q,
@@ -136,74 +127,106 @@ defmodule Slink.Links do
         q
       end
 
-    site_id = Keyword.get(opts, :site_id)
-
+    # site support
     q =
       if site_id do
         from(l in q,
           join: s in assoc(l, :site),
-          on: s.id == ^site_id
+          on: s.id == ^site_id,
+          as: :site
         )
       else
         q
       end
 
-    q =
-      case query do
-        "" -> q
-        _ -> q |> where([l], ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
-      end
+    if scope do
+      user = scope.user
 
-    Keyword.get(opts, :order_by, true)
-    |> case do
-      false -> q
-      _ -> q |> order_by([l], desc: l.updated_at, desc: l.id)
+      q =
+        if kind == "collected" do
+          from(l in q,
+            join: ul in UserLink,
+            # https://hexdocs.pm/ecto/3.13.2/Ecto.Query.html#module-named-bindings
+            as: :ul,
+            on: l.id == ul.link_id and ul.user_id == ^user.id
+          )
+        else
+          from(l in q,
+            left_join: ul in UserLink,
+            # https://hexdocs.pm/ecto/3.13.2/Ecto.Query.html#module-named-bindings
+            as: :ul,
+            on: l.id == ul.link_id and ul.user_id == ^user.id
+          )
+        end
+
+      q =
+        case kind do
+          "latest" ->
+            q
+
+          "pinned" ->
+            q |> where([l, ul: ul], not is_nil(ul.pin_at))
+
+          "favored" ->
+            q |> where([l, ul: ul], not is_nil(ul.favor_at))
+
+          "collected" ->
+            q
+        end
+
+      # pin or favor selected support
+      if order_by do
+        q =
+          case kind do
+            "latest" ->
+              q
+              |> order_by([l, ul: ul],
+                desc_nulls_last: ul.last_visit_at,
+                desc: l.updated_at,
+                desc: l.id
+              )
+
+            "pinned" ->
+              q
+              |> order_by([l, ul: ul],
+                desc_nulls_last: ul.pin_at,
+                desc: l.updated_at,
+                desc: l.id
+              )
+
+            "favored" ->
+              q
+              |> order_by([l, ul: ul],
+                desc_nulls_last: ul.favor_at,
+                desc: l.updated_at,
+                desc: l.id
+              )
+
+            "collected" ->
+              q
+              |> order_by([l, ul: ul],
+                desc_nulls_last: ul.updated_at,
+                desc: ul.id
+              )
+          end
+
+        q
+        |> select([l, ul: ul], %{l | my_ulink: ul})
+      else
+        q
+      end
+    else
+      # no user scope
+      if order_by do
+        q
+        |> order_by([l], desc: l.updated_at, desc: l.id)
+      else
+        q
+      end
     end
   end
 
-  def build_search_query(user, query, opts) when is_binary(query) do
-    q =
-      from(l in Link,
-        left_join: ul in UserLink,
-        # https://hexdocs.pm/ecto/3.13.2/Ecto.Query.html#module-named-bindings
-        as: :ul,
-        on: l.id == ul.link_id and ul.user_id == ^user.id
-      )
-
-    q =
-      case query do
-        "" -> q
-        _ -> q |> where([l], ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
-      end
-
-    tag_id = Keyword.get(opts, :tag_id)
-
-    q =
-      if tag_id do
-        from(l in q,
-          join: t in assoc(l, :tags),
-          on: t.id == ^tag_id
-        )
-      else
-        q
-      end
-
-    site_id = Keyword.get(opts, :site_id)
-
-    q =
-      if site_id do
-        from(l in q,
-          join: s in assoc(l, :site),
-          on: s.id == ^site_id
-        )
-      else
-        q
-      end
-
-    q
-    |> order_by([l, ul: ul], desc_nulls_last: ul.last_visit_at, desc: l.updated_at, desc: l.id)
-    |> select([l, ul: ul], %{l | my_ulink: ul})
-  end
+  def search1(info \\ []), do: search_links(info |> Keyword.put_new(:per_page, 1))
 
   @doc """
   Gets a single link.
