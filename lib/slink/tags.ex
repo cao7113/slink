@@ -81,6 +81,8 @@ defmodule Slink.Tags do
 
   def get_tag!(id), do: Repo.get_by!(Tag, id: id)
 
+  def get_tag(id), do: Repo.get_by(Tag, id: id)
+
   def get_by_name(name) when is_binary(name), do: Repo.get_by(Tag, name: name)
 
   def get_or_create_tag(%Scope{} = scope, name) do

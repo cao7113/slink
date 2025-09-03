@@ -5,10 +5,7 @@ defmodule SlinkWeb.LinkLive.Index do
   alias Slink.UserLinks
   require Logger
 
-  # configured in router.ex
-  # on_mount {SlinkWeb.UserAuth, :mount_current_scope}
-
-  @per_page 20
+  @per_page 50
 
   @impl true
   def mount(params, _session, socket) do
@@ -18,59 +15,50 @@ defmodule SlinkWeb.LinkLive.Index do
       Links.subscribe_links(scope)
     end
 
-    search_form = to_form(params)
-
     {:ok,
      socket
      |> assign(:page_title, "Listing Links")
      |> assign(:pin_user_links, get_top_pinned_links(scope))
      |> assign(:inline_note, false)
-     |> assign(:search_form, search_form)
+     |> assign(:search_form, to_form(params))
      |> assign(:kind, "latest")
-     |> assign(:the_tag_id, nil)
-     |> assign(:the_site_id, nil)
-     |> assign(page: 1, per_page: @per_page)
-     |> stream_items(query: params["query"])}
+     |> assign(:tag_id, get_init_tag_id(params))
+     |> assign(:site_id, get_init_site_id(params))
+     |> assign(page: get_page(params["page"]), per_page: @per_page)
+     |> stream_items()}
   end
 
   @impl true
   def handle_event("search", params, socket) do
-    search_form = to_form(params)
-
     socket =
       socket
-      |> assign(:search_form, search_form)
-      |> stream_items(query: params["query"], page: 1)
+      |> assign(:search_form, to_form(params))
+      |> stream_items(page: 1)
 
     {:noreply, socket}
   end
 
-  def handle_event("next-page", _, socket) do
-    query = socket.assigns.search_form.params["query"]
-    {:noreply, stream_items(socket, query: query, page: socket.assigns.page + 1)}
-  end
-
   def handle_event("prev-page", %{"_overran" => true}, socket) do
-    query = socket.assigns.search_form.params["query"]
-    {:noreply, stream_items(socket, query: query, page: 1)}
+    {:noreply, stream_items(socket, page: 1)}
   end
 
   def handle_event("prev-page", _, socket) do
     if socket.assigns.page > 1 do
-      query = socket.assigns.search_form.params["query"]
-      {:noreply, stream_items(socket, query: query, page: socket.assigns.page - 1)}
+      {:noreply, stream_items(socket, page: socket.assigns.page - 1)}
     else
       {:noreply, socket}
     end
   end
 
-  def handle_event("change_kind", %{"kind" => kind}, socket) do
-    query = socket.assigns.search_form.params["query"]
+  def handle_event("next-page", _, socket) do
+    {:noreply, stream_items(socket, page: socket.assigns.page + 1)}
+  end
 
+  def handle_event("change_kind", %{"kind" => kind}, socket) do
     socket =
       socket
       |> assign(:kind, kind)
-      |> stream_items(query: query)
+      |> stream_items()
 
     {:noreply, socket}
   end
@@ -115,36 +103,32 @@ defmodule SlinkWeb.LinkLive.Index do
   end
 
   def handle_event("toggle_inline_note", %{}, socket) do
-    query = socket.assigns.search_form.params["query"]
-
     socket =
       socket
       |> assign(:inline_note, !socket.assigns.inline_note)
-      |> stream_items(query: query)
+      |> stream_items()
 
     {:noreply, socket}
   end
 
-  def handle_event("toggle_the_tag_id", %{"id" => id}, socket) do
-    query = socket.assigns.search_form.params["query"]
-    new_id = if socket.assigns.the_tag_id == id, do: nil, else: id
+  def handle_event("toggle_tag_id", %{"id" => id}, socket) do
+    new_id = if socket.assigns.tag_id == id, do: nil, else: id
 
     socket =
       socket
-      |> assign(:the_tag_id, new_id)
-      |> stream_items(query: query)
+      |> assign(:tag_id, new_id)
+      |> stream_items()
 
     {:noreply, socket}
   end
 
-  def handle_event("toggle_the_site_id", %{"id" => id}, socket) do
-    query = socket.assigns.search_form.params["query"]
-    new_id = if socket.assigns.the_site_id == id, do: nil, else: id
+  def handle_event("toggle_site_id", %{"id" => id}, socket) do
+    new_id = if socket.assigns.site_id == id, do: nil, else: id
 
     socket =
       socket
-      |> assign(:the_site_id, new_id)
-      |> stream_items(query: query)
+      |> assign(:site_id, new_id)
+      |> stream_items(page: 1)
 
     {:noreply, socket}
   end
@@ -157,11 +141,16 @@ defmodule SlinkWeb.LinkLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("_try", params, socket) do
+    {params, socket.assigns} |> dbg
+
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_info({type, %Slink.Links.Link{}}, socket)
       when type in [:created, :updated, :deleted] do
-    query = socket.assigns.search_form.params["query"]
-    socket = stream_items(socket, query: query)
+    socket = stream_items(socket)
     {:noreply, socket}
   end
 
@@ -169,24 +158,16 @@ defmodule SlinkWeb.LinkLive.Index do
   Stream items with pagination
   """
   def stream_items(socket, opts \\ []) do
-    query = Keyword.get(opts, :query)
-    query = if query, do: query, else: ""
-
-    %{per_page: per_page, page: cur_page, the_tag_id: tag_id, the_site_id: site_id, kind: kind} =
-      socket.assigns
-
+    q = socket.assigns.search_form.params |> Map.get("q", "")
+    %{per_page: per_page, page: cur_page} = socket.assigns
     new_page = Keyword.get(opts, :page, 1) |> get_page()
 
-    # socket.assigns is a map
-    search_info = [
-      current_scope: socket.assigns.current_scope,
-      q: query,
-      kind: kind,
-      tag_id: tag_id,
-      site_id: site_id,
-      page: new_page,
-      per_page: per_page
-    ]
+    search_info =
+      socket.assigns
+      # socket.assigns is a map
+      |> Map.take([:current_scope, :kind, :tag_id, :site_id, :page, :per_page])
+      |> Map.to_list()
+      |> Keyword.put(:q, q)
 
     total_count = Links.search_links_count(search_info)
     items = Links.search_links(search_info)
@@ -216,20 +197,43 @@ defmodule SlinkWeb.LinkLive.Index do
     end
   end
 
+  def get_top_pinned_links(scope) do
+    if scope, do: UserLinks.top_pinned_user_links(scope, 3), else: []
+  end
+
   def get_page(nil), do: 1
   def get_page(page) when is_integer(page) and page >= 1, do: page
   def get_page(page) when is_binary(page), do: page |> String.to_integer() |> get_page()
 
-  def get_top_pinned_links(scope) do
-    if scope, do: UserLinks.top_pinned_user_links(scope), else: []
+  def get_init_tag_id(params) do
+    tag =
+      case params["tag_id"] do
+        nil ->
+          case params["tag"] do
+            nil -> nil
+            name -> Slink.Tags.get_by_name(name)
+          end
+
+        id ->
+          Slink.Tags.get_tag(id)
+      end
+
+    if tag, do: tag.id, else: nil
   end
 
-  # @impl true
-  # def render(assigns) do
-  #   ~H"""
-  #   <Layouts.app flash={@flash} current_scope={@current_scope}>
-  #     <span>Nothing here, already moved into index.html.heex!</span>
-  #   </Layouts.app>
-  #   """
-  # end
+  def get_init_site_id(params) do
+    site =
+      case params["site_id"] do
+        nil ->
+          case params["site"] do
+            nil -> nil
+            name -> Slink.Sites.get_by_name(name)
+          end
+
+        id ->
+          Slink.Sites.get_site(id)
+      end
+
+    if site, do: site.id, else: nil
+  end
 end

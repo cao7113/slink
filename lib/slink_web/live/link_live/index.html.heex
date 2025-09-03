@@ -1,172 +1,180 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
   <div class="flex">
     <div class="flex-1 min-w-full">
-      <ul :if={@current_scope}>
-        <li :for={ulink <- @pin_user_links}>
-          <.link href={ulink.link.url} class="link link-info" target="_blank">
-            <p class="truncate w-100">{ulink.link.title}</p>
-          </.link>
-        </li>
-      </ul>
+      <div class="flex flex-col fixed z-10">
+        <.link :if={is_dev?()} class="link link-warning" phx-click={JS.push("_try")}>
+          Try
+        </.link>
 
-      <.form for={@search_form} phx-change="search">
-        <.input
-          type="search"
-          field={@search_form[:query]}
-          placeholder="Search title or url..."
-          phx-debounce="300"
-          class="input input-lg w-3/4"
-        />
-      </.form>
-
-      <.header>
-        <div class="flex flex-rows">
-          <span class="text-xl font-bold p-2">Links({@links_count})</span>
-          <span :for={kind <- ["latest", "favored", "pinned", "collected"]}>
-            <.link
-              class="link link-info divider"
-              phx-click={JS.push("change_kind", value: %{kind: kind})}
-            >
-              <%= if @kind == kind do %>
-                <span class="capitalize text-red-400">{kind}</span>
-              <% else %>
-                <span class="capitalize">{kind}</span>
-              <% end %>
+        <ul :if={@current_scope}>
+          <li :for={ulink <- @pin_user_links}>
+            <.link href={ulink.link.url} class="link link-info" target="_blank">
+              <p class="truncate w-100">{ulink.link.title}</p>
             </.link>
-          </span>
-        </div>
+          </li>
+        </ul>
 
-        <:actions>
-          <.link
-            :if={@current_scope}
-            class="btn btn-accent"
-            phx-click={JS.push("toggle_inline_note")}
-          >
-            Toggle inline note
-          </.link>
-          <.button :if={@current_scope} variant="primary" navigate={~p"/links/new"}>
-            <.icon name="hero-plus" /> New Link
-          </.button>
-        </:actions>
-      </.header>
+        <.form for={@search_form} phx-change="search">
+          <.input
+            type="search"
+            field={@search_form[:q]}
+            placeholder="Search title or url..."
+            phx-debounce="300"
+            class="input input-lg w-3/4"
+          />
+        </.form>
 
-      <ul
-        id="links"
-        phx-update="stream"
-        phx-viewport-top={@page > 1 && JS.push("prev-page", page_loading: true)}
-        phx-viewport-bottom={!@end_of_timeline? && JS.push("next-page", page_loading: true)}
-        class={[
-          if(@end_of_timeline?, do: "pb-3", else: "pb-[calc(200vh)]"),
-          if(@page == 1, do: "pt-2", else: "pt-[calc(200vh)]")
-        ]}
-      >
-        <li :for={{id, link} <- @streams.links} id={id}>
-          <div class="card bg-base-100 shadow-md p-1 rounded-box">
-            <div class="flex justify-between items-start">
-              <h3 class="card-title font-semibold text-xl flex items-center">
-                <.link navigate={~p"/links/#{link}"}>
-                  {link.title}
-                </.link>
-              </h3>
-            </div>
-
-            <div class="flex items-center">
+        <.header>
+          <div class="flex flex-rows">
+            <span class="text-xl font-bold p-2">Links({@links_count})</span>
+            <span :for={kind <- ["latest", "favored", "pinned", "collected"]}>
               <.link
-                href={link.url}
-                target="_blank"
-                class="link link-hover text-blue-600 truncate max-w-[80%]"
-                phx-click={JS.push("open_link", value: %{id: link.id})}
+                class="link link-info divider"
+                phx-click={JS.push("change_kind", value: %{kind: kind})}
               >
-                {link.url}
+                <%= if @kind == kind do %>
+                  <span class="capitalize bg-blue-200">{kind}</span>
+                <% else %>
+                  <span class="capitalize">{kind}</span>
+                <% end %>
               </.link>
-            </div>
-            <div class="flex items-center">
-              <%= for tag <- link.tags do %>
-                <span class="badge badge-secondary">{tag.name}</span>
-              <% end %>
-            </div>
-
-            <div :if={@current_scope}>
-              <%= if link.my_ulink do %>
-                <span class="text-sm text-gray-500">
-                  Last visit(#{link.my_ulink.total_visit_times}): {link.my_ulink.last_visit_at}
-                </span>
-              <% end %>
-
-              <.link
-                :if={@current_scope.user.id == link.user_id}
-                navigate={~p"/links/#{link}/edit"}
-                class="btn"
-              >
-                <.icon name="hero-pencil" class="size-3" />
-              </.link>
-
-              <.link
-                :if={@current_scope.user.id == link.user_id}
-                phx-click={JS.push("delete", value: %{id: link.id}) |> hide("##{id}")}
-                data-confirm="Are you sure?"
-                class="btn text-red-400"
-              >
-                <.icon name="hero-trash" class="size-3" />
-              </.link>
-
-              <%= if link.my_ulink && link.my_ulink.pin_at do %>
-                <span class="text-sm text-gray-500">Pin: {link.my_ulink.pin_at}</span>
-                <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})}>
-                  Unpin
-                </.button>
-              <% else %>
-                <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})} alt="Pin">
-                  <.icon name="hero-map-pin" class="size-3" />
-                </.button>
-              <% end %>
-
-              <%= if link.my_ulink && link.my_ulink.favor_at do %>
-                <span class="text-sm text-gray-500">Favor: {link.my_ulink.favor_at}</span>
-                <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
-                  Unfavor
-                </.button>
-              <% else %>
-                <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
-                  <.icon name="hero-star" class="size-3" />
-                </.button>
-              <% end %>
-            </div>
-
-            <div class="text-sm text-gray-500">
-              <span class="text-sm text-gray-500">ID: {link.id}</span>
-              <span class="mx-2">•</span>
-              <span class="i-carbon-calendar mr-1"></span> Updated at: {link.updated_at}
-              <span class="mx-2">•</span>
-              <span class="i-carbon-user mr-1">User: <strong>{link.user.name}</strong></span>
-              <span class="mx-2">•</span>
-              <span class="i-carbon-user mr-1">Site: {link.site && link.site.name}</span>
-            </div>
-
-            <div :if={@current_scope && @inline_note}>
-              <%= if link.my_ulink && link.my_ulink.note do %>
-                <textarea
-                  type="textarea"
-                  class="textarea textarea-sm textarea-accent w-3/4"
-                  label="Note"
-                  placeholder="Note here"
-                  phx-blur={JS.push("update_note", value: %{id: link.id})}
-                >{link.my_ulink.note}</textarea>
-              <% else %>
-                <textarea
-                  type="textarea"
-                  class="textarea textarea-sm textarea-accent w-3/4"
-                  label="Note"
-                  placeholder="Note here"
-                  phx-blur={JS.push("update_note", value: %{id: link.id})}
-                ></textarea>
-              <% end %>
-            </div>
+            </span>
           </div>
-        </li>
-      </ul>
-      <div :if={@end_of_timeline?} class="mt-1 text-[20px] text-center">
-        🎉 Reached the end 🎉
+
+          <:actions>
+            <.link
+              :if={@current_scope}
+              class="btn btn-accent"
+              phx-click={JS.push("toggle_inline_note")}
+            >
+              Toggle inline note
+            </.link>
+            <.button :if={@current_scope} variant="primary" navigate={~p"/links/new"}>
+              <.icon name="hero-plus" /> New Link
+            </.button>
+          </:actions>
+        </.header>
+      </div>
+
+      <div class="pt-40">
+        <ul
+          id="links"
+          phx-update="stream"
+          phx-viewport-top={@page > 1 && JS.push("prev-page", page_loading: true)}
+          phx-viewport-bottom={!@end_of_timeline? && JS.push("next-page", page_loading: true)}
+          class={[
+            if(@end_of_timeline?, do: "pb-3", else: "pb-[calc(200vh)]"),
+            if(@page == 1, do: "pt-2", else: "pt-[calc(200vh)]")
+          ]}
+        >
+          <li :for={{id, link} <- @streams.links} id={id}>
+            <div class="card bg-base-100 shadow-md p-1 rounded-box">
+              <div class="flex justify-between items-start">
+                <h3 class="card-title font-semibold text-xl flex items-center">
+                  <.link navigate={~p"/links/#{link}"}>
+                    {link.title}
+                  </.link>
+                </h3>
+              </div>
+
+              <div class="flex items-center">
+                <.link
+                  href={link.url}
+                  target="_blank"
+                  class="link link-hover text-blue-600 truncate max-w-[80%]"
+                  phx-click={JS.push("open_link", value: %{id: link.id})}
+                >
+                  {link.url}
+                </.link>
+              </div>
+              <div class="flex items-center">
+                <%= for tag <- link.tags do %>
+                  <span class="badge badge-secondary">{tag.name}</span>
+                <% end %>
+              </div>
+
+              <div :if={@current_scope}>
+                <%= if link.my_ulink do %>
+                  <span class="text-sm text-gray-500">
+                    Last visit(#{link.my_ulink.total_visit_times}): {link.my_ulink.last_visit_at}
+                  </span>
+                <% end %>
+
+                <.link
+                  :if={@current_scope.user.id == link.user_id}
+                  navigate={~p"/links/#{link}/edit"}
+                  class="btn"
+                >
+                  <.icon name="hero-pencil" class="size-3" />
+                </.link>
+
+                <.link
+                  :if={@current_scope.user.id == link.user_id}
+                  phx-click={JS.push("delete", value: %{id: link.id}) |> hide("##{id}")}
+                  data-confirm="Are you sure?"
+                  class="btn text-red-400"
+                >
+                  <.icon name="hero-trash" class="size-3" />
+                </.link>
+
+                <%= if link.my_ulink && link.my_ulink.pin_at do %>
+                  <span class="text-sm text-gray-500">Pin: {link.my_ulink.pin_at}</span>
+                  <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})}>
+                    Unpin
+                  </.button>
+                <% else %>
+                  <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})} alt="Pin">
+                    <.icon name="hero-map-pin" class="size-3" />
+                  </.button>
+                <% end %>
+
+                <%= if link.my_ulink && link.my_ulink.favor_at do %>
+                  <span class="text-sm text-gray-500">Favor: {link.my_ulink.favor_at}</span>
+                  <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
+                    Unfavor
+                  </.button>
+                <% else %>
+                  <.button phx-click={JS.push("toggle_favor", value: %{id: link.id})}>
+                    <.icon name="hero-star" class="size-3" />
+                  </.button>
+                <% end %>
+              </div>
+
+              <div class="text-sm text-gray-500">
+                <span class="text-sm text-gray-500">ID: {link.id}</span>
+                <span class="mx-2">•</span>
+                <span class="i-carbon-calendar mr-1"></span> Updated at: {link.updated_at}
+                <span class="mx-2">•</span>
+                <span class="i-carbon-user mr-1">User: <strong>{link.user.name}</strong></span>
+                <span class="mx-2">•</span>
+                <span class="i-carbon-user mr-1">Site: {link.site && link.site.name}</span>
+              </div>
+
+              <div :if={@current_scope && @inline_note}>
+                <%= if link.my_ulink && link.my_ulink.note do %>
+                  <textarea
+                    type="textarea"
+                    class="textarea textarea-sm textarea-accent w-3/4"
+                    label="Note"
+                    placeholder="Note here"
+                    phx-blur={JS.push("update_note", value: %{id: link.id})}
+                  >{link.my_ulink.note}</textarea>
+                <% else %>
+                  <textarea
+                    type="textarea"
+                    class="textarea textarea-sm textarea-accent w-3/4"
+                    label="Note"
+                    placeholder="Note here"
+                    phx-blur={JS.push("update_note", value: %{id: link.id})}
+                  ></textarea>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div :if={@end_of_timeline?} class="mt-1 text-[20px] text-center">
+          🎉 Reached the end 🎉
+        </div>
       </div>
     </div>
 
@@ -174,17 +182,17 @@
       <h2>Hot tags</h2>
       <ul class="menu menu-vertical bg-base-100 w-56 rounded-box">
         <li :for={tag <- Links.hot_tags()}>
-          <%= if tag.id == @the_tag_id do %>
+          <%= if tag.id == @tag_id do %>
             <.link
               class="badge badge-primary"
-              phx-click={JS.push("toggle_the_tag_id", value: %{id: tag.id})}
+              phx-click={JS.push("toggle_tag_id", value: %{id: tag.id})}
             >
               {tag.name}({tag.count})
             </.link>
           <% else %>
             <.link
-              class="badge badge-accent  hover:bg-primary truncate"
-              phx-click={JS.push("toggle_the_tag_id", value: %{id: tag.id})}
+              class="badge badge-accent  hover:bg-secondary truncate"
+              phx-click={JS.push("toggle_tag_id", value: %{id: tag.id})}
             >
               {tag.name}({tag.count})
             </.link>
@@ -195,17 +203,17 @@
       <h2>Hot sites</h2>
       <ul class="menu menu-vertical bg-base-100 w-56 rounded-box">
         <li :for={site <- Links.hot_sites()}>
-          <%= if site.id == @the_site_id do %>
+          <%= if site.id == @site_id do %>
             <.link
               class="badge badge-primary"
-              phx-click={JS.push("toggle_the_site_id", value: %{id: site.id})}
+              phx-click={JS.push("toggle_site_id", value: %{id: site.id})}
             >
               {site.name}({site.count})
             </.link>
           <% else %>
             <.link
-              class="badge badge-accent hover:bg-primary truncate"
-              phx-click={JS.push("toggle_the_site_id", value: %{id: site.id})}
+              class="badge badge-accent hover:bg-secondary truncate"
+              phx-click={JS.push("toggle_site_id", value: %{id: site.id})}
             >
               {site.name}({site.count})
             </.link>

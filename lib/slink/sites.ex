@@ -72,9 +72,15 @@ defmodule Slink.Sites do
     Repo.get_by!(Site, id: id, user_id: scope.user.id)
   end
 
+  def get_site(id) do
+    Repo.get_by(Site, id: id)
+  end
+
   def get_by_url(url) do
     Repo.get_by(Site, url: url)
   end
+
+  def get_by_name(name) when is_binary(name), do: Repo.get_by(Site, name: name)
 
   @doc """
   Creates a site.
