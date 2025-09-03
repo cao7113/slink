@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.17 (2025-09-03)
+
+
+
+
+### Improvements:
+
+* add links kind nav by Ryn Cao
+
 ## v0.3.16 (2025-08-28)
 
 
