@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.3.18 (2025-09-03)
+
+
+
+
+### Improvements:
+
+* refactor search logic and add init tag filter param by Ryn Cao
+
 ## v0.3.17 (2025-09-03)
 
 
