@@ -76,12 +76,13 @@ defmodule Slink.Links do
 
   @doc """
   Search links with related resources
-  info keys:
+
+  keys:
   - current_scope: current scope, maybe nil
+  - kind: one of ["latest", "pinned", "favored", "collected"]
   - q: query keyword
   - tag_id: related tag id
   - site_id: related site id
-  - kind: one of ["latest", "pinned", "favored", "collected"]
   - page: page number
   - per_page: page size per page
   """
@@ -103,55 +104,55 @@ defmodule Slink.Links do
 
   def build_search_query(scope, opts) do
     kind = Keyword.get(opts, :kind, "latest")
-    query = Keyword.get(opts, :q, "") |> String.trim()
+    q = Keyword.get(opts, :q, "") |> String.trim()
     tag_id = Keyword.get(opts, :tag_id)
     site_id = Keyword.get(opts, :site_id)
     order_by = Keyword.get(opts, :order_by, true)
 
-    q = from(l in Link)
+    query = from(l in Link)
 
-    q =
-      case query do
-        "" -> q
-        _ -> q |> where([l], ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
+    query =
+      case q do
+        "" -> query
+        _ -> query |> where([l], ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
       end
 
     # tag support
-    q =
+    query =
       if tag_id do
-        from(l in q,
+        from(l in query,
           join: t in assoc(l, :tags),
           on: t.id == ^tag_id
         )
       else
-        q
+        query
       end
 
     # site support
-    q =
+    query =
       if site_id do
-        from(l in q,
+        from(l in query,
           join: s in assoc(l, :site),
           on: s.id == ^site_id,
           as: :site
         )
       else
-        q
+        query
       end
 
     if scope do
       user = scope.user
 
-      q =
+      query =
         if kind == "collected" do
-          from(l in q,
+          from(l in query,
             join: ul in UserLink,
             # https://hexdocs.pm/ecto/3.13.2/Ecto.Query.html#module-named-bindings
             as: :ul,
             on: l.id == ul.link_id and ul.user_id == ^user.id
           )
         else
-          from(l in q,
+          from(l in query,
             left_join: ul in UserLink,
             # https://hexdocs.pm/ecto/3.13.2/Ecto.Query.html#module-named-bindings
             as: :ul,
@@ -159,35 +160,35 @@ defmodule Slink.Links do
           )
         end
 
-      q =
+      query =
         case kind do
           "latest" ->
-            q
+            query
 
           "pinned" ->
-            q |> where([l, ul: ul], not is_nil(ul.pin_at))
+            query |> where([l, ul: ul], not is_nil(ul.pin_at))
 
           "favored" ->
-            q |> where([l, ul: ul], not is_nil(ul.favor_at))
+            query |> where([l, ul: ul], not is_nil(ul.favor_at))
 
           "collected" ->
-            q
+            query
         end
 
       # pin or favor selected support
       if order_by do
-        q =
+        query =
           case kind do
             "latest" ->
-              q
+              query
               |> order_by([l, ul: ul],
-                desc_nulls_last: ul.last_visit_at,
+                # desc_nulls_last: ul.last_visit_at,
                 desc: l.updated_at,
                 desc: l.id
               )
 
             "pinned" ->
-              q
+              query
               |> order_by([l, ul: ul],
                 desc_nulls_last: ul.pin_at,
                 desc: l.updated_at,
@@ -195,7 +196,7 @@ defmodule Slink.Links do
               )
 
             "favored" ->
-              q
+              query
               |> order_by([l, ul: ul],
                 desc_nulls_last: ul.favor_at,
                 desc: l.updated_at,
@@ -203,25 +204,25 @@ defmodule Slink.Links do
               )
 
             "collected" ->
-              q
+              query
               |> order_by([l, ul: ul],
                 desc_nulls_last: ul.updated_at,
                 desc: ul.id
               )
           end
 
-        q
+        query
         |> select([l, ul: ul], %{l | my_ulink: ul})
       else
-        q
+        query
       end
     else
       # no user scope
       if order_by do
-        q
+        query
         |> order_by([l], desc: l.updated_at, desc: l.id)
       else
-        q
+        query
       end
     end
   end
