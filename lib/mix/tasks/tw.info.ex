@@ -21,7 +21,8 @@ defmodule Mix.Tasks.Tw.Info do
       bin_path: Tailwind.bin_path(),
       bin_version: Tailwind.bin_version() |> elem(1),
       profile: Application.get_env(:tailwind, @app, :default),
-      changes: "https://github.com/tailwindlabs/tailwindcss/blob/main/CHANGELOG.md"
+      changes: "https://github.com/tailwindlabs/tailwindcss/blob/main/CHANGELOG.md",
+      hex: "https://github.com/phoenixframework/tailwind/blob/main/CHANGELOG.md"
     ]
     |> IO.inspect(
       label: "TailwindCSS info",
