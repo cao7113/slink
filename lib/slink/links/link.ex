@@ -79,6 +79,7 @@ defmodule Slink.Links.Link do
     |> validate_length(:title, min: 2, max: 200)
     |> validate_length(:url, min: 5, max: 255)
     |> unique_constraint(:url, name: "links_url_index")
+    |> validate_format(:url, ~r/^https?:\/\//i, message: "must start with http:// or https://")
     |> prepare_changes(fn cs ->
       input_tags = cs.changes[:input_tags]
       # todo check name length

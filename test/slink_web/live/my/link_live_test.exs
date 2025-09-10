@@ -5,7 +5,7 @@ defmodule SlinkWeb.My.LinkLiveTest do
   import Slink.LinksFixtures
 
   @create_attrs %{title: "some title", url: "http://some.url"}
-  @update_attrs %{title: "some updated title", url: "some updated url"}
+  @update_attrs %{title: "some updated title", url: unique_link_url()}
   @invalid_attrs %{title: nil, url: nil}
 
   setup :register_and_log_in_user

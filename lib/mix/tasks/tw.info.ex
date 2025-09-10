@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Tailwind.Info do
+defmodule Mix.Tasks.Tw.Info do
   @moduledoc """
   Get tailwind info
 
@@ -18,11 +18,13 @@ defmodule Mix.Tasks.Tailwind.Info do
   def run(_) do
     [
       version: Application.get_env(:tailwind, :version, Tailwind.latest_version()),
+      bin_path: Tailwind.bin_path(),
+      bin_version: Tailwind.bin_version() |> elem(1),
       profile: Application.get_env(:tailwind, @app, :default),
       changes: "https://github.com/tailwindlabs/tailwindcss/blob/main/CHANGELOG.md"
     ]
     |> IO.inspect(
-      label: "tailwind info",
+      label: "TailwindCSS info",
       pretty: true
     )
   end

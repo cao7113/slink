@@ -20,7 +20,7 @@ defmodule SlinkWeb.Layouts do
 
   def app_navbar(assigns) do
     ~H"""
-    <ul class="flex flex-column items-center">
+    <ul class="flex items-center">
       <li>
         <.link href={~p"/links"} class="btn btn-ghost">Links</.link>
       </li>
@@ -46,6 +46,9 @@ defmodule SlinkWeb.Layouts do
             </li>
             <li>
               <.link href={~p"/pages/daisyui"}>DaisyUI</.link>
+            </li>
+            <li>
+              <.link href={~p"/pages/test"}>Test</.link>
             </li>
             <li>
               <.link href={~p"/home"}>Pages Home</.link>
@@ -161,9 +164,9 @@ defmodule SlinkWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar fixed px-4 z-10 sm:px-4 lg:px-8">
+    <header class="navbar sticky top-0 px-6 z-10 bg-base-100">
       <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
+        <a href="/">
           <span class="text-md font-semibold">Slink</span>
           <span class="text-sm">v{Application.spec(:slink, :vsn)}</span>
         </a>
@@ -173,10 +176,8 @@ defmodule SlinkWeb.Layouts do
       </div>
     </header>
 
-    <main class="px-4 sm:pt-2 sm:px-4 lg:px-8">
-      <div class="mx-auto max-w-4xl mt-12 space-y-1">
-        {render_slot(@inner_block)}
-      </div>
+    <main class="mx-auto max-w-5xl px-2">
+      {render_slot(@inner_block)}
     </main>
 
     <.flash_group flash={@flash} />

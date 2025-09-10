@@ -24,6 +24,7 @@ defmodule SlinkWeb.Router do
     get "/home", PageController, :home
     get "/pages/tailwind", PageController, :tailwind
     get "/pages/daisyui", PageController, :daisyui
+    get "/pages/test", PageController, :test
   end
 
   # API

@@ -63,7 +63,9 @@ config :slink, Slink.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.25.4",
+  # https://github.com/evanw/esbuild/releases
+  # run below after updated version: mix esbuild.install --if-missing
+  version: "0.25.9",
   slink: [
     args:
       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
@@ -73,8 +75,10 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  # version: "4.1.7",
-  version: "4.1.12",
+  # https://github.com/tailwindlabs/tailwindcss/releases/
+  # should run below after changed the version:
+  # mix tailwind.install --if-missing
+  version: "4.1.13",
   slink: [
     args: ~w(
       --input=assets/css/app.css

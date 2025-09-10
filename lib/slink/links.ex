@@ -114,7 +114,7 @@ defmodule Slink.Links do
     query =
       case q do
         "" -> query
-        _ -> query |> where([l], ilike(l.title, ^"%#{query}%") or ilike(l.url, ^"%#{query}%"))
+        _ -> query |> where([l], ilike(l.title, ^"%#{q}%") or ilike(l.url, ^"%#{q}%"))
       end
 
     # tag support
@@ -228,6 +228,22 @@ defmodule Slink.Links do
   end
 
   def search1(info \\ []), do: search_links(info |> Keyword.put_new(:per_page, 1))
+
+  def find_non_http_links() do
+    query =
+      from(l in Link)
+      |> where([l], not like(l.url, "%http%"))
+
+    query |> Repo.all()
+  end
+
+  def clean_non_http_links() do
+    query =
+      from(l in Link)
+      |> where([l], not like(l.url, "%http%"))
+
+    query |> Repo.delete_all()
+  end
 
   @doc """
   Gets a single link.

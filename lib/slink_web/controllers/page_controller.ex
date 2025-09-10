@@ -14,4 +14,10 @@ defmodule SlinkWeb.PageController do
     conn
     |> render(:daisyui)
   end
+
+  def test(conn, _params) do
+    conn
+    |> put_root_layout(html: false)
+    |> render(:test)
+  end
 end

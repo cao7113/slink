@@ -10,7 +10,7 @@ defmodule SlinkWeb.Api.LinkControllerTest do
   }
   @update_attrs %{
     title: "some updated title",
-    url: "some updated url"
+    url: "http://some-updated-url"
   }
   @invalid_attrs %{title: nil, url: nil}
 
@@ -93,10 +93,12 @@ defmodule SlinkWeb.Api.LinkControllerTest do
 
       conn = get(conn, ~p"/api/links/#{id}")
 
+      expected_url = @update_attrs[:url]
+
       assert %{
                "id" => ^id,
                "title" => "some updated title",
-               "url" => "some updated url"
+               "url" => ^expected_url
              } = json_response(conn, 200)["data"]
     end
 

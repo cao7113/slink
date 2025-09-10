@@ -48,11 +48,11 @@ defmodule Slink.LinksTest do
     test "update_link/3 with valid data updates the link" do
       scope = user_scope_fixture()
       link = link_fixture(scope)
-      update_attrs = %{title: "some updated title", url: "some updated url"}
+      update_attrs = %{title: "some updated title", url: unique_link_url()}
 
       assert {:ok, %Link{} = link} = Links.update_link(scope, link, update_attrs)
       assert link.title == "some updated title"
-      assert link.url == "some updated url"
+      assert link.url == update_attrs.url
     end
 
     test "update_link/3 with invalid scope raises" do

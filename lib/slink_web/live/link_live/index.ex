@@ -38,11 +38,15 @@ defmodule SlinkWeb.LinkLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("prev-page", %{"_overran" => true}, socket) do
+  # https://hexdocs.pm/phoenix_live_view/1.1.0-rc.4/bindings.html#scroll-events-and-infinite-pagination
+  def handle_event("prev-page", %{"_overran" => true} = _params, socket) do
+    # {"prev-page _overran", params} |> dbg
     {:noreply, stream_items(socket, page: 1)}
   end
 
-  def handle_event("prev-page", _, socket) do
+  def handle_event("prev-page", _params, socket) do
+    # {"prev-page", params} |> dbg
+
     if socket.assigns.page > 1 do
       {:noreply, stream_items(socket, page: socket.assigns.page - 1)}
     else
@@ -50,7 +54,8 @@ defmodule SlinkWeb.LinkLive.Index do
     end
   end
 
-  def handle_event("next-page", _, socket) do
+  def handle_event("next-page", _params, socket) do
+    # {"next-page", params} |> dbg
     {:noreply, stream_items(socket, page: socket.assigns.page + 1)}
   end
 
@@ -141,8 +146,8 @@ defmodule SlinkWeb.LinkLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("_try", params, socket) do
-    {params, socket.assigns} |> dbg
+  def handle_event("_try", _params, socket) do
+    # {params, socket.assigns} |> dbg
 
     {:noreply, socket}
   end
@@ -168,6 +173,9 @@ defmodule SlinkWeb.LinkLive.Index do
       |> Map.take([:current_scope, :kind, :tag_id, :site_id, :page, :per_page])
       |> Map.to_list()
       |> Keyword.put(:q, q)
+
+    # debug_info = search_info |> Keyword.delete(:current_scope)
+    # debug_info |> dbg
 
     total_count = Links.search_links_count(search_info)
     items = Links.search_links(search_info)
