@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.19](https://github.com/cao7113/slink/compare/v0.3.18...v0.3.19) (2025-09-10)
+
+
+
+
+### Improvements:
+
+* upgrade tailwindcss and esbuild version and refactor links page layout by Ryn Cao
+
 ## v0.3.18 (2025-09-03)
 
 
