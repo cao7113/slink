@@ -66,7 +66,7 @@ tasks:
     mix run run/fly-db-local-restore.exs
     mix run run/dev/seed.exs
 
-  ## Git ops
+  ## Git ops https://github.com/zachdaniel/git_ops/blob/master/CHANGELOG.md
   ops: mix git_ops.project_info
   ops.up: |
     mix git_ops.release --yes

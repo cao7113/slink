@@ -2,6 +2,7 @@ import Config
 
 config :git_ops,
   mix_project: Mix.Project.get!(),
+  repository_url: "https://github.com/cao7113/slink",
   types: [tidbit: [hidden?: true], important: [header: "Important Changes"]],
   github_handle_lookup?: true,
   version_tag_prefix: "v",
