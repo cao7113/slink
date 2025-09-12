@@ -205,7 +205,7 @@ defmodule SlinkWeb.LinkLive.Index do
         socket
         |> assign(end_of_timeline?: false)
         |> assign(:page, new_page)
-        |> stream(:links, items, at: at, limit: limit, reset: total_count <= per_page)
+        |> stream(:links, items, at: at, limit: limit, reset: true)
     end
   end
 
