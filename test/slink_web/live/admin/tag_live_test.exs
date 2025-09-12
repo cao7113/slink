@@ -4,8 +4,8 @@ defmodule SlinkWeb.Admin.TagLiveTest do
   import Phoenix.LiveViewTest
   import Slink.TagsFixtures
 
-  @create_attrs %{name: "some name", group: "some group"}
-  @update_attrs %{name: "some updated name", group: "some updated group"}
+  @create_attrs %{name: unique_tag_name(), group: "some group"}
+  @update_attrs %{name: unique_tag_name(), group: "some updated group"}
   @invalid_attrs %{name: nil, group: nil}
 
   setup :register_and_log_in_user
@@ -58,7 +58,7 @@ defmodule SlinkWeb.Admin.TagLiveTest do
 
       html = render(index_live)
       assert html =~ "Tag created successfully"
-      assert html =~ "some name"
+      assert html =~ @create_attrs[:name]
     end
 
     test "updates tag in listing", %{conn: conn, tag: tag} do
@@ -84,7 +84,8 @@ defmodule SlinkWeb.Admin.TagLiveTest do
 
       html = render(index_live)
       assert html =~ "Tag updated successfully"
-      assert html =~ "some updated name"
+
+      assert html =~ @update_attrs[:name]
     end
 
     test "deletes tag in listing", %{conn: conn, tag: tag} do
@@ -130,7 +131,7 @@ defmodule SlinkWeb.Admin.TagLiveTest do
 
       html = render(show_live)
       assert html =~ "Tag updated successfully"
-      assert html =~ "some updated name"
+      assert html =~ @update_attrs[:name]
     end
   end
 end

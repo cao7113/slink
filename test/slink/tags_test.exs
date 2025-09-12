@@ -29,13 +29,15 @@ defmodule Slink.TagsTest do
     end
 
     test "create_tag/2 with valid data creates a tag" do
-      valid_attrs = %{name: "some name", group: "some group"}
+      valid_attrs = %{name: unique_tag_name(), group: "some group"}
       scope = user_scope_fixture()
 
       assert {:ok, %Tag{} = tag} = Tags.create_tag(scope, valid_attrs)
-      assert tag.name == "some name"
+      assert tag.name == valid_attrs.name
       assert tag.group == "some group"
       assert tag.user_id == scope.user.id
+
+      # name format normalize! only contains alphanumeric characters
     end
 
     test "create_tag/2 with invalid data returns error changeset" do
@@ -58,10 +60,10 @@ defmodule Slink.TagsTest do
     test "update_tag/3 with valid data updates the tag" do
       scope = user_scope_fixture()
       tag = tag_fixture(scope)
-      update_attrs = %{name: "some updated name", group: "some updated group"}
+      update_attrs = %{name: unique_tag_name(), group: "some updated group"}
 
       assert {:ok, %Tag{} = tag} = Tags.update_tag(scope, tag, update_attrs)
-      assert tag.name == "some updated name"
+      assert tag.name == update_attrs.name
       assert tag.group == "some updated group"
     end
 

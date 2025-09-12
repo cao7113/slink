@@ -25,6 +25,9 @@ defmodule SlinkWeb.Layouts do
         <.link href={~p"/links"} class="btn btn-ghost">Links</.link>
       </li>
       <li>
+        <.link href={~p"/pages/info"} class="btn btn-ghost">Info</.link>
+      </li>
+      <li>
         <.link href={Builder.scm_url()} target="_blank" class="btn btn-ghost">Code</.link>
       </li>
       <li :if={is_dev?()}>
@@ -42,16 +45,13 @@ defmodule SlinkWeb.Layouts do
               <.link href="/dev/mailbox">Mailbox</.link>
             </li>
             <li>
-              <.link href={~p"/pages/tailwind"}>TailwindCSS</.link>
-            </li>
-            <li>
-              <.link href={~p"/pages/daisyui"}>DaisyUI</.link>
+              <.link href={~p"/pages/ui"}>UI Playground</.link>
             </li>
             <li>
               <.link href={~p"/pages/test"}>Test</.link>
             </li>
             <li>
-              <.link href={~p"/home"}>Pages Home</.link>
+              <.link href={~p"/home"}>Raw Home</.link>
             </li>
           </ul>
         </div>

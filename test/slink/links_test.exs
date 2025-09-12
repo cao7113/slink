@@ -120,7 +120,7 @@ defmodule Slink.LinksTest do
       %{tags: [tag]} =
         link
         |> Ecto.Changeset.change()
-        |> Link.tags_changeset("tag1", scope)
+        |> Link.add_tags_changest("tag1", scope)
         |> Repo.update!()
         |> Repo.preload(:tags)
 
@@ -129,7 +129,7 @@ defmodule Slink.LinksTest do
       %{tags: []} =
         link
         |> Ecto.Changeset.change()
-        |> Link.tags_changeset("", scope)
+        |> Link.add_tags_changest("", scope)
         |> Repo.update!()
         |> Repo.preload(:tags)
     end

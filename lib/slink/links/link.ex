@@ -82,24 +82,20 @@ defmodule Slink.Links.Link do
     |> validate_format(:url, ~r/^https?:\/\//i, message: "must start with http:// or https://")
     |> prepare_changes(fn cs ->
       input_tags = cs.changes[:input_tags]
-      # todo check name length
-      # keep tags order
-
-      if input_tags do
-        cs
-        |> tags_changeset(input_tags, user_scope)
-        |> put_change(:updated_at, DateTime.utc_now(:second))
-      else
-        cs
-      end
+      add_tags_changest(cs, input_tags, user_scope)
     end)
     |> put_change(:user_id, user_scope.user.id)
   end
 
-  ## todo move to Links.
-  #
-  def tags_changeset(cs, input_tags, user_scope) do
-    cs |> put_assoc(:tags, parse_tags(input_tags, user_scope))
+  def add_tags_changest(cs, nil, _scope), do: cs
+
+  ## todo move to Links
+  def add_tags_changest(cs, input_tags, user_scope) do
+    tags = parse_tags(input_tags, user_scope)
+
+    cs
+    |> put_change(:tags, tags)
+    |> put_change(:updated_at, DateTime.utc_now(:second))
   end
 
   # https://hexdocs.pm/ecto/3.13.2/constraints-and-upserts.html
@@ -111,7 +107,8 @@ defmodule Slink.Links.Link do
     |> insert_and_get_all(user_scope)
   end
 
-  defp do_parse_tags(tags) when is_binary(tags), do: tags |> String.split(",")
+  # 中文或英文逗号，分号，顿号
+  defp do_parse_tags(tags) when is_binary(tags), do: tags |> String.split(~r/[,，;；、]/)
   defp do_parse_tags(tags) when is_list(tags), do: tags
 
   defp insert_and_get_all([], _), do: []

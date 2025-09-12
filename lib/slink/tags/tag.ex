@@ -21,6 +21,9 @@ defmodule Slink.Tags.Tag do
     |> cast(attrs, [:name, :group])
     |> validate_required([:name])
     |> validate_name_length()
+    |> validate_format(:name, ~r/^[\w\-]+$/,
+      message: "only contain letters, numbers, underscore and hyphens"
+    )
     |> unique_constraint(:name, name: "tags_name_index")
     |> put_change(:user_id, user_scope.user.id)
   end
