@@ -12,6 +12,9 @@
     </script>
     <script>
       (() => {
+
+        // const defaultTheme = "system";
+        const defaultTheme = "light";
         const setTheme = (theme) => {
           if (theme === "system") {
             localStorage.removeItem("phx:theme");
@@ -21,11 +24,24 @@
             document.documentElement.setAttribute("data-theme", theme);
           }
         };
+        
         if (!document.documentElement.hasAttribute("data-theme")) {
-          setTheme(localStorage.getItem("phx:theme") || "system");
+          setTheme(localStorage.getItem("phx:theme") || defaultTheme);
         }
-        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || defaultTheme));
         window.addEventListener("phx:set-theme", ({ detail: { theme } }) => setTheme(theme));
+
+        const toggleTheme = () => {
+          theme = document.documentElement.getAttribute("data-theme")||defaultTheme;
+          if (theme === "dark") {
+            toTheme = "light";
+          } else {
+            toTheme = "dark";
+          }
+          //console.log("toggling to theme: " + toTheme)
+          setTheme(toTheme);
+        };
+        window.addEventListener("phx:toggle-theme", () => toggleTheme());
       })();
     </script>
   </head>

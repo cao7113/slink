@@ -134,7 +134,7 @@ defmodule SlinkWeb.Layouts do
       <% end %>
 
       <li>
-        <.theme_toggle_mini />
+        <.theme_toggle_switch />
       </li>
     </ul>
     """
@@ -278,6 +278,20 @@ defmodule SlinkWeb.Layouts do
         class="flex p-2 cursor-pointer w-1/2"
       >
         <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
+      </button>
+    </div>
+    """
+  end
+
+  def theme_toggle_switch(assigns) do
+    ~H"""
+    <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
+      <button
+        phx-click={JS.dispatch("phx:toggle-theme")}
+        class="flex p-2 cursor-pointer"
+      >
+        <%!-- hero-moon-micro --%>
+        <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
       </button>
     </div>
     """
