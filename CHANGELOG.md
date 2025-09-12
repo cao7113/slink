@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.25](https://github.com/cao7113/slink/compare/v0.3.24...v0.3.25) (2025-09-12)
+
+
+
+
+### Improvements:
+
+* use one light/dark theme swither by Ryn Cao
+
 ## [v0.3.24](https://github.com/cao7113/slink/compare/v0.3.23...v0.3.24) (2025-09-12)
 
 
