@@ -134,7 +134,7 @@ defmodule SlinkWeb.Layouts do
       <% end %>
 
       <li>
-        <.theme_toggle />
+        <.theme_toggle_mini />
       </li>
     </ul>
     """
@@ -254,6 +254,28 @@ defmodule SlinkWeb.Layouts do
       <button
         phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "dark"})}
         class="flex p-2 cursor-pointer w-1/3"
+      >
+        <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
+      </button>
+    </div>
+    """
+  end
+
+  def theme_toggle_mini(assigns) do
+    ~H"""
+    <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
+      <div class="absolute w-1/2 h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 [[data-theme=light]_&]:left-0 [[data-theme=dark]_&]:left-1/2 transition-[left]" />
+
+      <button
+        phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "light"})}
+        class="flex p-2 cursor-pointer w-1/2"
+      >
+        <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
+      </button>
+
+      <button
+        phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "dark"})}
+        class="flex p-2 cursor-pointer w-1/2"
       >
         <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
       </button>

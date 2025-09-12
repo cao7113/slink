@@ -8,8 +8,8 @@
         No pinned links yet. Pin some links to see them here!
       </li>
       <li :for={ulink <- @pin_user_links}>
-        <.link href={ulink.link.url} class="link link-info" target="_blank">
-          <p class="truncate w-100">{ulink.link.title}</p>
+        <.link href={ulink.link.url} class="link link-info truncate" target="_blank">
+          {ulink.link.title}
         </.link>
       </li>
     </ul>
