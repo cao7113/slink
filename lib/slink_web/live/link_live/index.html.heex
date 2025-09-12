@@ -1,6 +1,6 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
   <%= if not Enum.empty?(@pin_user_links) do %>
-    <div class="sticky top-16 z-1 bg-base-100 border-1 border-green-300">
+    <div class="sticky top-16 h-20 z-1 bg-base-100 border-1 border-green-300">
       <ul class="">
         <li :for={ulink <- @pin_user_links}>
           <.link href={ulink.link.url} class="link link-info" target="_blank">
@@ -12,8 +12,8 @@
   <% end %>
 
   <div class="flex">
-    <div class="flex-1">
-      <div class="flex flex-col sticky top-34 z-1 bg-base-100">
+    <div class="flex-1 min-w-5/6">
+      <div class="flex flex-col sticky top-36 z-1 bg-base-100">
         <div class="flex flex-rows">
           <span class="text-xl font-bold p-2">Links({@links_count})</span>
 
@@ -22,11 +22,7 @@
               class="link link-info divider"
               phx-click={JS.push("change_kind", value: %{kind: kind})}
             >
-              <%= if @kind == kind do %>
-                <span class="capitalize bg-blue-200">{kind}</span>
-              <% else %>
-                <span class="capitalize">{kind}</span>
-              <% end %>
+              <span class={["capitalize", @kind == kind && "bg-blue-200"]}>{kind}</span>
             </.link>
           </span>
         </div>
@@ -68,30 +64,28 @@
         phx-viewport-top={@page > 1 && JS.push("prev-page", page_loading: true)}
         phx-viewport-bottom={!@end_of_timeline? && JS.push("next-page", page_loading: true)}
         class={[
-          if(@end_of_timeline?, do: "pb-3", else: "pb-[calc(200vh)]"),
-          if(@page == 1, do: "pt-2", else: "pt-[calc(200vh)]")
+          if(@end_of_timeline?, do: "pb-3", else: "pb-3"),
+          if(@page == 1, do: "pt-2", else: "pt-2")
         ]}
       >
         <li :for={{id, link} <- @streams.links} id={id}>
           <div class="card bg-base-100 shadow-md p-1 rounded-box">
-            <div class="flex justify-between items-start">
-              <h3 class="card-title font-semibold text-xl flex items-center">
-                <.link navigate={~p"/links/#{link}"}>
-                  {link.title}
-                </.link>
-              </h3>
-            </div>
+            <p class="card-title font-semibold text-xl">
+              <.link navigate={~p"/links/#{link}"} class="truncate">
+                {link.title}
+              </.link>
+            </p>
 
-            <div class="flex items-center">
+            <p class="flex items-center">
               <.link
                 href={link.url}
                 target="_blank"
-                class="link link-hover text-blue-600 truncate max-w-[80%]"
+                class="link link-hover text-blue-600 truncate"
                 phx-click={JS.push("open_link", value: %{id: link.id})}
               >
                 {link.url}
               </.link>
-            </div>
+            </p>
 
             <div class="flex items-center">
               <%= for tag <- link.tags do %>

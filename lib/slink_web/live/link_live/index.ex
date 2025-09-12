@@ -33,6 +33,8 @@ defmodule SlinkWeb.LinkLive.Index do
     socket =
       socket
       |> assign(:search_form, to_form(params))
+      # set current page to 1 every search
+      |> assign(:page, 1)
       |> stream_items(page: 1)
 
     {:noreply, socket}
@@ -40,13 +42,10 @@ defmodule SlinkWeb.LinkLive.Index do
 
   # https://hexdocs.pm/phoenix_live_view/1.1.0-rc.4/bindings.html#scroll-events-and-infinite-pagination
   def handle_event("prev-page", %{"_overran" => true} = _params, socket) do
-    # {"prev-page _overran", params} |> dbg
     {:noreply, stream_items(socket, page: 1)}
   end
 
   def handle_event("prev-page", _params, socket) do
-    # {"prev-page", params} |> dbg
-
     if socket.assigns.page > 1 do
       {:noreply, stream_items(socket, page: socket.assigns.page - 1)}
     else
@@ -55,7 +54,6 @@ defmodule SlinkWeb.LinkLive.Index do
   end
 
   def handle_event("next-page", _params, socket) do
-    # {"next-page", params} |> dbg
     {:noreply, stream_items(socket, page: socket.assigns.page + 1)}
   end
 
@@ -63,6 +61,7 @@ defmodule SlinkWeb.LinkLive.Index do
     socket =
       socket
       |> assign(:kind, kind)
+      |> assign(:page, 1)
       |> stream_items()
 
     {:noreply, socket}
@@ -122,7 +121,8 @@ defmodule SlinkWeb.LinkLive.Index do
     socket =
       socket
       |> assign(:tag_id, new_id)
-      |> stream_items()
+      |> assign(:page, 1)
+      |> stream_items(page: 1)
 
     {:noreply, socket}
   end
@@ -133,6 +133,7 @@ defmodule SlinkWeb.LinkLive.Index do
     socket =
       socket
       |> assign(:site_id, new_id)
+      |> assign(:page, 1)
       |> stream_items(page: 1)
 
     {:noreply, socket}
@@ -147,8 +148,6 @@ defmodule SlinkWeb.LinkLive.Index do
   end
 
   def handle_event("_try", _params, socket) do
-    # {params, socket.assigns} |> dbg
-
     {:noreply, socket}
   end
 
@@ -164,7 +163,7 @@ defmodule SlinkWeb.LinkLive.Index do
   """
   def stream_items(socket, opts \\ []) do
     q = socket.assigns.search_form.params |> Map.get("q", "")
-    %{per_page: per_page, page: cur_page} = socket.assigns
+    %{page: cur_page, per_page: per_page} = socket.assigns
     new_page = Keyword.get(opts, :page, 1) |> get_page()
 
     search_info =
@@ -174,9 +173,6 @@ defmodule SlinkWeb.LinkLive.Index do
       |> Map.to_list()
       |> Keyword.put(:q, q)
 
-    # debug_info = search_info |> Keyword.delete(:current_scope)
-    # debug_info |> dbg
-
     total_count = Links.search_links_count(search_info)
     items = Links.search_links(search_info)
 
@@ -184,24 +180,32 @@ defmodule SlinkWeb.LinkLive.Index do
       socket
       |> assign(:links_count, total_count)
 
+    num_pages = 3
+
     {items, at, limit} =
       if new_page >= cur_page do
-        {items, -1, per_page * 3 * -1}
+        {items, -1, per_page * num_pages * -1}
       else
-        {Enum.reverse(items), 0, per_page * 3}
+        {Enum.reverse(items), 0, per_page * num_pages}
       end
+
+    if Builder.is_dev?() do
+      Logger.warning(
+        "current-page=#{cur_page} new-page=#{new_page} total-count=#{total_count}  #{Enum.count(items)} items found!"
+      )
+    end
 
     case items do
       [] ->
         socket
         |> assign(end_of_timeline?: at == -1)
-        |> stream(:links, [])
+        |> stream(:links, [], reset: total_count == 0)
 
       [_ | _] = items ->
         socket
         |> assign(end_of_timeline?: false)
         |> assign(:page, new_page)
-        |> stream(:links, items, at: at, limit: limit, reset: true)
+        |> stream(:links, items, at: at, limit: limit, reset: total_count <= per_page)
     end
   end
 
