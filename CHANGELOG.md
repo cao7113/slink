@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.20](https://github.com/cao7113/slink/compare/v0.3.19...v0.3.20) (2025-09-12)
+
+
+
+
+### Improvements:
+
+* friendly support tags separated by chinese comma by Ryn Cao
+
 ## [v0.3.19](https://github.com/cao7113/slink/compare/v0.3.18...v0.3.19) (2025-09-10)
 
 
