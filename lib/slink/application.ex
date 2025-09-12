@@ -5,8 +5,12 @@ defmodule Slink.Application do
 
   use Application
 
+  require Logger
+
   @impl true
   def start(_type, _args) do
+    Logger.info("Starting Slink version: #{Builder.vsn()}")
+
     children = [
       SlinkWeb.Telemetry,
       Slink.Repo,

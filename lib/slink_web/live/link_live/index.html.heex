@@ -1,15 +1,19 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <%= if not Enum.empty?(@pin_user_links) do %>
-    <div class="sticky top-16 h-20 z-1 bg-base-100 border-1 border-green-300">
-      <ul class="">
-        <li :for={ulink <- @pin_user_links}>
-          <.link href={ulink.link.url} class="link link-info" target="_blank">
-            <p class="truncate w-100">{ulink.link.title}</p>
-          </.link>
-        </li>
-      </ul>
-    </div>
-  <% end %>
+  <div class="sticky top-16 h-20 z-1 bg-base-100 border-1 border-green-300">
+    <ul>
+      <li
+        :if={Enum.empty?(@pin_user_links)}
+        class="text-gray-500 text-center p-4"
+      >
+        No pinned links yet. Pin some links to see them here!
+      </li>
+      <li :for={ulink <- @pin_user_links}>
+        <.link href={ulink.link.url} class="link link-info" target="_blank">
+          <p class="truncate w-100">{ulink.link.title}</p>
+        </.link>
+      </li>
+    </ul>
+  </div>
 
   <div class="flex">
     <div class="flex-1 min-w-5/6">
