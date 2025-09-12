@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.22](https://github.com/cao7113/slink/compare/v0.3.21...v0.3.22) (2025-09-12)
+
+
+
+
+### Bug Fixes:
+
+* stream reset when has more data by Ryn Cao
+
 ## [v0.3.21](https://github.com/cao7113/slink/compare/v0.3.20...v0.3.21) (2025-09-12)
 
 
