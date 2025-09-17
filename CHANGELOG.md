@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.28](https://github.com/cao7113/slink/compare/v0.3.27...v0.3.28) (2025-09-17)
+
+
+
+
+### Improvements:
+
+* allow site selected on each link item by Ryn Cao
+
 ## [v0.3.27](https://github.com/cao7113/slink/compare/v0.3.26...v0.3.27) (2025-09-17)
 
 
