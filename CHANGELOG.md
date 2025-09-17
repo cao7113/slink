@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.27](https://github.com/cao7113/slink/compare/v0.3.26...v0.3.27) (2025-09-17)
+
+
+
+
+### Improvements:
+
+* refactor link-tags changeset and add some links by Ryn Cao
+
 ## [v0.3.26](https://github.com/cao7113/slink/compare/v0.3.25...v0.3.26) (2025-09-17)
 
 
