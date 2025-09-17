@@ -3,13 +3,10 @@ defmodule Slink.Links.Link do
   use Ecto.Schema
 
   import Ecto.Changeset
-  import Ecto.Query, only: [from: 2]
 
-  alias Slink.Repo
+  alias Slink.Tags
   alias Slink.Tags.Tag
   alias Slink.Links.LinkTag
-
-  require Logger
 
   @default_limit 20
 
@@ -85,81 +82,18 @@ defmodule Slink.Links.Link do
     |> validate_format(:url, ~r/^https?:\/\//i, message: "must start with http:// or https://")
     |> prepare_changes(fn cs ->
       input_tags = cs.changes[:input_tags]
-      add_tags_changest(cs, input_tags, user_scope)
+      put_tags_changeset(cs, input_tags, user_scope)
     end)
     |> put_change(:user_id, user_scope.user.id)
   end
 
-  def add_tags_changest(cs, nil, _scope), do: cs
+  def put_tags_changeset(cs, nil, _scope), do: cs
 
-  ## todo move to Links
-  def add_tags_changest(cs, input_tags, user_scope) do
-    tags = parse_tags(input_tags, user_scope)
+  def put_tags_changeset(cs, input_tags, user_scope) do
+    tags = Tags.filter_and_ensure_tags(input_tags, user_scope)
 
     cs
     |> put_change(:tags, tags)
     |> put_change(:updated_at, DateTime.utc_now(:second))
-  end
-
-  # https://hexdocs.pm/ecto/3.13.2/constraints-and-upserts.html
-  defp parse_tags(input_tags, user_scope) do
-    input_tags
-    |> do_parse_tags()
-    |> Enum.map(&String.trim/1)
-    |> Enum.reject(&(&1 == ""))
-    |> Enum.uniq()
-    |> check_tag_names_validation()
-    |> insert_and_get_all(user_scope)
-  end
-
-  # 中文或英文逗号，分号，顿号
-  @tag_seperators ~r/[,，;；、]/u
-
-  def do_parse_tags(tags) when is_binary(tags), do: tags |> String.split(@tag_seperators)
-  def do_parse_tags(tags) when is_list(tags), do: tags
-
-  defp check_tag_names_validation(tag_names) do
-    Logger.debug("check_tag_names_validation tag_names: #{inspect(tag_names)}")
-
-    tag_names
-    |> Enum.filter(fn name ->
-      Tag.check_tag_name(name).valid?
-      |> case do
-        true ->
-          true
-
-        false ->
-          Logger.warning("Ignore ivalid tag name: #{inspect(name)}")
-          false
-      end
-    end)
-  end
-
-  defp insert_and_get_all([], _), do: []
-
-  defp insert_and_get_all(names, user_scope) do
-    timestamp = DateTime.utc_now(:second)
-    placeholders = %{timestamp: timestamp}
-
-    maps =
-      Enum.map(
-        names,
-        &%{
-          name: &1,
-          user_id: user_scope.user.id,
-          inserted_at: {:placeholder, :timestamp},
-          updated_at: {:placeholder, :timestamp}
-        }
-      )
-
-    Repo.insert_all(
-      Tag,
-      maps,
-      placeholders: placeholders,
-      on_conflict: :nothing
-    )
-
-    # todo: fix order lost
-    Repo.all(from t in Tag, where: t.name in ^names)
   end
 end

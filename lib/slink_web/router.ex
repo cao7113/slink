@@ -35,30 +35,16 @@ defmodule SlinkWeb.Router do
     get "/ping", ToolsController, :ping
     get "/info", ToolsController, :info
 
-    scope "/" do
-      # todo should be dev-ops route
-      pipe_through [:require_authenticated_api_user]
-
-      get "/info/builder", ToolsController, :build_info
-    end
-
-    # resources "/links", Api.LinkController, except: [:new, :edit]
     get "/links", LinkController, :index
     get "/links/:id", LinkController, :show
 
-    scope "/links" do
-      pipe_through [:require_authenticated_api_user]
-
-      post "/", LinkController, :create
-      put "/:id", LinkController, :update
-      patch "/:id", LinkController, :update
-      delete "/:id", LinkController, :delete
-    end
-
     scope "/" do
-      # todo should be dev-ops route
       pipe_through [:require_authenticated_api_user]
 
+      # public links
+      resources "/links", LinkController, except: [:new, :edit, :index, :show]
+
+      # user_links
       post "/user_links/collect", UserLinkController, :collect
       resources "/user_links", UserLinkController, except: [:new, :edit]
     end
@@ -156,6 +142,9 @@ defmodule SlinkWeb.Router do
         live "/sites/new", SiteLive.Form, :new
         live "/sites/:id", SiteLive.Show, :show
         live "/sites/:id/edit", SiteLive.Form, :edit
+
+        ## Info
+        live "/info", InfoLive.Index, :index
       end
     end
   end

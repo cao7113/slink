@@ -1,0 +1,15 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <h1 class="text-lg font-bold mb-2">Admin Info Page</h1>
+
+  <div class="space-y-2">
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Build Info</h2>
+      <pre class="bg-gray-100 p-4 rounded overflow-auto text-sm">{Builder.info() |> Jason.encode!(pretty: true)}</pre>
+    </div>
+
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Release Info</h2>
+      <pre class="bg-gray-100 p-4 rounded overflow-auto text-sm">{Builder.release_info() |> Jason.encode!(pretty: true)}</pre>
+    </div>
+  </div>
+</Layouts.app>

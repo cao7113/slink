@@ -36,18 +36,4 @@ defmodule SlinkWeb.Api.ToolsControllerTest do
       assert info["msg"] == "Unauthorized"
     end
   end
-
-  describe "GET /api/info/builder" do
-    test "user authorized", %{conn: conn, user: user} do
-      conn =
-        conn
-        |> log_in_user_by_api_token(user: user)
-        |> get(~p"/api/info/builder")
-
-      %{
-        "builder" => _,
-        "release" => _
-      } = json_response(conn, 200)
-    end
-  end
 end

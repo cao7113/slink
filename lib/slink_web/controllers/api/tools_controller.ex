@@ -28,13 +28,4 @@ defmodule SlinkWeb.Api.ToolsController do
 
     json(conn, body)
   end
-
-  def build_info(conn, _params) do
-    info = %{
-      builder: Builder.info(),
-      release: Builder.release_info()
-    }
-
-    json(conn, info)
-  end
 end

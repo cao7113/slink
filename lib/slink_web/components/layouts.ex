@@ -115,6 +115,9 @@ defmodule SlinkWeb.Layouts do
                 <li>
                   <.link href={~p"/admin/sites"}>Sites</.link>
                 </li>
+                <li>
+                  <.link href={~p"/admin/info"}>Info</.link>
+                </li>
               </ul>
             </div>
           </li>
@@ -139,6 +142,11 @@ defmodule SlinkWeb.Layouts do
           >
             <li>
               <.link href={Builder.scm_url()} target="_blank" class="">Code</.link>
+            </li>
+            <li>
+              <.link href={Builder.scm_url()<>"/blob/main/CHANGELOG.md"} target="_blank" class="">
+                Changelog
+              </.link>
             </li>
             <li>
               <.link href={~p"/pages/info"} class="">Info</.link>
