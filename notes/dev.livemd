@@ -41,11 +41,11 @@ Kino.nothing()
 result = Postgrex.query!(conn, ~S"select * from users order by id asc", [])
 ```
 
-<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoicG9zdGdyZXMiLCJ2YXJpYWJsZSI6ImNvbm4ifSwiZGF0YV9mcmFtZV9hbGlhcyI6IkVsaXhpci5FeHBsb3Jlci5EYXRhRnJhbWUiLCJxdWVyeSI6InNlbGVjdCAqIGZyb20gdXNlcnNfdG9rZW5zIG9yZGVyIGJ5IGlkIGRlc2MgbGltaXQgMzAiLCJyZXN1bHRfdmFyaWFibGUiOiJyZXN1bHQyIiwidGltZW91dCI6bnVsbH0","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoicG9zdGdyZXMiLCJ2YXJpYWJsZSI6ImNvbm4ifSwiZGF0YV9mcmFtZV9hbGlhcyI6IkVsaXhpci5FeHBsb3Jlci5EYXRhRnJhbWUiLCJxdWVyeSI6InNlbGVjdCAqIGZyb20gdXNlcnNfdG9rZW5zIG9yZGVyIGJ5IGlkIGRlc2MgbGltaXQgNSIsInJlc3VsdF92YXJpYWJsZSI6InJlc3VsdDIiLCJ0aW1lb3V0IjpudWxsfQ","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
 
 ```elixir
 result2 =
-  Postgrex.query!(conn, ~S"select * from users_tokens order by id desc limit 30", [])
+  Postgrex.query!(conn, ~S"select * from users_tokens order by id desc limit 5", [])
 ```
 
 ## Node info
@@ -148,13 +148,13 @@ opts = [
 {:ok, flyio_conn} = Kino.start_child({Postgrex, opts})
 ```
 
-<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoicG9zdGdyZXMiLCJ2YXJpYWJsZSI6ImZseWlvX2Nvbm4ifSwiZGF0YV9mcmFtZV9hbGlhcyI6IkVsaXhpci5FeHBsb3Jlci5EYXRhRnJhbWUiLCJxdWVyeSI6InNlbGVjdCAqIGZyb20gbGlua3Mgb3JkZXIgYnkgdXBkYXRlZF9hdCBkZXNjIGxpbWl0IDMiLCJyZXN1bHRfdmFyaWFibGUiOiJmbHlpb19saW5rcyIsInRpbWVvdXQiOm51bGx9","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoicG9zdGdyZXMiLCJ2YXJpYWJsZSI6ImZseWlvX2Nvbm4ifSwiZGF0YV9mcmFtZV9hbGlhcyI6IkVsaXhpci5FeHBsb3Jlci5EYXRhRnJhbWUiLCJxdWVyeSI6InNlbGVjdCAqIGZyb20gbGlua3Mgb3JkZXIgYnkgdXBkYXRlZF9hdCBkZXNjIGxpbWl0IDEwIiwicmVzdWx0X3ZhcmlhYmxlIjoiZmx5aW9fbGlua3MiLCJ0aW1lb3V0IjpudWxsfQ","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
 
 ```elixir
 flyio_links =
   Postgrex.query!(
     flyio_conn,
-    ~S"select * from links order by updated_at desc limit 3",
+    ~S"select * from links order by updated_at desc limit 10",
     []
   )
 ```
@@ -207,4 +207,4 @@ Node.set_cookie(node, :"happy-cookie-not-secret-but-for-cluster")
 ss = Kino.RPC.eval_string(node, ~S"Slink.Links.Link.last", file: __ENV__.file)
 ```
 
-<!-- livebook:{"offset":6867,"stamp":{"token":"XCP.oPmMp-CjkpTo0RTsOFW8cVUDWasabQflomygxD4XGxhH-XALPi2Kfz649R5_BygCv0cEnxkYKsiHTWZ_gook3hGl3tC5zXVpwIiqGrLA6STlnsHTy-1-uuX1MrH8loLx","version":2}} -->
+<!-- livebook:{"offset":6868,"stamp":{"token":"XCP.ooZbN7znzZNERfD2JzVEcJlABTtqB_4zQlNXcBRoGqSp_kaLWkxqA6TnVdt9EY-yRP-tdfGn0PlJfBpyKPrTHy5811YFw5isVgqCBoqxn-HAmgV_EBLUkWz3B5pHGTSC","version":2}} -->

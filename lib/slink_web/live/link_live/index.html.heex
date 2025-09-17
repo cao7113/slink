@@ -151,11 +151,26 @@
               <span class="mx-2">•</span>
               <span class="text-sm text-gray-500">ID: {link.id}</span>
               <span class="mx-2">•</span>
-              <span class="i-carbon-calendar mr-1"></span> Updated at: {link.updated_at}
+              <span class="i-carbon-calendar mr-1"></span>
+              Updated at: {link.updated_at}
               <span class="mx-2">•</span>
               <span class="i-carbon-user mr-1">User: <strong>{link.user.name}</strong></span>
               <span class="mx-2">•</span>
-              <span class="i-carbon-user mr-1">Site: {link.site && link.site.name}</span>
+              <span class="i-carbon-user mr-1">
+                Site:
+                <.link
+                  class={[
+                    "badge",
+                    if(link.site.id == @site_id,
+                      do: "badge-primary",
+                      else: "badge-neutral hover:badge-lg"
+                    )
+                  ]}
+                  phx-click={JS.push("toggle_site_id", value: %{id: link.site.id})}
+                >
+                  <span class="w-12 truncate">{link.site && link.site.name}</span>
+                </.link>
+              </span>
             </div>
 
             <div :if={@current_scope && @inline_note}>

@@ -76,15 +76,15 @@ defmodule Slink.Links.Link do
     link
     |> cast(attrs, [:title, :url, :input_tags, :site_id])
     |> validate_required([:title, :url])
-    |> validate_length(:title, min: 2, max: 200)
+    |> validate_length(:title, min: 1, max: 200)
     |> validate_length(:url, min: 5, max: 255)
-    |> unique_constraint(:url, name: "links_url_index")
     |> validate_format(:url, ~r/^https?:\/\//i, message: "must start with http:// or https://")
     |> prepare_changes(fn cs ->
       input_tags = cs.changes[:input_tags]
       put_tags_changeset(cs, input_tags, user_scope)
     end)
     |> put_change(:user_id, user_scope.user.id)
+    |> unique_constraint(:url, name: "links_url_index")
   end
 
   def put_tags_changeset(cs, nil, _scope), do: cs
