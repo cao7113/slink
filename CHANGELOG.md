@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.26](https://github.com/cao7113/slink/compare/v0.3.25...v0.3.26) (2025-09-17)
+
+
+
+
+### Improvements:
+
+* allow chinese tag name in admin tag live and link edit page by Ryn Cao
+
 ## [v0.3.25](https://github.com/cao7113/slink/compare/v0.3.24...v0.3.25) (2025-09-12)
 
 
