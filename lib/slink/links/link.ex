@@ -9,6 +9,8 @@ defmodule Slink.Links.Link do
   alias Slink.Tags.Tag
   alias Slink.Links.LinkTag
 
+  require Logger
+
   @default_limit 20
 
   # https://hexdocs.pm/flop/Flop.Schema.html#module-usage
@@ -38,6 +40,7 @@ defmodule Slink.Links.Link do
     field :list_index, :integer, virtual: true
     # attach current-scope user_link
     field :my_ulink, :map, virtual: true
+    # for tag input
     field :input_tags, :string, virtual: true
     # field :input_tags, {:array, :string}, virtual: true
 
@@ -104,12 +107,33 @@ defmodule Slink.Links.Link do
     |> do_parse_tags()
     |> Enum.map(&String.trim/1)
     |> Enum.reject(&(&1 == ""))
+    |> Enum.uniq()
+    |> check_tag_names_validation()
     |> insert_and_get_all(user_scope)
   end
 
   # 中文或英文逗号，分号，顿号
-  defp do_parse_tags(tags) when is_binary(tags), do: tags |> String.split(~r/[,，;；、]/)
-  defp do_parse_tags(tags) when is_list(tags), do: tags
+  @tag_seperators ~r/[,，;；、]/u
+
+  def do_parse_tags(tags) when is_binary(tags), do: tags |> String.split(@tag_seperators)
+  def do_parse_tags(tags) when is_list(tags), do: tags
+
+  defp check_tag_names_validation(tag_names) do
+    Logger.debug("check_tag_names_validation tag_names: #{inspect(tag_names)}")
+
+    tag_names
+    |> Enum.filter(fn name ->
+      Tag.check_tag_name(name).valid?
+      |> case do
+        true ->
+          true
+
+        false ->
+          Logger.warning("Ignore ivalid tag name: #{inspect(name)}")
+          false
+      end
+    end)
+  end
 
   defp insert_and_get_all([], _), do: []
 
@@ -135,7 +159,7 @@ defmodule Slink.Links.Link do
       on_conflict: :nothing
     )
 
-    # fix: order lost
+    # todo: fix order lost
     Repo.all(from t in Tag, where: t.name in ^names)
   end
 end

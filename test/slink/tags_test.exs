@@ -40,6 +40,40 @@ defmodule Slink.TagsTest do
       # name format normalize! only contains alphanumeric characters
     end
 
+    test "create_tag/2 with Chinese characters creates a tag" do
+      chinese_attrs = %{name: "编程", group: "Chinese group"}
+      scope = user_scope_fixture()
+
+      assert {:ok, %Tag{} = tag} = Tags.create_tag(scope, chinese_attrs)
+      assert tag.name == "编程"
+      assert tag.group == "Chinese group"
+      assert tag.user_id == scope.user.id
+    end
+
+    test "create_tag/2 with mixed Chinese and English characters creates a tag" do
+      mixed_attrs = %{name: "web开发", group: "Mixed group"}
+      scope = user_scope_fixture()
+
+      assert {:ok, %Tag{} = tag} = Tags.create_tag(scope, mixed_attrs)
+      assert tag.name == "web开发"
+      assert tag.group == "Mixed group"
+      assert tag.user_id == scope.user.id
+    end
+
+    test "create_tag/2 with Chinese characters and special characters fails validation" do
+      invalid_chinese_attrs = %{name: "编程@#$", group: "Invalid group"}
+      scope = user_scope_fixture()
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Tags.create_tag(scope, invalid_chinese_attrs)
+
+      assert [
+               {:name,
+                {"only contain letters, numbers, underscore, hyphens and Chinese characters",
+                 [validation: :format]}}
+             ] = changeset.errors
+    end
+
     test "create_tag/2 with invalid data returns error changeset" do
       scope = user_scope_fixture()
       assert {:error, %Ecto.Changeset{}} = Tags.create_tag(scope, @invalid_attrs)

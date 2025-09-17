@@ -24,12 +24,6 @@ defmodule SlinkWeb.Layouts do
       <li>
         <.link href={~p"/links"} class="btn btn-ghost">Links</.link>
       </li>
-      <li>
-        <.link href={~p"/pages/info"} class="btn btn-ghost">Info</.link>
-      </li>
-      <li>
-        <.link href={Builder.scm_url()} target="_blank" class="btn btn-ghost">Code</.link>
-      </li>
       <li :if={is_dev?()}>
         <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
           <div tabindex="0" class="btn btn-ghost m-1">Dev</div>
@@ -70,9 +64,10 @@ defmodule SlinkWeb.Layouts do
                     />
                   </div>
                 </div>
-                <span class="sm">{@current_scope.user.name || @current_scope.user.email}</span>
               <% else %>
-                {@current_scope.user.name || @current_scope.user.email}
+                <span class="text-md max-w-15 truncate">
+                  {@current_scope.user.name || @current_scope.user.email}
+                </span>
               <% end %>
             </div>
             <ul
@@ -112,10 +107,10 @@ defmodule SlinkWeb.Layouts do
                 class="dropdown-content menu bg-base-100 rounded-box z-1 w-30 p-2 shadow-sm"
               >
                 <li>
-                  <.link href={~p"/admin/users"}>Users</.link>
+                  <.link href={~p"/admin/tags"}>Tags</.link>
                 </li>
                 <li>
-                  <.link href={~p"/admin/tags"}>Tags</.link>
+                  <.link href={~p"/admin/users"}>Users</.link>
                 </li>
                 <li>
                   <.link href={~p"/admin/sites"}>Sites</.link>
@@ -126,12 +121,31 @@ defmodule SlinkWeb.Layouts do
         <% end %>
       <% else %>
         <li>
-          <.link href={~p"/users/register"} class="btn btn-ghost">Register</.link>
-        </li>
-        <li>
           <.link href={~p"/users/log-in"} class="btn btn-ghost">Log in</.link>
         </li>
+        <li>
+          <.link href={~p"/users/register"} class="btn btn-ghost">Register</.link>
+        </li>
       <% end %>
+
+      <li>
+        <div class="dropdown dropdown-bottom dropdown-start dropdown-hover">
+          <div tabindex="0" class="btn btn-ghost m-1">
+            More
+          </div>
+          <ul
+            tabindex="0"
+            class="dropdown-content menu bg-base-100 rounded-box z-1 w-30 p-2 shadow-sm"
+          >
+            <li>
+              <.link href={Builder.scm_url()} target="_blank" class="">Code</.link>
+            </li>
+            <li>
+              <.link href={~p"/pages/info"} class="">Info</.link>
+            </li>
+          </ul>
+        </div>
+      </li>
 
       <li>
         <.theme_toggle_switch />
