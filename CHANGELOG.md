@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.32](https://github.com/cao7113/slink/compare/v0.3.31...v0.3.32) (2025-09-20)
+
+
+
+
+### Bug Fixes:
+
+* link tags max width style by Ryn Cao
+
 ## [v0.3.31](https://github.com/cao7113/slink/compare/v0.3.30...v0.3.31) (2025-09-20)
 
 
