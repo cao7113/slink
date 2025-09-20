@@ -43,7 +43,19 @@ defmodule Builder do
   def all_env, do: Application.get_all_env(app())
   def priv_dir, do: :code.priv_dir(app()) |> to_string()
 
-  ## Dig Release
+  ## Pkg info
+  def pkg_info do
+    [:phoenix, :ecto, :req]
+    |> Enum.map(fn app ->
+      %{
+        app: app,
+        vsn: Application.spec(app, :vsn) |> to_string(),
+        desc: Application.spec(app, :description) |> to_string()
+      }
+    end)
+  end
+
+  ## Release Info
 
   def release_info do
     vars = release_env_vars()

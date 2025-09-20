@@ -1,0 +1,27 @@
+# https://taskfile.dev/usage/
+version: '3'
+
+## Assets management tasks
+tasks:
+  default: bun i
+
+  # # Install a NPM package such a htmx.org
+  # _build/bun add htmx.org
+  # # Install a local package such as phoenix_html
+  # _build/bun add ./deps/phoenix_html
+  # # Remove a dependency
+  # _build/bun remove htmx.org
+
+  setup: |
+    bun add tailwindcss daisyui # @tailwindcss/vite@latest -D
+  
+  up.daisyui: |
+    # refer assets/css/app.css # https://github.com/saadeghi/daisyui/releases
+    # version=v5.1.12
+    version=v5.0.35
+    cd vendor
+    curl -sLO https://github.com/saadeghi/daisyui/releases/download/$version/daisyui.js
+    curl -sLO https://github.com/saadeghi/daisyui/releases/download/$version/daisyui-theme.js
+    # curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui.js
+    # curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui-theme.js
+    echo "Upgrade daisyUI to version: $version !"

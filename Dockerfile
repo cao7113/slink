@@ -36,6 +36,7 @@ RUN mix local.hex --force \
 
 # set build ENV
 ENV MIX_ENV="prod"
+
 # import commit-info using build arg then use as default env, used in config/config.exs
 ARG GIT_COMMIT_ID=""
 ENV GIT_COMMIT_ID=$GIT_COMMIT_ID
@@ -53,6 +54,7 @@ RUN mkdir config
 COPY config/config.exs config/${MIX_ENV}.exs config/
 RUN mix deps.compile
 
+COPY assets assets
 RUN mix assets.setup
 
 COPY priv priv
@@ -61,8 +63,6 @@ COPY lib lib
 
 # Compile the release
 RUN mix compile
-
-COPY assets assets
 
 # compile assets
 RUN mix assets.deploy
