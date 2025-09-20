@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "phoenixframework.phoenix",
+    "jakebecker.elixir-ls",
+    "bradlc.vscode-tailwindcss",
+    // "tamasfe.even-better-toml",
+    "qwtel.sqlite-viewer"
+  ]
+}

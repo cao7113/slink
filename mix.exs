@@ -60,8 +60,11 @@ defmodule Slink.MixProject do
       {:phoenix_live_view, "~> 1.1"},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
+      # {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
+      # like esbuild and tailwind, https://github.com/crbelaus/bun
+      {:bun, "~> 1.5", runtime: Mix.env() == :dev},
+      # {:bun, "~> 1.5", only: :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.2.0",
@@ -105,14 +108,33 @@ defmodule Slink.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind slink", "esbuild slink"],
+      # "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      # "assets.build": ["tailwind slink", "esbuild slink"],
+      # "assets.deploy": [
+      #   "tailwind slink --minify",
+      #   "esbuild slink --minify",
+      #   "phx.digest"
+      # ],
+      "assets.setup": [
+        "tailwind.install --if-missing",
+        "bun.install --if-missing",
+        "bun assets install"
+      ],
+      # "assets.build": ["bun js", "bun css"],
+      # "assets.deploy": ["bun css --minify", "bun js --minify", "phx.digest"],
+      "assets.build": ["tailwind slink", "bun js"],
       "assets.deploy": [
         "tailwind slink --minify",
-        "esbuild slink --minify",
+        # "bun css --minify",
+        "bun js --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"],
+      precommit: [
+        "compile --warning-as-errors",
+        "deps.unlock --unused",
+        "format",
+        "test"
+      ],
       # Helpers
       "ecto.reset.force": ["ecto.drop --force-drop", "ecto.setup"],
       "dev.db.init": ["ecto.drop --force-drop", "ecto.create"],
@@ -121,6 +143,7 @@ defmodule Slink.MixProject do
       reset: ["dev.reset"],
       "test.reset": ["ecto.reset.force"],
       "test.demo": &test_task/1,
+      "assets.clean": [&assets_clean_build/1, "phx.digest.clean --all"],
       routes: ["phx.routes"]
     ]
   end
@@ -138,6 +161,12 @@ defmodule Slink.MixProject do
     IO.puts("#" |> String.duplicate(40))
     IO.puts("##  Mix.env(): #{Mix.env()}")
     IO.puts("")
+  end
+
+  def assets_clean_build(_args) do
+    # assets_dir = "priv/static/assets"
+    # File.rm_rf(assets_dir)
+    # Mix.shell().info("Removed #{assets_dir}")
   end
 
   defp docs do

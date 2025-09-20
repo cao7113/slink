@@ -21,9 +21,9 @@ defmodule SlinkWeb.Router do
   scope "/", SlinkWeb do
     pipe_through :browser
 
-    get "/pages/info", PageController, :info
+    # pages
     get "/home", PageController, :home
-    get "/pages/ui", PageController, :ui
+    get "/pages/info", PageController, :info
     get "/pages/test", PageController, :test
   end
 

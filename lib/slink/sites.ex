@@ -68,8 +68,9 @@ defmodule Slink.Sites do
       ** (Ecto.NoResultsError)
 
   """
-  def get_site!(%Scope{} = scope, id) do
-    Repo.get_by!(Site, id: id, user_id: scope.user.id)
+  def get_site!(%Scope{} = _scope, id) do
+    # Repo.get_by!(Site, id: id, user_id: scope.user.id)
+    get_site(id)
   end
 
   def get_site(id) do

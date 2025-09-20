@@ -61,23 +61,43 @@ config :slink, SlinkWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :slink, Slink.Mailer, adapter: Swoosh.Adapters.Local
 
-# Configure esbuild (the version is required)
-config :esbuild,
-  # https://github.com/evanw/esbuild/releases
-  # run below after updated version: mix esbuild.install --if-missing
-  version: "0.25.9",
-  slink: [
+config :bun,
+  version: "1.2.22",
+  assets: [
+    args: [],
+    cd: Path.expand("../assets", __DIR__)
+  ],
+  js: [
     args:
-      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
-    cd: Path.expand("../assets", __DIR__),
-    env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
+      ~w(build js/app.js --outdir=../priv/static/assets/js --external /fonts/* --external /images/*),
+    cd: Path.expand("../assets", __DIR__)
+  ],
+  css: [
+    # not work in Dockerfile???
+    # --bun run tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css
+    # --bun x tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css
+    args: ~w(run tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css),
+    cd: Path.expand("../assets", __DIR__)
   ]
 
-# Configure tailwind (the version is required)
+# # Configure esbuild (the version is required)
+# config :esbuild,
+#   # https://github.com/evanw/esbuild/releases
+#   # run after updated version: mix esbuild.install --if-missing
+#   version: "0.25.9",
+#   slink: [
+#     args:
+#       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
+#     cd: Path.expand("../assets", __DIR__),
+#     env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
+#   ]
+
+# # Configure tailwind (the version is required)
 config :tailwind,
   # https://github.com/tailwindlabs/tailwindcss/releases/
-  # should run below after changed the version:
-  # mix tailwind.install --if-missing
+  # run below after changed the version:
+  # mix tailwind.install --if-missing # or
+  # mix asset.setup
   version: "4.1.13",
   slink: [
     args: ~w(

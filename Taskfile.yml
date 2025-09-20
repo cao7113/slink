@@ -150,6 +150,3 @@ tasks:
   dk.test: |
     docker compose version
     docker compose up --quiet-pull --exit-code-from curl # --abort-on-container-exit
-
-  setup: |
-    mix deps.get

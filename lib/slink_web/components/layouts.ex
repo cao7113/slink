@@ -39,13 +39,10 @@ defmodule SlinkWeb.Layouts do
               <.link href="/dev/mailbox">Mailbox</.link>
             </li>
             <li>
-              <.link href={~p"/pages/ui"}>UI Playground</.link>
-            </li>
-            <li>
               <.link href={~p"/pages/test"}>Test</.link>
             </li>
             <li>
-              <.link href={~p"/home"}>Raw Home</.link>
+              <.link href={~p"/home"}>Welcome</.link>
             </li>
           </ul>
         </div>
@@ -150,6 +147,9 @@ defmodule SlinkWeb.Layouts do
             </li>
             <li>
               <.link href={~p"/pages/info"} class="">Info</.link>
+            </li>
+            <li>
+              <.link href={~p"/play/demo.html"} class="">Playground</.link>
             </li>
           </ul>
         </div>

@@ -1,0 +1,43 @@
+{
+  "tailwindcss-intellisense.trace.server": "verbose",
+  "tailwindCSS.classAttributes": [
+    "class"
+  ],
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.includeLanguages": {
+    "phoenix-heex": "html",
+    "elixir": "html"
+  },
+  "emmet.includeLanguages": {
+    "phoenix-heex": "html",
+    "elixir": "html"
+  },
+  "tailwindCSS.lint.cssConflict": "error",
+  "tailwindCSS.suggestions": true,
+  "files.associations": {
+    "*.css": "tailwindcss",
+    "*.heex": "phoenix-heex"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "tailwindCSS.files.exclude": [
+    "**/.git/**",
+    "**/node_modules/**",
+    "**/.hg/**",
+    "**/.svn/**",
+    "_local/**",
+    "deps/**",
+    "test/**",
+    "rel/**",
+    "notes/**"
+  ],
+  "[elixir]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+  },
+  "[phoenix-heex]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+  },
+}
