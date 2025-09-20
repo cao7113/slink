@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.30](https://github.com/cao7113/slink/compare/v0.3.29...v0.3.30) (2025-09-20)
+
+
+
+
+### Bug Fixes:
+
+* app.js missing phoenix-colocated/slink by Ryn Cao
+
 ## [v0.3.29](https://github.com/cao7113/slink/compare/v0.3.28...v0.3.29) (2025-09-20)
 
 
