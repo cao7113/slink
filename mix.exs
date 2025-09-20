@@ -108,24 +108,23 @@ defmodule Slink.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      # "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      # "assets.build": ["tailwind slink", "esbuild slink"],
-      # "assets.deploy": [
-      #   "tailwind slink --minify",
-      #   "esbuild slink --minify",
-      #   "phx.digest"
-      # ],
+      # assets
       "assets.setup": [
         "tailwind.install --if-missing",
+        # "esbuild.install --if-missing",
         "bun.install --if-missing",
         "bun assets install"
       ],
-      # "assets.build": ["bun js", "bun css"],
-      # "assets.deploy": ["bun css --minify", "bun js --minify", "phx.digest"],
-      "assets.build": ["tailwind slink", "bun js"],
+      "assets.build": [
+        # "bun css",
+        "tailwind slink",
+        # "esbuild slink",
+        "bun js"
+      ],
       "assets.deploy": [
-        "tailwind slink --minify",
         # "bun css --minify",
+        "tailwind slink --minify",
+        # "esbuild slink --minify",
         "bun js --minify",
         "phx.digest"
       ],

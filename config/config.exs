@@ -70,11 +70,13 @@ config :bun,
   js: [
     args:
       ~w(build js/app.js --outdir=../priv/static/assets/js --external /fonts/* --external /images/*),
-    cd: Path.expand("../assets", __DIR__)
+    cd: Path.expand("../assets", __DIR__),
+    env: %{
+      "NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()] |> Enum.join(":")
+    }
   ],
   css: [
     # not work in Dockerfile???
-    # --bun run tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css
     # --bun x tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css
     args: ~w(run tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css),
     cd: Path.expand("../assets", __DIR__)

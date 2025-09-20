@@ -22,8 +22,7 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
-// TODO fix this import
-// import { hooks as colocatedHooks } from "phoenix-colocated/slink";
+import { hooks as colocatedHooks } from "phoenix-colocated/slink";
 // import topbar from "../vendor/topbar"
 import topbar from "topbar";
 
