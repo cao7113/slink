@@ -93,8 +93,17 @@
 
             <div class="flex items-center">
               <%= for tag <- link.tags do %>
-                <.link phx-click={JS.push("toggle_tag_id", value: %{id: tag.id})}>
-                  <span class="badge badge-secondary">{tag.name}</span>
+                <.link
+                  class={[
+                    "badge",
+                    if(tag.id == @tag_id,
+                      do: "badge-primary",
+                      else: "badge-secondary hover:bg-secondary"
+                    )
+                  ]}
+                  phx-click={JS.push("toggle_tag_id", value: %{id: tag.id})}
+                >
+                  <span class="w-20 truncate ">{tag.name}</span>
                 </.link>
               <% end %>
             </div>
