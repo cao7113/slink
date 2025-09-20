@@ -5,6 +5,17 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.29](https://github.com/cao7113/slink/compare/v0.3.28...v0.3.29) (2025-09-20)
+
+
+
+
+### Improvements:
+
+* use bun instead of esbuild and add tailwindcss intellisense for vscode (#4) by 草色青青 [(#4)](https://github.com/cao7113/slink/pull/4)
+
+* use bun instead of esbuild and add tailwindcss intellisense for vscode by 草色青青 [(#4)](https://github.com/cao7113/slink/pull/4)
+
 ## [v0.3.28](https://github.com/cao7113/slink/compare/v0.3.27...v0.3.28) (2025-09-17)
 
 
