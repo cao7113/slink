@@ -6,10 +6,11 @@
 */
 
 /* See the Tailwind configuration guide for advanced usage
-   https://tailwindcss.com/docs/configuration */
+   https://tailwindcss.com/docs/configuration 
+   https://tailwindcss.com/docs/detecting-classes-in-source-files#disabling-automatic-detection
+*/
 
 @import "tailwindcss" source(none);
-
 @source "../css";
 @source "../js";
 @source "../../lib/slink_web";

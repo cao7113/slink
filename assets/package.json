@@ -2,6 +2,11 @@
   "workspaces": [
     "../deps/*"
   ],
+  "scripts": {
+    "ls": "bun pm ls",
+    "buildcss": "tailwindcss -i ./css/app.css -o ../priv/static/assets/app.css --minify",
+    "watchcss": "tailwindcss -i ./css/app.css -o ../priv/static/assets/app.css --watch"
+  },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.13",
     "daisyui": "^5.1.13",

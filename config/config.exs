@@ -67,6 +67,11 @@ config :bun,
     args: [],
     cd: Path.expand("../assets", __DIR__)
   ],
+  # shorthand assets commands, run like: mix bun a ls
+  a: [
+    args: [],
+    cd: Path.expand("../assets", __DIR__)
+  ],
   js: [
     args:
       ~w(build js/app.js --outdir=../priv/static/assets/js --external /fonts/* --external /images/*),
