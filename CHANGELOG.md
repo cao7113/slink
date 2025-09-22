@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.33](https://github.com/cao7113/slink/compare/v0.3.32...v0.3.33) (2025-09-22)
+
+
+
+
+### Improvements:
+
+* add tag desc and links db not-null constraint and update user_links updated when re-connect a link by Ryn Cao
+
 ## [v0.3.32](https://github.com/cao7113/slink/compare/v0.3.31...v0.3.32) (2025-09-20)
 
 
