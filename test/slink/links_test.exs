@@ -109,11 +109,7 @@ defmodule Slink.LinksTest do
         input_tags: "tag1, tag2"
       }
 
-      %{tags: tags} =
-        link =
-        Link.changeset(%Link{}, attrs, scope)
-        |> Slink.Repo.insert!()
-        |> Slink.Repo.preload(:tags)
+      {:ok, %{tags: tags} = link} = Links.create_link(scope, attrs)
 
       assert length(tags) == 2
 

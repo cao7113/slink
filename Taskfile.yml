@@ -57,6 +57,8 @@ tasks:
     aliases: [sql, pg]
     cmds:
       - pgcli slink_dev
+  db.reset: |
+    mix do dev.reset + test.reset
   db.mig: mix ecto.migrate
   # task db.back -- 1
   db.back: mix ecto.rollback --step {{.CLI_ARGS}}
