@@ -5,6 +5,7 @@ defmodule Slink.Tags.Tag do
 
   schema "tags" do
     field :name, :string
+    field :desc, :string
     field :group, :string
 
     belongs_to :user, Slink.Accounts.User
@@ -19,7 +20,7 @@ defmodule Slink.Tags.Tag do
   @doc false
   def changeset(tag, attrs, user_scope) do
     tag
-    |> cast(attrs, [:name, :group])
+    |> cast(attrs, [:name, :desc, :group])
     |> check_tag_name()
     |> unique_constraint(:name, name: "tags_name_index")
     |> put_change(:user_id, user_scope.user.id)

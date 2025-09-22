@@ -15,6 +15,7 @@ defmodule SlinkWeb.Admin.TagLive.Form do
 
       <.form for={@form} id="tag-form" phx-change="validate" phx-submit="save">
         <.input field={@form[:name]} type="text" label="Name" class="input" autofocus />
+        <.input field={@form[:desc]} type="text" label="Desc" class="input" />
         <.input field={@form[:group]} type="text" label="Group" class="input" />
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Tag</.button>

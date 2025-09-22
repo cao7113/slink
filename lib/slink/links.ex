@@ -182,8 +182,7 @@ defmodule Slink.Links do
             "latest" ->
               query
               |> order_by([l, ul: ul],
-                # desc_nulls_last: ul.last_visit_at,
-                desc: l.updated_at,
+                desc_nulls_last: ul.updated_at,
                 desc: l.id
               )
 
@@ -301,13 +300,22 @@ defmodule Slink.Links do
 
   """
   def create_link(%Scope{} = scope, attrs) do
-    with {:ok, link = %Link{}} <-
-           %Link{}
-           |> Link.changeset(attrs, scope)
-           |> Repo.insert() do
-      broadcast(scope, {:created, link})
-      # todo use pubsub to split concern
-      fill_site(scope, link)
+    url = attrs[:url] || attrs["url"]
+    cs = %Link{} |> Link.changeset(attrs, scope)
+
+    Sites.get_or_create_site(scope, url)
+    |> case do
+      {:ok, site} ->
+        with {:ok, link = %Link{}} <-
+               cs
+               |> Ecto.Changeset.put_change(:site_id, site.id)
+               |> Repo.insert() do
+          broadcast(scope, {:created, link})
+          {:ok, link}
+        end
+
+      {:error, _} ->
+        {:error, cs |> Ecto.Changeset.add_error(:site, "Cannot create or get site")}
     end
   end
 
@@ -616,21 +624,7 @@ defmodule Slink.Links do
   end
 
   def fill_site(%Scope{} = scope, %Link{url: url, site_id: nil} = link) do
-    site_url = Sites.get_site_url(url)
-    site = Sites.get_by_url(site_url)
-
-    site =
-      if site do
-        site
-      else
-        site_name = Sites.get_site_name(site_url)
-
-        {:ok, site} =
-          Sites.create_site(scope, %{url: site_url, name: site_name})
-
-        site
-      end
-
+    {:ok, site} = Sites.get_or_create_site(scope, url)
     update_link(scope, link, %{site_id: site.id})
   end
 

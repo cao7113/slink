@@ -186,4 +186,23 @@ defmodule Slink.Sites do
     |> String.replace(".com", "")
     |> String.replace(".", "-")
   end
+
+  def get_or_create_site(%Scope{} = scope, url) when is_binary(url) do
+    site_url = get_site_url(url)
+
+    case get_by_url(site_url) do
+      %Site{} = site ->
+        {:ok, site}
+
+      nil ->
+        create_site(scope, %{
+          name: get_site_name(site_url),
+          url: site_url
+        })
+    end
+  end
+
+  def get_or_create_site(_scope, url) do
+    {:error, "invalid url: #{inspect(url)}"}
+  end
 end

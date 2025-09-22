@@ -39,6 +39,7 @@ Error: The plugin "../vendor/daisyui" does not accept options
 Unable to load plugin: ../vendor/heroicons Error: Can't resolve 'tailwindcss/plugin'
 ```
 
+- https://github.com/crbelaus/bun/issues/43
 - https://github.com/tailwindlabs/tailwindcss-intellisense?tab=readme-ov-file#troubleshooting
 - https://github.com/tailwindlabs/tailwindcss/issues/17794
 
@@ -53,6 +54,8 @@ Todo：
 更好的方法是引导插件使用phoenix使用的命令行版本的tailwindcss，似乎不容易办到
 
 ## bun deploy
+
+search  assets.deploy TypeError: familySync is not a function const { MUSL, familySync } = require('detect-libc') process.platform === 'linux'
 
 ```
  > [builder 15/18] RUN mix assets.deploy:

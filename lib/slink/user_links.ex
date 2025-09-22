@@ -105,7 +105,20 @@ defmodule Slink.UserLinks do
       |> Map.put_new(:title, title)
 
     with {:ok, ulink} <- get_or_create_user_link(scope, ulink_attrs) do
-      # always add?
+      ulink =
+        case ulink do
+          {:already_existed, ulink} ->
+            update_user_link(scope, ulink, %{
+              last_visit_at: DateTime.utc_now(:second),
+              total_visit_times: ulink.total_visit_times + 1
+            })
+
+            ulink
+
+          {:created, ulink} ->
+            ulink
+        end
+
       Links.create_link_log(scope, %{link_id: link.id, event: "collected"})
 
       # put link assoc
@@ -154,14 +167,14 @@ defmodule Slink.UserLinks do
     Repo.get_by(UserLink, user_id: scope.user.id, link_id: link_id)
     |> case do
       %UserLink{} = ulink ->
-        # update_user_link(scope, ulink, %{
-        #   last_visit_at: DateTime.utc_now(:second),
-        #   total_visit_times: ulink.total_visit_times + 1
-        # })
-        {:ok, ulink}
+        {:ok, {:already_existed, ulink}}
 
       nil ->
         create_user_link(scope, attrs)
+        |> case do
+          {:ok, ulink} -> {:ok, {:created, ulink}}
+          err -> err
+        end
     end
   end
 

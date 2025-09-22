@@ -33,6 +33,9 @@ defmodule SlinkWeb.Admin.TagLive.Index do
       >
         <:col :let={{_id, tag}} label="ID">{tag.id}</:col>
         <:col :let={{_id, tag}} label="Name">{tag.name}</:col>
+        <:col :let={{_id, tag}} label="Desc">
+          <div class="max-w-20 truncate">{tag.desc}</div>
+        </:col>
         <:col :let={{_id, tag}} label="Group">{tag.group}</:col>
         <:col :let={{_id, tag}} label="Links Count">{tag.links_count}</:col>
         <:col :let={{_id, tag}} label="User">{tag.user_id}</:col>

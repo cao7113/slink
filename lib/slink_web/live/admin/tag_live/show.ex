@@ -22,6 +22,7 @@ defmodule SlinkWeb.Admin.TagLive.Show do
 
       <.list>
         <:item title="Name">{@tag.name}</:item>
+        <:item title="Desc">{@tag.desc}</:item>
         <:item title="Group">{@tag.group}</:item>
         <:item title="InsertedAt">{@tag.inserted_at}</:item>
         <:item title="UpdatedAt">{@tag.updated_at}</:item>

@@ -64,6 +64,7 @@ tasks:
   db.fly: |
     mix dev.db.init
     mix run run/fly-db-local-restore.exs
+    mix ecto.migrate
     mix run run/dev/seed.exs
 
   ## Git ops https://github.com/zachdaniel/git_ops/blob/master/CHANGELOG.md
