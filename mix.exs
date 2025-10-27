@@ -82,7 +82,7 @@ defmodule Slink.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"},
+      {:bandit, "~> 1.8"},
 
       # App enhancement deps
       {:endon, "~> 2.0"},
