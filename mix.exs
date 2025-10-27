@@ -35,9 +35,12 @@ defmodule Slink.MixProject do
   def application do
     [
       mod: {Slink.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools] ++ extra_apps(Mix.env())
     ]
   end
+
+  def extra_apps(:dev), do: [:wx, :observer]
+  def extra_apps(_), do: []
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
