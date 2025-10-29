@@ -96,7 +96,7 @@ defmodule Slink.MixProject do
       {:git_ops, "~> 2.0", only: [:dev], runtime: false},
       # {:faker, "~> 0.18", only: [:dev, :test]},
       {:tidewave, "~> 0.3", only: [:dev]}
-    ]
+    ] ++ env_deps(Mix.env())
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -181,4 +181,14 @@ defmodule Slink.MixProject do
       ]
     ]
   end
+
+  def env_deps(:dev),
+    do: [
+      # Livebook tools
+      {:kino, "~> 0.16.0"},
+      {:kino_vega_lite, "~> 0.1.11"}
+    ]
+
+  def env_deps(_),
+    do: []
 end

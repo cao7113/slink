@@ -30,7 +30,14 @@ config :slink, SlinkWeb.Endpoint,
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   # http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
   # allow http://xxx-mac.local:4000 access like in iPhone browser
-  http: [ip: {0, 0, 0, 0}, port: String.to_integer(System.get_env("PORT") || "4000")],
+  http: [
+    ip: {0, 0, 0, 0},
+    port: String.to_integer(System.get_env("PORT") || "4000"),
+    # https://hexdocs.pm/thousand_island/1.4.2/ThousandIsland.html#t:options/0
+    thousand_island_options: [
+      num_acceptors: 2
+    ]
+  ],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

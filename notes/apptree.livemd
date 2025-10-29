@@ -1,0 +1,13 @@
+# Slink app tree
+
+## App tree
+
+NOTE: in attached mode
+
+```elixir
+Kino.Process.render_sup_tree(SlinkWeb.Endpoint)
+```
+
+```elixir
+Kino.Process.render_app_tree(:slink)
+```

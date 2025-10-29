@@ -206,5 +206,3 @@ node = :"slink-01K2BZRVFZS0TZNRR7WH56WRZ6@fdaa:2:686c:a7b:17b:eab4:2a91:2"
 Node.set_cookie(node, :"happy-cookie-not-secret-but-for-cluster")
 ss = Kino.RPC.eval_string(node, ~S"Slink.Links.Link.last", file: __ENV__.file)
 ```
-
-<!-- livebook:{"offset":6868,"stamp":{"token":"XCP.ooZbN7znzZNERfD2JzVEcJlABTtqB_4zQlNXcBRoGqSp_kaLWkxqA6TnVdt9EY-yRP-tdfGn0PlJfBpyKPrTHy5811YFw5isVgqCBoqxn-HAmgV_EBLUkWz3B5pHGTSC","version":2}} -->
