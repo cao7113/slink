@@ -1,8 +1,13 @@
 defmodule SlinkWeb.Api.ToolsController do
   use SlinkWeb, :controller
 
-  def home(conn, _params) do
-    json(conn, %{msg: "ok"})
+  def home(%{adapter: {Bandit.Adapter, adapter}} = conn, _params) do
+    http_version = Bandit.HTTPTransport.version(adapter.transport)
+
+    json(conn, %{
+      msg: "ok",
+      http_version: http_version
+    })
   end
 
   def ping(conn, _params) do

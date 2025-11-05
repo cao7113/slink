@@ -28,6 +28,8 @@ alias Slink.Sites.Site
 # Web
 alias SlinkWeb, as: Web
 alias SlinkWeb.UserAuth
+alias SlinkWeb.Endpoint, as: Ep
+# Ep.config :http
 
 ## Remote
 alias Remote, as: R

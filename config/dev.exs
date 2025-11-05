@@ -29,11 +29,12 @@ config :slink, SlinkWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   # http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
-  # allow http://xxx-mac.local:4000 access like in iPhone browser
+  # allow http://mac.local:4000 access like in iPhone browser
   http: [
     ip: {0, 0, 0, 0},
     port: String.to_integer(System.get_env("PORT") || "4000"),
     # https://hexdocs.pm/thousand_island/1.4.2/ThousandIsland.html#t:options/0
+    # https://hexdocs.pm/bandit/Bandit.PhoenixAdapter.html#module-endpoint-configuration
     thousand_island_options: [
       num_acceptors: 2
     ]
