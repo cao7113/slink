@@ -1,6 +1,6 @@
 // If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
-// import "./user_socket.js"
+import "./chat_socket.js";
 
 // You can include dependencies in two ways.
 //
@@ -22,19 +22,52 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
-// should run: mix compile before assets.deploy!
+
+// run: mix compile before assets.deploy!!! fro ColocatedHook or ColocatedJS
 // https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.ColocatedHook.html
 import { hooks as colocatedHooks } from "phoenix-colocated/slink";
 // import topbar from "../vendor/topbar"
 import topbar from "topbar";
 
+let Hooks = {};
+
+/**
+ * @type {import("phoenix_live_view").Hook}
+ */
+Hooks.ClickMeHook = {
+  mounted() {
+    this.el.addEventListener("click", () => {
+      // Push event to LiveView with callback for reply
+      this.pushEvent("get_message", {}, (reply) => {
+        // console.debug(reply.message);
+        alert(reply.message);
+      });
+    });
+  },
+};
+
+// Hooks.PhoneNumber = {
+//   mounted() {
+//     this.el.addEventListener("input", (e) => {
+//       let match = this.el.value
+//         .replace(/\D/g, "")
+//         .match(/^(\d{3})(\d{3})(\d{4})$/);
+//       if (match) {
+//         this.el.value = `${match[1]}-${match[2]}-${match[3]}`;
+//       }
+//     });
+//   },
+// };
+
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
+
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
-  hooks: { ...colocatedHooks },
+  hooks: { ...Hooks, ...colocatedHooks },
+  debug: true,
 });
 
 // Show progress bar on live navigation and form submits
@@ -50,6 +83,7 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+window.lv = liveSocket;
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

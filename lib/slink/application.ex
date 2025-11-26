@@ -9,13 +9,15 @@ defmodule Slink.Application do
 
   @impl true
   def start(_type, _args) do
-    Logger.info("Starting Slink version: #{Builder.vsn()}")
+    Logger.info("Starting #{Builder.app()} version: #{Builder.vsn()}")
 
     children = [
       SlinkWeb.Telemetry,
       Slink.Repo,
       {DNSCluster, query: Application.get_env(:slink, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Slink.PubSub},
+      SlinkWeb.Presence,
+      SlinkWeb.Presence.Live,
       # Start a worker by calling: Slink.Worker.start_link(arg)
       # {Slink.Worker, arg},
       # Start to serve requests, typically the last entry

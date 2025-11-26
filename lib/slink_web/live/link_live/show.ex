@@ -8,7 +8,7 @@ defmodule SlinkWeb.LinkLive.Show do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Link {@link.id}
+        {@link.title}
         <:subtitle>This is a link record from your database.</:subtitle>
         <:actions>
           <.button navigate={~p"/links"}>

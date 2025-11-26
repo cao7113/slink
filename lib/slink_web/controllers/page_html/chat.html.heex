@@ -1,0 +1,18 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <h1 class="text-3xl font-bold">Chat Room</h1>
+
+  <div class="presence">
+    <div id="presence-info"></div>
+  </div>
+
+  <.button id="set-socket" class="block btn my-4">Set Socket</.button>
+
+  <input
+    id="chat-input"
+    placeholder="Input something here..."
+    class="input my-4"
+    type="text"
+    phx-mounted={JS.focus()}
+  />
+  <div id="messages" role="log" aria-live="polite"></div>
+</Layouts.app>

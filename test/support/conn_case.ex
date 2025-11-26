@@ -77,7 +77,7 @@ defmodule SlinkWeb.ConnCase do
     Slink.AccountsFixtures.override_token_authenticated_at(token, authenticated_at)
   end
 
-  ## API helpers
+  ## API test helpers
 
   def log_in_user_by_api_token(conn, opts \\ []) do
     api_token =

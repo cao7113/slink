@@ -50,6 +50,20 @@ config :slink, SlinkWeb.Endpoint,
     bun_js: {Bun, :install_and_run, [:js, ~w(--sourcemap=inline --watch)]}
   ]
 
+# todo
+# https://github.com/phoenixframework/phoenix_live_reload
+# config :phoenix_live_reload,
+#   # backend: :fs_poll,
+#   # backend_opts: [
+#   #   interval: 500
+#   # ],
+#   dirs: [
+#     "assets",
+#     "lib",
+#     # Contents of this directory is not watched
+#     "deps/phoenix"
+#   ]
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
@@ -101,6 +115,7 @@ config :phoenix_live_view,
   # Include debug annotations and locations in rendered markup.
   # Changing this configuration will require mix clean and a full recompile.
   debug_heex_annotations: true,
+  debug_attributes: true,
   debug_tags_location: true,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true

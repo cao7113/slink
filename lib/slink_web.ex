@@ -32,7 +32,7 @@ defmodule SlinkWeb do
 
   def channel do
     quote do
-      use Phoenix.Channel
+      use Phoenix.Channel, log_join: :info, log_handle_in: :debug
     end
   end
 
@@ -87,16 +87,16 @@ defmodule SlinkWeb do
       # Core UI components
       import SlinkWeb.CoreComponents
 
+      # Builder info
+      import Builder,
+        only: [is_dev?: 0, is_prod?: 0, is_test?: 0]
+
       # Common modules used in templates
       alias Phoenix.LiveView.JS
       alias SlinkWeb.Layouts
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
-
-      # Builder info
-      import Builder,
-        only: [is_dev?: 0, is_prod?: 0, is_test?: 0]
     end
   end
 

@@ -14,7 +14,7 @@ defmodule SlinkWeb.UserLive.Registration do
             Register for an account
             <:subtitle>
               Already registered?
-              <.link navigate={~p"/users/log-in"} class="font-semibold text-brand hover:underline">
+              <.link navigate={~p"/users/log-in"} class="font-semibold text-info hover:underline">
                 Log in
               </.link>
               to your account now.
@@ -27,7 +27,7 @@ defmodule SlinkWeb.UserLive.Registration do
             field={@form[:email]}
             type="email"
             label="Email"
-            autocomplete="username"
+            autocomplete="email"
             required
             phx-mounted={JS.focus()}
           />

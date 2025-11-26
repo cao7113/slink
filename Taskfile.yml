@@ -15,6 +15,9 @@ includes:
 tasks:
   default: mix test
   sh: iex --erl "-kernel shell_history enabled" -S mix
+  drun: |
+    mix deps.compile phoenix phoenix_live_view
+    task run
   run:
     env:
       ERL_AFLAGS: "-kernel shell_history enabled"
@@ -38,6 +41,9 @@ tasks:
       - |
         mix reset
         mix test.reset
+  clean.links: find deps/ -type l -depth 1 -delete
+
+  assets.install: mix bun a install --verbose
 
   ## AI
   td: |
