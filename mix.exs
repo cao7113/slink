@@ -13,7 +13,9 @@ defmodule Slink.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps(),
+      # deps: deps(),
+      deps: deps_with_linking_path(),
+      archives: archives(Mix.env()),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader],
       name: "Shareup links",
@@ -25,7 +27,12 @@ defmodule Slink.MixProject do
   def cli do
     [
       # default_task: "phx.server",
-      preferred_envs: preferred_cli_env()
+      preferred_envs: [
+        "demo.test": :test,
+        "dev.init": :dev,
+        "dev.reset": :dev,
+        "test.reset": :test
+      ]
     ]
   end
 
@@ -51,21 +58,24 @@ defmodule Slink.MixProject do
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
+  # note: maybe have `local_linking` flag for local debug dep code
+  # https://hexdocs.pm/mix/Mix.Tasks.Deps.html#module-dependency-definition-options
   defp deps do
     [
       {:bcrypt_elixir, "~> 3.0"},
-      {:phoenix, "~> 1.8"},
+      {:phoenix, "~> 1.8.1", local_linking: true},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.1"},
+      {:phoenix_live_view, "~> 1.1.0"},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       # {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       # like esbuild and tailwind, https://github.com/crbelaus/bun
+      # https://hexdocs.pm/bun/Bun.html
       {:bun, "~> 1.5", runtime: Mix.env() == :dev},
       # {:bun, "~> 1.5", only: :dev},
       {:heroicons,
@@ -82,7 +92,10 @@ defmodule Slink.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.8"},
+      {:bandit, "~> 1.8", local_linking: true},
+      {:phoenix_pubsub, "2.2.0", local_linking: true},
+      {:plug, "~> 1.18", local_linking: true},
+      {:mint_web_socket, "~> 1.0", optional: true, local_linking: true},
 
       # App enhancement deps
       {:endon, "~> 2.0"},
@@ -92,11 +105,20 @@ defmodule Slink.MixProject do
       # {:corsica, "~> 2.1"},
 
       # Dev Tools
-      {:igniter, "~> 0.6", only: [:dev, :test]},
-      {:git_ops, "~> 2.0", only: [:dev], runtime: false},
+      # LiveDebugger run at http://localhost:4007
+      # require chrome extenstion!
+      # https://github.com/software-mansion/live-debugger?tab=readme-ov-file#getting-started
+      # {:live_debugger, "~> 0.4.0", only: :dev},
       # {:faker, "~> 0.18", only: [:dev, :test]},
-      {:tidewave, "~> 0.3", only: [:dev]}
-    ] ++ env_deps(Mix.env())
+      {:tidewave, "~> 0.5", only: [:dev]},
+      # Livebook tools
+      {:kino, "~> 0.16.0", only: [:dev]},
+      {:kino_vega_lite, "~> 0.1.11", only: [:dev]},
+
+      # deployment tool
+      {:igniter, "~> 0.6", only: [:dev, :test]},
+      {:git_ops, "~> 2.0", only: [:dev], runtime: false}
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -131,6 +153,7 @@ defmodule Slink.MixProject do
         "bun js --minify",
         "phx.digest"
       ],
+      "assets.clean": ["phx.digest.clean --all"],
       precommit: [
         "compile --warning-as-errors",
         "deps.unlock --unused",
@@ -142,33 +165,53 @@ defmodule Slink.MixProject do
       "dev.db.init": ["ecto.drop --force-drop", "ecto.create"],
       "dev.init": ["run run/dev/seed.exs"],
       "dev.reset": ["ecto.reset.force", "dev.init"],
-      reset: ["dev.reset"],
       "test.reset": ["ecto.reset.force"],
-      "test.demo": &test_task/1,
-      "assets.clean": [&assets_clean_build/1, "phx.digest.clean --all"],
+      "demo.test": &demo_task/1,
+      demo: ["demo.test", "cmd mix demo.test"],
       routes: ["phx.routes"]
     ]
   end
 
-  def preferred_cli_env do
+  ## Support deps local-linking
+  def raw_deps, do: deps()
+
+  def deps_with_linking_path(deps \\ deps()) do
+    # Mix.Local.append_archives()
+    # :code.get_path() |> Enum.sort();
+
+    Mix.DepLink
+    |> Code.ensure_loaded()
+    |> case do
+      {:module, _} ->
+        deps
+        |> Mix.DepLink.deps_with_local_linking()
+
+      {:error, reason} ->
+        if Mix.env() in [:dev, :test] do
+          Mix.raise(
+            "No Mix.DepLink because: #{reason |> inspect}, please run: mix archive.install hex ehelper first!"
+          )
+        else
+          deps
+        end
+    end
+  end
+
+  def archives(:dev) do
     [
-      "dev.init": :dev,
-      "dev.reset": :dev,
-      "test.reset": :test,
-      "test.demo": :test
+      # https://github.com/cao7113/ehelper?tab=readme-ov-file#install
+      # https://hexdocs.pm/mix/Mix.Tasks.Archive.Check.html
+      # mix archive.check called by mix deps.get automatically unless --no-archives-check given
+      {:ehelper, "~> 0.1"}
     ]
   end
 
-  def test_task(_args) do
+  def archives(_), do: []
+
+  def demo_task(_args) do
     IO.puts("#" |> String.duplicate(40))
     IO.puts("##  Mix.env(): #{Mix.env()}")
     IO.puts("")
-  end
-
-  def assets_clean_build(_args) do
-    # assets_dir = "priv/static/assets"
-    # File.rm_rf(assets_dir)
-    # Mix.shell().info("Removed #{assets_dir}")
   end
 
   defp docs do
@@ -181,14 +224,4 @@ defmodule Slink.MixProject do
       ]
     ]
   end
-
-  def env_deps(:dev),
-    do: [
-      # Livebook tools
-      {:kino, "~> 0.16.0"},
-      {:kino_vega_lite, "~> 0.1.11"}
-    ]
-
-  def env_deps(_),
-    do: []
 end

@@ -17,7 +17,7 @@ defmodule SlinkWeb.UserLive.Login do
               <% else %>
                 Don't have an account? <.link
                   navigate={~p"/users/register"}
-                  class="font-semibold text-brand hover:underline"
+                  class="font-semibold text-info hover:underline"
                   phx-no-format
                 >Sign up</.link> for an account now.
               <% end %>
@@ -38,8 +38,9 @@ defmodule SlinkWeb.UserLive.Login do
             field={f[:email]}
             type="email"
             label="Email"
-            autocomplete="username"
+            autocomplete="email"
             required
+            phx-mounted={JS.focus()}
           />
           <.input
             field={@form[:password]}
@@ -77,12 +78,11 @@ defmodule SlinkWeb.UserLive.Login do
             field={f[:email]}
             type="email"
             label="Email"
-            autocomplete="username"
+            autocomplete="email"
             required
-            phx-mounted={JS.focus()}
           />
           <.button class="btn btn-primary w-full">
-            Log in with email <span aria-hidden="true">→</span>
+            Log in with email magic-link <span aria-hidden="true">→</span>
           </.button>
         </.form>
       </div>

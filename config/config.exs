@@ -43,6 +43,7 @@ config :slink,
 
 # Configures the endpoint
 config :slink, SlinkWeb.Endpoint,
+  # https://hexdocs.pm/bandit/1.6.7/Bandit.html#t:options/0
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
@@ -62,7 +63,7 @@ config :slink, SlinkWeb.Endpoint,
 config :slink, Slink.Mailer, adapter: Swoosh.Adapters.Local
 
 config :bun,
-  version: "1.2.22",
+  version: "1.3.2",
   assets: [
     args: [],
     cd: Path.expand("../assets", __DIR__)

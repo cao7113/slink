@@ -33,10 +33,20 @@ defmodule SlinkWeb.Layouts do
             class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm"
           >
             <li>
-              <.link href="/dev/dashboard">Dashboard</.link>
+              <.link href="/dev/dashboard" target="_blank">Dashboard</.link>
             </li>
             <li>
-              <.link href="/dev/mailbox">Mailbox</.link>
+              <.link href="/dev/mailbox" target="_blank">Mailbox</.link>
+            </li>
+            <li>
+              <.link href={~p"/play/try"}>Try live</.link>
+            </li>
+            <li>
+              <.link href={~p"/play/demo"}>Demo live</.link>
+            </li>
+
+            <li>
+              <.link href={~p"/pages/chat"}>Chat Channel</.link>
             </li>
             <li>
               <.link href={~p"/pages/test"}>Test</.link>

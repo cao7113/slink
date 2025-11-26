@@ -5,6 +5,18 @@ defmodule SlinkWeb.UserLive.RegistrationTest do
   import Slink.AccountsFixtures
 
   describe "Registration page" do
+    @tag try: true
+    test "init disconnected mount", %{conn: conn} do
+      conn = get(conn, ~p"/users/register")
+      html = html_response(conn, 200)
+      assert html =~ "Register for an account"
+
+      # live view mount
+      {:ok, lv, html} = live(conn)
+      assert is_pid(lv.pid)
+      assert html =~ "Register for an account"
+    end
+
     test "renders registration page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
@@ -12,16 +24,15 @@ defmodule SlinkWeb.UserLive.RegistrationTest do
       assert html =~ "Log in"
     end
 
-    # to fix
-    # test "redirects if already logged in", %{conn: conn} do
-    #   result =
-    #     conn
-    #     |> log_in_user(user_fixture())
-    #     |> live(~p"/users/register")
-    #     |> follow_redirect(conn, ~p"/")
+    test "redirects if already logged in", %{conn: conn} do
+      result =
+        conn
+        |> log_in_user(user_fixture())
+        |> live(~p"/users/register")
+        |> follow_redirect(conn, ~p"/")
 
-    #   assert {:ok, _conn} = result
-    # end
+      assert {:ok, _conn} = result
+    end
 
     test "renders errors for invalid data", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")

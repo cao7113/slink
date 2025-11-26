@@ -2,19 +2,16 @@
   "workspaces": [
     "../deps/*"
   ],
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.13",
+    "daisyui": "^5.1.13",
+    "tailwindcss": "^4.1.13",
+    "topbar": "^3.0.0"
+  },
+  "devDependencies": {},
   "scripts": {
     "ls": "bun pm ls",
     "buildcss": "tailwindcss -i ./css/app.css -o ../priv/static/assets/app.css --minify",
     "watchcss": "tailwindcss -i ./css/app.css -o ../priv/static/assets/app.css --watch"
-  },
-  "dependencies": {
-    "@tailwindcss/cli": "^4.1.13",
-    "daisyui": "^5.1.13",
-    "phoenix": "workspace:*",
-    "phoenix_html": "workspace:*",
-    "phoenix_live_view": "workspace:*",
-    "tailwindcss": "^4.1.13",
-    "topbar": "^3.0.0"
-  },
-  "devDependencies": {}
+  }
 }

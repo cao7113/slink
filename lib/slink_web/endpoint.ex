@@ -11,9 +11,48 @@ defmodule SlinkWeb.Endpoint do
     same_site: "Lax"
   ]
 
+  ## Sockets
+
   socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options]],
-    longpoll: [connect_info: [session: @session_options]]
+    websocket: [
+      connect_info: [session: @session_options],
+      transport_log: :debug
+    ],
+    longpoll: [
+      connect_info: [session: @session_options],
+      transport_log: :debug
+    ]
+
+  ## Try channel and sockets
+  # - https://hexdocs.pm/phoenix/1.8.1/channels.html#tying-it-all-together
+  # - https://hexdocs.pm/phoenix/1.8.1/Phoenix.Endpoint.html#socket/3
+  socket "/ws/chat", SlinkWeb.ChatSocket,
+    # websocket: true,
+    websocket: [
+      # https://hexdocs.pm/phoenix/1.8.1/Phoenix.Endpoint.html#socket/3-connect-info
+      connect_info: [
+        # In order to validate the session, the "_csrf_token" must be given as request parameter when connecting the socket with the value of URI.encode_www_form(Plug.CSRFProtection.get_csrf_token())
+        # ref assets/js/chat_socket.js
+        session: @session_options
+      ],
+      transport_log: :debug,
+      error_handler: {SlinkWeb.ChatSocket, :handle_error, []}
+    ],
+    # longpoll: false,
+    auth_token: false
+
+  # https://hexdocs.pm/phoenix/1.8.1/Phoenix.Endpoint.html#socket/3
+  socket "/ws/echo", SlinkWeb.EchoSocket,
+    # longpoll: false, # this is default
+    # websocket: true, # default is true
+    websocket: [
+      # access ws endpoint at: ws://localhost:4000/ws/echo/websocket
+      # path: "/websocket",
+      # connect_info: [
+      #   session: @session_options
+      # ],
+      transport_log: :debug
+    ]
 
   # Serve at "/" the static files from "priv/static" directory.
   #

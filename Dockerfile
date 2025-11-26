@@ -16,7 +16,7 @@
 # # Github Actions Error: no match for platform in manifest: not found
 # # ARG DEBIAN_VERSION=bookworm-20250610-slim
 # ARG DEBIAN_VERSION=bookworm-20250520-slim
-ARG ELIXIR_VERSION=1.19.1
+ARG ELIXIR_VERSION=1.19.2
 ARG OTP_VERSION=28.1.1
 ARG DEBIAN_VERSION=bookworm-20251020-slim
 # docker.io/hexpm/elixir:1.19.1-erlang-28.1.1-debian-bookworm-20251020-slim
