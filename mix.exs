@@ -187,13 +187,13 @@ defmodule Slink.MixProject do
         |> Mix.DepLink.deps_with_local_linking()
 
       {:error, reason} ->
-        if Mix.env() in [:dev, :test] do
-          Mix.raise(
-            "No Mix.DepLink because: #{reason |> inspect}, please run: mix archive.install hex ehelper first!"
+        if Mix.env() in [:dev] do
+          Mix.shell().info(
+            "No Mix.DepLink : #{reason |> inspect}, run: mix archive.install hex ehelper"
           )
-        else
-          deps
         end
+
+        deps
     end
   end
 
