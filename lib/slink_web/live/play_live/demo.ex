@@ -1,75 +1,87 @@
 defmodule SlinkWeb.PlayLive.Demo do
-  alias SlinkWeb.Layouts
+  @moduledoc """
+  Basic Liveview demo
+  liveview is just a process(channel)
+
+  """
+
   use Phoenix.LiveView
+  alias SlinkWeb.Layouts
+
+  @process_name :live_demo
+  def process_name, do: @process_name
+
+  attr :name, :string, default: "boy"
 
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
+      <div>Hello {@name}</div>
       <div>
-        <div>
-          Counter: {@counter}
-          <button class="btn" phx-click="inc">+</button>
-        </div>
-
-        <MySortComponent.display lists={[first_list: @first_list, second_list: @second_list]} />
+        Update name on input-blur: <input phx-blur="update_name" class="input w-40" value={@name} />
       </div>
+
+      <div>
+        Counter: {@counter}
+        <button class="btn btn-active" phx-click="inc">+</button>
+      </div>
+
+      <div>Current time: {@date} (UTC)</div>
+      <div>Current pid {self() |> inspect} as process-name {process_name() |> inspect}</div>
     </Layouts.app>
     """
   end
 
-  def mount(_params, _session, socket) do
-    first_list = for(i <- 1..9, do: "First List #{i}") |> Enum.shuffle()
-    second_list = for(i <- 1..9, do: "Second List #{i}") |> Enum.shuffle()
+  @impl true
+  def mount(params, session, socket) do
+    if connected?(socket) do
+      register_process_name(process_name())
+      {:ok, _tref} = :timer.send_interval(1000, self(), :tick)
+    end
+
+    {params, session, socket} |> dbg
 
     socket =
       socket
       |> assign(:counter, 0)
-      |> assign(first_list: first_list)
-      |> assign(second_list: second_list)
-      # 2) Delegated events
-      |> attach_hook(:sort, :handle_event, &MySortComponent.hooked_event/3)
-
-    # ss = socket |> Map.from_struct()
+      |> assign(date: DateTime.utc_now())
 
     {:ok, socket}
   end
 
-  # 1) Normal event
+  @impl true
   def handle_event("inc", _params, socket) do
+    {:handle_event, self(), socket} |> dbg
     {:noreply, update(socket, :counter, &(&1 + 1))}
   end
-end
 
-defmodule MySortComponent do
-  use Phoenix.Component
-
-  def display(assigns) do
-    ~H"""
-    <div class="flex gap-8">
-      <div :for={{key, list} <- @lists}>
-        <ul>
-          <li :for={item <- list}>{item}</li>
-        </ul>
-        <button phx-click="shuffle" phx-value-list={key} class="btn">Shuffle</button>
-        <button phx-click="sort" phx-value-list={key} class="btn">Sort</button>
-      </div>
-    </div>
-    """
+  def handle_event("update_name", %{"value" => new_name}, socket) do
+    # todo maybe too long
+    {:noreply, assign(socket, :name, new_name)}
   end
 
-  def hooked_event("shuffle", %{"list" => key}, socket) do
-    key = String.to_existing_atom(key)
-    shuffled = Enum.shuffle(socket.assigns[key])
-
-    {:halt, assign(socket, key, shuffled)}
+  @impl true
+  @doc """
+  iex> send(:live_demo, {:update_name, "new name"})
+  iex> pstate(:live_demo).socket.assigns
+  """
+  def handle_info({:update_name, name}, socket) do
+    socket = socket |> assign(:name, name)
+    {:noreply, socket}
   end
 
-  def hooked_event("sort", %{"list" => key}, socket) do
-    key = String.to_existing_atom(key)
-    sorted = Enum.sort(socket.assigns[key])
-
-    {:halt, assign(socket, key, sorted)}
+  def handle_info(:tick, socket) do
+    {:noreply, assign(socket, date: DateTime.utc_now())}
   end
 
-  def hooked_event(_event, _params, socket), do: {:cont, socket}
+  def register_process_name(name, pid \\ self()) do
+    Process.whereis(name)
+    |> case do
+      nil -> nil
+      # prepare for new binding if already registered
+      _pid -> Process.unregister(name)
+    end
+
+    Process.register(pid, :live_demo)
+  end
 end

@@ -20,4 +20,4 @@ https://hexdocs.pm/phoenix/Phoenix.Presence.html
 
 ## Test
 
-- many tabs open: http://localhost:4000/pages/chat
+- many tabs open: http://localhost:4000/chat

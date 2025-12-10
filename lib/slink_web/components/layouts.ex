@@ -33,23 +33,22 @@ defmodule SlinkWeb.Layouts do
             class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm"
           >
             <li>
-              <.link href="/dev/dashboard" target="_blank">Dashboard</.link>
-            </li>
-            <li>
-              <.link href="/dev/mailbox" target="_blank">Mailbox</.link>
+              <.link href={~p"/play/demo"}>Demo live</.link>
             </li>
             <li>
               <.link href={~p"/play/try"}>Try live</.link>
             </li>
             <li>
-              <.link href={~p"/play/demo"}>Demo live</.link>
-            </li>
-
-            <li>
-              <.link href={~p"/pages/chat"}>Chat Channel</.link>
+              <.link href={~p"/chat"}>Chat Channel</.link>
             </li>
             <li>
-              <.link href={~p"/pages/test"}>Test</.link>
+              <.link href={~p"/test"}>Web test</.link>
+            </li>
+            <li>
+              <.link href="/dev/dashboard" target="_blank">Dashboard</.link>
+            </li>
+            <li>
+              <.link href="/dev/mailbox" target="_blank">Mailbox</.link>
             </li>
             <li>
               <.link href={~p"/home"}>Welcome</.link>
@@ -156,7 +155,7 @@ defmodule SlinkWeb.Layouts do
               </.link>
             </li>
             <li>
-              <.link href={~p"/pages/info"} class="">Info</.link>
+              <.link href={~p"/info"} class="">Info</.link>
             </li>
             <li>
               <.link href={~p"/play/demo.html"} class="">Playground</.link>

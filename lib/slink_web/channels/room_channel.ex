@@ -67,10 +67,10 @@ defmodule SlinkWeb.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_in("set-socket", %{}, socket) do
+  def handle_in("client-push", %{}, socket) do
     broadcast!(socket, "new_msg", %{
-      body: "set-socket",
-      self: self() |> inspect(),
+      body: "reply to client push",
+      from_pid: self() |> inspect(),
       ref: socket.ref
     })
 

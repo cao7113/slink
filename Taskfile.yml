@@ -45,6 +45,8 @@ tasks:
 
   assets.install: mix bun a install --verbose
 
+  scc: scc --exclude-dir _build,deps,assets,node_modules,elixir_ls --include-ext ex,exs,eex,heex,leex .
+
   ## AI
   td: |
     # curl -v http://localhost:4000/tidewave/mcp

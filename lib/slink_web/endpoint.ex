@@ -13,12 +13,14 @@ defmodule SlinkWeb.Endpoint do
 
   ## Sockets
 
+  # https://github.com/phoenixframework/phoenix_live_view/blob/v1.1.18/lib/phoenix_live_view/socket.ex#L105
   socket "/live", Phoenix.LiveView.Socket,
+    # longpoll: [
+    #   connect_info: [session: @session_options],
+    #   transport_log: :debug
+    # ],
+    longpool: false,
     websocket: [
-      connect_info: [session: @session_options],
-      transport_log: :debug
-    ],
-    longpoll: [
       connect_info: [session: @session_options],
       transport_log: :debug
     ]
@@ -31,7 +33,8 @@ defmodule SlinkWeb.Endpoint do
     websocket: [
       # https://hexdocs.pm/phoenix/1.8.1/Phoenix.Endpoint.html#socket/3-connect-info
       connect_info: [
-        # In order to validate the session, the "_csrf_token" must be given as request parameter when connecting the socket with the value of URI.encode_www_form(Plug.CSRFProtection.get_csrf_token())
+        # In order to validate the session, the "_csrf_token" must be given as request parameter
+        # when connecting the socket with the value of URI.encode_www_form(Plug.CSRFProtection.get_csrf_token())
         # ref assets/js/chat_socket.js
         session: @session_options
       ],

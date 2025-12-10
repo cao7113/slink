@@ -73,9 +73,9 @@ if (chatInput) {
       console.log("Unable to join", resp);
     });
 
-  let btn = document.querySelector("#set-socket");
+  let btn = document.querySelector("#client-push-btn");
   btn.addEventListener("click", (event) => {
-    channel.push("set-socket", { something: "some value" });
+    channel.push("client-push", { something: "some value" });
   });
 }
 

@@ -1,11 +1,21 @@
 defmodule SlinkWeb.PageController do
   use SlinkWeb, :controller
 
+  def hi(conn, params) do
+    if params["dbg"] do
+      conn |> dbg
+    end
+
+    conn
+    |> send_resp(200, "ok")
+  end
+
   def home(conn, _params) do
     render(conn, :home)
   end
 
   def test(conn, _params) do
+    {:test, conn} |> dbg
     render(conn, :test)
   end
 

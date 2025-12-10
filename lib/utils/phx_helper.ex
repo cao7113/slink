@@ -2,7 +2,10 @@ defmodule PhxHelper do
   @moduledoc """
   Phoenix Helpers
 
+  todo phx-helper package
+
   - https://hexdocs.pm/phoenix/Phoenix.Debug.html
+  - https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.Debug.html
   """
   @compile {:no_warn_undefined, Phoenix.Debug}
 
@@ -13,6 +16,7 @@ defmodule PhxHelper do
   # NOTE: endport is a plug with nested plug-chain built by Plug.Builder
   @endpoint SlinkWeb.Endpoint
   # Slink.Supervisor
+  @router SlinkWeb.Router
 
   def app_sup(mod \\ Slink.Supervisor) do
     Process.whereis(mod)
@@ -85,7 +89,29 @@ defmodule PhxHelper do
   #   Phoenix.Token.verify(ctx, salt, token, opts)
   # end
 
+  ## Router & Controller
+
+  # Phoenix.Controller.__plugs__(Web.PageController, formats: [:html, :json])
+
+  def routes(), do: @router.__routes__()
+
+  def route_info(path, opts \\ []) do
+    router = Keyword.get(opts, :router, @router)
+    method = Keyword.get(opts, :method, "GET") |> to_string |> String.upcase()
+    host = Keyword.get(opts, :host, nil)
+    Phoenix.Router.route_info(router, method, path, host)
+  end
+
   ## Phoenix Sockets and Channels process
+
+  @doc """
+  View socket partitions config, default is cores
+  ref: Phoenix.Socket.PoolSupervisor
+  """
+  def socket_partitions(socket_mod \\ SlinkWeb.ChatSocket) do
+    ets_ref = @endpoint.config({:socket, socket_mod})
+    :ets.lookup_element(ets_ref, :partitions, 2)
+  end
 
   @doc """
   Returns a list of all currently connected Phoenix.Socket transport processes.
@@ -111,7 +137,7 @@ defmodule PhxHelper do
     end)
   end
 
-  def ep_sockets, do: @endpoint.__sockets__()
+  def socket_defs, do: @endpoint.__sockets__()
 
   def channels_of_socket(socket_pid \\ rand_socket_pid()) do
     Phoenix.Debug.list_channels(socket_pid)
@@ -125,4 +151,44 @@ defmodule PhxHelper do
 
   def rand_socket_pid, do: rand_socket() |> Map.get(:pid)
   def rand_socket, do: sockets() |> Enum.random()
+
+  ## LiveView
+  # https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.Debug.html
+
+  # Phoenix.LiveView.Socket.__channel__("lv:123")
+
+  def live_metadata(mod) when is_atom(mod) do
+    mod.__live__()
+  end
+
+  def live_info do
+    [
+      endpoint_config: @endpoint.config(:live_view),
+      phoenix_live_view_app_config: Application.get_all_env(:phoenix_live_view)
+    ]
+  end
+
+  def list_liveviews do
+    Phoenix.LiveView.Debug.list_liveviews()
+  end
+
+  def socket_of_liveview(pid) do
+    Phoenix.LiveView.Debug.socket(pid)
+  end
+
+  @doc """
+  Ph.live_sup
+  """
+  def live_sup do
+    # no any child processes
+    Supervisor.which_children(Phoenix.LiveView.Supervisor)
+  end
+
+  @doc """
+  Ph.live_channel_sup
+  sup -> dynamic-partitioned-sup -> channel process
+  """
+  def live_channel_sup do
+    Module.concat([@endpoint, Phoenix.LiveView.Socket])
+  end
 end

@@ -18,36 +18,38 @@ defmodule SlinkWeb.Router do
     plug(:fetch_current_scope_for_api_user)
   end
 
+  ## Web Pages
   scope "/", SlinkWeb do
     pipe_through(:browser)
 
     # pages
-    get("/home", PageController, :home)
-    get("/pages/info", PageController, :info)
-    get("/pages/chat", PageController, :chat)
-    get("/pages/test", PageController, :test)
+    get "/hi", PageController, :hi
+    get "/home", PageController, :home
+    get "/info", PageController, :info
+    get "/chat", PageController, :chat
+    get "/test", PageController, :test
   end
 
-  # API
+  ## API
   scope "/api", SlinkWeb.Api do
     pipe_through(:api)
 
-    get("/", ToolsController, :home)
-    get("/ping", ToolsController, :ping)
-    get("/info", ToolsController, :info)
+    get "/", ToolsController, :home
+    get "/ping", ToolsController, :ping
+    get "/info", ToolsController, :info
 
-    get("/links", LinkController, :index)
-    get("/links/:id", LinkController, :show)
+    get "/links", LinkController, :index
+    get "/links/:id", LinkController, :show
 
     scope "/" do
       pipe_through([:require_authenticated_api_user])
 
       # public links
-      resources("/links", LinkController, except: [:new, :edit, :index, :show])
+      resources "/links", LinkController, except: [:new, :edit, :index, :show]
 
       # user_links
-      post("/user_links/collect", UserLinkController, :collect)
-      resources("/user_links", UserLinkController, except: [:new, :edit])
+      post "/user_links/collect", UserLinkController, :collect
+      resources "/user_links", UserLinkController, except: [:new, :edit]
     end
   end
 
@@ -75,26 +77,26 @@ defmodule SlinkWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{SlinkWeb.UserAuth, :require_authenticated}] do
-      live("/users/settings", UserLive.Settings, :edit)
-      live("/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email)
-      live("/users/profile", UserLive.Profile, :edit)
+      live "/users/settings", UserLive.Settings, :edit
+      live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+      live "/users/profile", UserLive.Profile, :edit
 
       scope "/my", My do
-        live("/links", LinkLive.Index, :index)
-        live("/links/new", LinkLive.Form, :new)
-        live("/links/:id", LinkLive.Show, :show)
-        live("/links/:id/edit", LinkLive.Form, :edit)
+        live "/links", LinkLive.Index, :index
+        live "/links/new", LinkLive.Form, :new
+        live "/links/:id", LinkLive.Show, :show
+        live "/links/:id/edit", LinkLive.Form, :edit
 
-        live("/user_links", UserLinkLive.Index, :index)
-        live("/user_links/new", UserLinkLive.Form, :new)
-        live("/user_links/:id", UserLinkLive.Show, :show)
-        live("/user_links/:id/edit", UserLinkLive.Form, :edit)
+        live "/user_links", UserLinkLive.Index, :index
+        live "/user_links/new", UserLinkLive.Form, :new
+        live "/user_links/:id", UserLinkLive.Show, :show
+        live "/user_links/:id/edit", UserLinkLive.Form, :edit
 
-        live("/user_tokens", UserTokenLive.Index, :index)
+        live "/user_tokens", UserTokenLive.Index, :index
       end
     end
 
-    post("/users/update-password", UserSessionController, :update_password)
+    post "/users/update-password", UserSessionController, :update_password
   end
 
   # Live views
@@ -103,24 +105,24 @@ defmodule SlinkWeb.Router do
 
     live_session :current_user,
       on_mount: [{SlinkWeb.UserAuth, :mount_current_scope}] do
-      live("/play/try", PlayLive.Try)
-      live("/play/demo", PlayLive.Demo)
+      live "/play/demo", PlayLive.Demo, :index
+      live "/play/try", PlayLive.Try, :index
       live "/play/online/:name", PlayLive.Online, :index
 
-      live("/users/register", UserLive.Registration, :new)
-      live("/users/log-in", UserLive.Login, :new)
-      live("/users/log-in/:token", UserLive.Confirmation, :new)
+      live "/users/register", UserLive.Registration, :new
+      live "/users/log-in", UserLive.Login, :new
+      live "/users/log-in/:token", UserLive.Confirmation, :new
 
       # public links show
-      live("/", LinkLive.Index, :index)
-      live("/links", LinkLive.Index, :index)
-      live("/links/new", LinkLive.Form, :new)
-      live("/links/:id", LinkLive.Show, :show)
-      live("/links/:id/edit", LinkLive.Form, :edit)
+      live "/", LinkLive.Index, :index
+      live "/links", LinkLive.Index, :index
+      live "/links/new", LinkLive.Form, :new
+      live "/links/:id", LinkLive.Show, :show
+      live "/links/:id/edit", LinkLive.Form, :edit
     end
 
-    post("/users/log-in", UserSessionController, :create)
-    delete("/users/log-out", UserSessionController, :delete)
+    post "/users/log-in", UserSessionController, :create
+    delete "/users/log-out", UserSessionController, :delete
   end
 
   ## Admin routes
@@ -132,24 +134,24 @@ defmodule SlinkWeb.Router do
       on_mount: [{SlinkWeb.UserAuth, :require_authenticated_admin_user}] do
       scope "/admin", Admin do
         ## Tags
-        live("/tags", TagLive.Index, :index)
-        live("/tags/new", TagLive.Form, :new)
-        live("/tags/:id", TagLive.Show, :show)
-        live("/tags/:id/migrate", TagLive.Migrate, :migrate)
-        live("/tags/:id/edit", TagLive.Form, :edit)
+        live "/tags", TagLive.Index, :index
+        live "/tags/new", TagLive.Form, :new
+        live "/tags/:id", TagLive.Show, :show
+        live "/tags/:id/migrate", TagLive.Migrate, :migrate
+        live "/tags/:id/edit", TagLive.Form, :edit
 
         ## Sites
-        live("/sites", SiteLive.Index, :index)
-        live("/sites/new", SiteLive.Form, :new)
-        live("/sites/:id", SiteLive.Show, :show)
-        live("/sites/:id/edit", SiteLive.Form, :edit)
+        live "/sites", SiteLive.Index, :index
+        live "/sites/new", SiteLive.Form, :new
+        live "/sites/:id", SiteLive.Show, :show
+        live "/sites/:id/edit", SiteLive.Form, :edit
 
         ## Users
-        live("/users", UserLive.Index, :index)
-        live("/users/:id", UserLive.Show, :show)
+        live "/users", UserLive.Index, :index
+        live "/users/:id", UserLive.Show, :show
 
         ## Info
-        live("/info", InfoLive.Index, :index)
+        live "/info", InfoLive.Index, :index
       end
     end
   end

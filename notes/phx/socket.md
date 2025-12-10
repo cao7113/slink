@@ -123,6 +123,30 @@ Add the channel to your `lib/slink_web/channels/chat_socket.ex` handler, for exa
 
   ```
 
+ - Phoenix.Socket 内部实现的 @behaviour Phoenix.Socket.Transport 的 child_spec(opts)是什么时候被调用的
+  - Phoenix.Socket.Transport是WebSock的超集，但不包括这个child_spec callback，是针对phoenix加的
+  - ChatSocket 的 child_spec/1 是endpoint的supervisor tree的一部分，通过endpoint中的 socket 宏配置注入 sup tree
+    - endpoint启动的时候，每个socket配置启动几个Phoenix.Socket.PoolSupervisor，用于后面的channel process的qidong
+    - 个数通过 partitions: 配置，默认为 System.schedulers_online()
+    - 每个socket配置都会生成这样一个管理进程 Process.whereis SlinkWeb.Endpoint.SlinkWeb.ChatSocket
+      - 下面生成出partitions个 Phoenix.Socket.PoolSupervisor，用于动态管理 生成的channel进程\
+      - H.Proc.state SlinkWeb.Endpoint.SlinkWeb.ChatSocket
+  - socket相关进程生成流程：
+    - Endpoint sup tree 为每个Socket实例，如ChatSocket 通过其内置的 child_spec( use Phoenix.Socket时引入) 生成一个 sup（Phoenix.Socket.PoolSupervisor 进程)
+    - 该sup 负责生成指定partitions个动态DynamicSupervisor，通过 Phoenix.Socket.PoolSupervisor.start_pooled
+    - 用户join channel时会根据 Phoenix.Socket.PoolSupervisor.start_child 生成由上面的某个dynamic-sup管理的channel进程
+    - 内部使用了 erlang:phash2 进行 动态分区
+    - socket connection进程在websocket是则是原来的http connection process，神奇upgrade！
+    ```
+    def __child_spec__(handler, opts, socket_options) do
+      endpoint = Keyword.fetch!(opts, :endpoint)
+      opts = Keyword.merge(socket_options, opts)
+      partitions = Keyword.get(opts, :partitions, System.schedulers_online())
+      args = {endpoint, handler, partitions}
+      Supervisor.child_spec({Phoenix.Socket.PoolSupervisor, args}, id: handler)
+    end
+    ```
+
 - 什么时候调用RoomChannel（use Phoenix.Channel）的join callback？
   - 总结一句话：用户进入channel进程后执行的首个回调！
   - 对应的transport socket handler（如ChatSocket）接受到phx_join event消息时会触发join

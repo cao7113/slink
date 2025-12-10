@@ -8,7 +8,8 @@ defmodule SlinkWeb.ChatSocket do
   - https://hexdocs.pm/phoenix/channels.html#tying-it-all-together
   """
 
-  use Phoenix.Socket, log: :debug
+  # final partitions = Keyword.get(opts, :partitions, System.schedulers_online())
+  use Phoenix.Socket, log: :debug, partitions: 2
   require Logger
 
   # A Socket handler
@@ -19,7 +20,6 @@ defmodule SlinkWeb.ChatSocket do
   ## Channels
   # Uncomment the following line to define a "room:*" topic
   # pointing to the `SlinkWeb.RoomChannel`:
-
   channel "room:*", SlinkWeb.RoomChannel
 
   # To create a channel file, use the mix task:

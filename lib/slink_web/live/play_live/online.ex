@@ -1,7 +1,6 @@
 defmodule SlinkWeb.PlayLive.Online do
   use SlinkWeb, :live_view
-
-  alias SlinkWeb.Presence.Live, as: Presence
+  alias SlinkWeb.PresenceLive, as: Presence
 
   def mount(params, _session, socket) do
     socket = stream(socket, :presences, [])

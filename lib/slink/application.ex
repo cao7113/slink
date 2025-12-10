@@ -17,7 +17,7 @@ defmodule Slink.Application do
       {DNSCluster, query: Application.get_env(:slink, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Slink.PubSub},
       SlinkWeb.Presence,
-      SlinkWeb.Presence.Live,
+      SlinkWeb.PresenceLive,
       # Start a worker by calling: Slink.Worker.start_link(arg)
       # {Slink.Worker, arg},
       # Start to serve requests, typically the last entry
