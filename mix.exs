@@ -13,8 +13,7 @@ defmodule Slink.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      # deps: deps(),
-      deps: deps_with_linking_path(),
+      deps: env_deps(Mix.env()),
       archives: archives(Mix.env()),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader],
@@ -73,11 +72,8 @@ defmodule Slink.MixProject do
       {:lazy_html, ">= 0.1.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       # {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
-      # like esbuild and tailwind, https://github.com/crbelaus/bun
-      # https://hexdocs.pm/bun/Bun.html
-      {:bun, "~> 1.5", runtime: Mix.env() == :dev},
-      # {:bun, "~> 1.5", only: :dev},
+      # {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
+      {:bun, "~> 1.6", runtime: Mix.env() == :dev, local_linking: true},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.2.0",
@@ -135,21 +131,21 @@ defmodule Slink.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       # assets
       "assets.setup": [
-        "tailwind.install --if-missing",
+        # "tailwind.install --if-missing",
         # "esbuild.install --if-missing",
         "bun.install --if-missing",
-        "bun assets install"
+        "bun assets install --verbose"
       ],
       "assets.build": [
-        # "bun css",
-        "tailwind slink",
+        # "tailwind slink",
         # "esbuild slink",
-        "bun js"
+        "bun js",
+        "bun css"
       ],
       "assets.deploy": [
-        # "bun css --minify",
-        "tailwind slink --minify",
+        # "tailwind slink --minify",
         # "esbuild slink --minify",
+        "bun css --minify",
         "bun js --minify",
         "phx.digest"
       ],
@@ -173,6 +169,10 @@ defmodule Slink.MixProject do
   end
 
   ## Support deps local-linking
+
+  # def env_deps(:prod), do: deps() |> prune_local_linking()
+  def env_deps(_), do: deps_with_linking_path()
+
   def raw_deps, do: deps()
 
   def deps_with_linking_path(deps \\ deps()) do
@@ -193,8 +193,22 @@ defmodule Slink.MixProject do
           )
         end
 
-        deps
+        deps |> prune_local_linking()
     end
+  end
+
+  def prune_local_linking(deps \\ deps()) do
+    deps
+    |> Enum.map(fn
+      {app, v, opts} ->
+        {app, v, opts |> Keyword.delete(:local_linking)}
+
+      {app, opts} when is_list(opts) ->
+        {app, opts |> Keyword.delete(:local_linking)}
+
+      item ->
+        item
+    end)
   end
 
   def archives(:dev) do

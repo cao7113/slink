@@ -66,6 +66,7 @@ defmodule SlinkWeb.Endpoint do
     at: "/",
     from: :slink,
     gzip: not code_reloading?,
+    # ["play", "assets", "fonts", "images", "favicon.ico", "robots.txt"]
     only: SlinkWeb.static_paths()
 
   if Code.ensure_loaded?(Tidewave) do

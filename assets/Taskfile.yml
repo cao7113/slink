@@ -7,8 +7,6 @@ tasks:
 
   # # Install a NPM package such a htmx.org
   # _build/bun add htmx.org
-  # # Install a local package such as phoenix_html
-  # _build/bun add ./deps/phoenix_html
   # # Remove a dependency
   # _build/bun remove htmx.org
 

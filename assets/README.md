@@ -1,11 +1,11 @@
 # Assets
 
-## Workspace
+## Bun
 
 - https://bun.com/docs/pm/workspaces
 
 ```
-"phoenix": "workspace:*",
-"phoenix_html": "workspace:*",
-"phoenix_live_view": "workspace:*",
+    "phoenix": "workspace:*",
+    "phoenix_html": "workspace:*",
+    "phoenix_live_view": "workspace:*",
 ```
