@@ -48,8 +48,8 @@ services:
   # https://github.com/cao7113/slink/pkgs/container/slink
   # http://web.slink.orb.local/
   web:
-    image: ghcr.io/cao7113/slink
-    # image: slink
+    # image: ghcr.io/cao7113/slink
+    image: slink
     # build: .
     depends_on:
       db:
