@@ -43,8 +43,9 @@ tasks:
         mix test.reset
   clean.links: find deps/ -type l -depth 1 -delete
 
-  bun.install: mix bun a install --verbose
-  bun.ls: mix bun a pm ls
+  ## assets
+  bun.install: mix bun assets install --verbose
+  bun.ls: mix bun assets pm ls
 
   scc: scc --exclude-dir _build,deps,assets,node_modules,elixir_ls --include-ext ex,exs,eex,heex,leex .
 
