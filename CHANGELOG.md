@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.34](https://github.com/cao7113/slink/compare/v0.3.33...v0.3.34) (2025-12-10)
+
+
+
+
+### Bug Fixes:
+
+* use bun to manage css and js and disable tailwind and esbuild config by Ryn Cao [(#7)](https://github.com/cao7113/slink/pull/7)
+
 ## [v0.3.33](https://github.com/cao7113/slink/compare/v0.3.32...v0.3.33) (2025-09-22)
 
 
