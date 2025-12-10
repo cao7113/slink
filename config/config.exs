@@ -62,24 +62,23 @@ config :slink, SlinkWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :slink, Slink.Mailer, adapter: Swoosh.Adapters.Local
 
+# https://github.com/crbelaus/bun?tab=readme-ov-file#adding-to-phoenix
 config :bun,
-  version: "1.3.2",
+  # run mix bun.install --if-missing
+  # NOTE: maybe rm _build/bun before install new version
+  version: "1.3.4",
+  # mix bun assets --version
   assets: [
-    args: [],
-    cd: Path.expand("../assets", __DIR__)
-  ],
-  # shorthand assets commands, run like: mix bun a ls
-  a: [
     args: [],
     cd: Path.expand("../assets", __DIR__)
   ],
   js: [
     args:
       ~w(build js/app.js --outdir=../priv/static/assets/js --external /fonts/* --external /images/*),
-    cd: Path.expand("../assets", __DIR__),
-    env: %{
-      "NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()] |> Enum.join(":")
-    }
+    cd: Path.expand("../assets", __DIR__)
+    # env: %{
+    #   "NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()] |> Enum.join(":")
+    # }
   ],
   css: [
     # not work in Dockerfile???
@@ -87,6 +86,9 @@ config :bun,
     args: ~w(run tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css),
     cd: Path.expand("../assets", __DIR__)
   ]
+
+config :phoenix_live_view, :colocated_js,
+  target_directory: Path.expand("../assets/node_modules/phoenix-colocated", __DIR__)
 
 # # Configure esbuild (the version is required)
 # config :esbuild,
@@ -101,19 +103,19 @@ config :bun,
 #   ]
 
 # # Configure tailwind (the version is required)
-config :tailwind,
-  # https://github.com/tailwindlabs/tailwindcss/releases/
-  # run below after changed the version:
-  # mix tailwind.install --if-missing # or
-  # mix asset.setup
-  version: "4.1.13",
-  slink: [
-    args: ~w(
-      --input=assets/css/app.css
-      --output=priv/static/assets/css/app.css
-    ),
-    cd: Path.expand("..", __DIR__)
-  ]
+# config :tailwind,
+#   # https://github.com/tailwindlabs/tailwindcss/releases/
+#   # run below after changed the version:
+#   # mix tailwind.install --if-missing # or
+#   # mix asset.setup
+#   version: "4.1.13",
+#   slink: [
+#     args: ~w(
+#       --input=assets/css/app.css
+#       --output=priv/static/assets/css/app.css
+#     ),
+#     cd: Path.expand("..", __DIR__)
+#   ]
 
 # Configures Elixir's Logger
 config :logger, :default_formatter,

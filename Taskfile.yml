@@ -43,9 +43,13 @@ tasks:
         mix test.reset
   clean.links: find deps/ -type l -depth 1 -delete
 
-  assets.install: mix bun a install --verbose
+  ## assets
+  bun.install: mix bun assets install --verbose
+  bun.ls: mix bun assets pm ls
 
-  scc: scc --exclude-dir _build,deps,assets,node_modules,elixir_ls --include-ext ex,exs,eex,heex,leex .
+  scc: |
+    # brew install scc
+    scc --exclude-dir _local,.elixir_ls,_build,deps,node_modules --include-ext ex,exs,eex,heex,js .
 
   ## AI
   td: |

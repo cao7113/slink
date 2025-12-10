@@ -45,8 +45,8 @@ config :slink, SlinkWeb.Endpoint,
   secret_key_base: "XxmbaZRUE+mDE3RZF0dYozOIXHzrS2CBdR12vGWCg+deNm2onRZ37OTBEwqcwcL8",
   watchers: [
     # esbuild: {Esbuild, :install_and_run, [:slink, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:slink, ~w(--watch)]},
-    # bun_css: {Bun, :install_and_run, [:css, ~w(--watch)]},
+    # tailwind: {Tailwind, :install_and_run, [:slink, ~w(--watch)]},
+    bun_css: {Bun, :install_and_run, [:css, ~w(--watch)]},
     bun_js: {Bun, :install_and_run, [:js, ~w(--sourcemap=inline --watch)]}
   ]
 
