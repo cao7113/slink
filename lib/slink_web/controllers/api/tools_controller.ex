@@ -14,6 +14,26 @@ defmodule SlinkWeb.Api.ToolsController do
     json(conn, %{msg: "pong"})
   end
 
+  @max_ms 3000
+  def delay(conn, %{"num" => num_ms}) do
+    ms = String.to_integer(num_ms)
+
+    {ms, msg} =
+      if ms <= @max_ms do
+        {ms, "ok"}
+      else
+        {@max_ms, "too large"}
+      end
+
+    :timer.sleep(ms)
+
+    json(conn, %{
+      delay: ms,
+      unit: :ms,
+      msg: msg
+    })
+  end
+
   def info(conn, _params) do
     user = (conn.assigns.current_scope || %{}) |> Map.get(:user)
 

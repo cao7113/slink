@@ -43,7 +43,7 @@ tasks:
         mix test.reset
   clean.links: find deps/ -type l -depth 1 -delete
 
-  ## assets
+  ## assets install or upgrade
   bun.install: mix bun assets install --verbose
   bun.ls: mix bun assets pm ls
 

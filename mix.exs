@@ -45,7 +45,8 @@ defmodule Slink.MixProject do
     ]
   end
 
-  def extra_apps(:dev), do: [:wx, :observer]
+  # https://hexdocs.pm/elixir/debugging.html#observer
+  def extra_apps(:dev), do: [:observer]
   def extra_apps(_), do: []
 
   # Specifies which paths to compile per environment.
@@ -62,7 +63,7 @@ defmodule Slink.MixProject do
   defp deps do
     [
       {:bcrypt_elixir, "~> 3.0"},
-      {:phoenix, "~> 1.8.1", local_linking: true},
+      {:phoenix, "~> 1.8", local_linking: true},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
@@ -92,6 +93,7 @@ defmodule Slink.MixProject do
       {:phoenix_pubsub, "2.2.0", local_linking: true},
       {:plug, "~> 1.18", local_linking: true},
       {:mint_web_socket, "~> 1.0", optional: true, local_linking: true},
+      {:req_client, "~> 0.1"},
 
       # App enhancement deps
       {:endon, "~> 2.0"},
@@ -200,7 +202,7 @@ defmodule Slink.MixProject do
   def prune_local_linking(deps \\ deps()) do
     deps
     |> Enum.map(fn
-      {app, v, opts} ->
+      {app, v, opts} when is_list(opts) ->
         {app, v, opts |> Keyword.delete(:local_linking)}
 
       {app, opts} when is_list(opts) ->

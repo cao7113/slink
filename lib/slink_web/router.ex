@@ -37,6 +37,7 @@ defmodule SlinkWeb.Router do
     get "/", ToolsController, :home
     get "/ping", ToolsController, :ping
     get "/info", ToolsController, :info
+    get "/delay/:num/ms", ToolsController, :delay
 
     get "/links", LinkController, :index
     get "/links/:id", LinkController, :show
@@ -108,6 +109,7 @@ defmodule SlinkWeb.Router do
       live "/play/demo", PlayLive.Demo, :index
       live "/play/try", PlayLive.Try, :index
       live "/play/online/:name", PlayLive.Online, :index
+      live "/play/modal", PlayLive.Modal, :index
 
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
