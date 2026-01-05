@@ -126,7 +126,6 @@
               <.link
                 :if={@current_scope.user.id == link.user_id}
                 phx-click={JS.push("delete", value: %{id: link.id}) |> hide("##{id}")}
-                data-confirm="Are you sure?"
                 class="btn text-red-400"
               >
                 <.icon name="hero-trash" class="size-3" />

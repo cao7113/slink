@@ -36,6 +36,9 @@ defmodule SlinkWeb.Layouts do
               <.link href={~p"/play/demo"}>Demo live</.link>
             </li>
             <li>
+              <.link href={~p"/play/modal"}>Modal live</.link>
+            </li>
+            <li>
               <.link href={~p"/play/try"}>Try live</.link>
             </li>
             <li>

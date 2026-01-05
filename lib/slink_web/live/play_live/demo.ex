@@ -2,11 +2,9 @@ defmodule SlinkWeb.PlayLive.Demo do
   @moduledoc """
   Basic Liveview demo
   liveview is just a process(channel)
-
   """
 
-  use Phoenix.LiveView
-  alias SlinkWeb.Layouts
+  use SlinkWeb, :live_view
 
   @process_name :live_demo
   def process_name, do: @process_name
@@ -33,13 +31,11 @@ defmodule SlinkWeb.PlayLive.Demo do
   end
 
   @impl true
-  def mount(params, session, socket) do
+  def mount(_params, _session, socket) do
     if connected?(socket) do
       register_process_name(process_name())
       {:ok, _tref} = :timer.send_interval(1000, self(), :tick)
     end
-
-    {params, session, socket} |> dbg
 
     socket =
       socket

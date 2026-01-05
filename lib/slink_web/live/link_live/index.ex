@@ -143,7 +143,12 @@ defmodule SlinkWeb.LinkLive.Index do
     link = Links.get_link!(socket.assigns.current_scope, id)
     # NOTE: publish delete event handled by handle_info()
     {:ok, _} = Links.delete_link(socket.assigns.current_scope, link)
-    socket = stream_delete(socket, :links, link)
+
+    socket =
+      socket
+      |> put_flash(:info, "Link-#{link.id} was deleted [#{link.title}]!")
+      |> stream_delete(:links, link)
+
     {:noreply, socket}
   end
 

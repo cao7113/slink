@@ -1,6 +1,5 @@
 defmodule SlinkWeb.PlayLive.Shuffer do
-  alias SlinkWeb.Layouts
-  use Phoenix.LiveView
+  use SlinkWeb, :live_view
 
   def render(assigns) do
     ~H"""

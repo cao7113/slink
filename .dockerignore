@@ -50,3 +50,4 @@ fly.toml
 Taskfile*
 .env*
 .github
+.vscode

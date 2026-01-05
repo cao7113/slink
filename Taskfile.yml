@@ -43,7 +43,7 @@ tasks:
         mix test.reset
   clean.links: find deps/ -type l -depth 1 -delete
 
-  ## assets
+  ## assets install or upgrade
   bun.install: mix bun assets install --verbose
   bun.ls: mix bun assets pm ls
 
@@ -80,6 +80,7 @@ tasks:
     mix run run/fly-db-local-restore.exs
     mix ecto.migrate
     mix run run/dev/seed.exs
+  # db browser tool: beekeeper
 
   ## Git ops https://github.com/zachdaniel/git_ops/blob/master/CHANGELOG.md
   ops: mix git_ops.project_info
