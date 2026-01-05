@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.35](https://github.com/cao7113/slink/compare/v0.3.34...v0.3.35) (2026-01-05)
+
+
+
+
+### Improvements:
+
+* delte link without confirmation for convenience by Ryn Cao
+
 ## [v0.3.34](https://github.com/cao7113/slink/compare/v0.3.33...v0.3.34) (2025-12-10)
 
 
