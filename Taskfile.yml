@@ -75,11 +75,13 @@ tasks:
   # task db.back -- 1
   db.back: mix ecto.rollback --step {{.CLI_ARGS}}
   db.back1: task db.back -- 1
-  db.fly: |
+  db.fly.local: |
     mix dev.db.init
     mix run run/fly-db-local-restore.exs
     mix ecto.migrate
     mix run run/dev/seed.exs
+  db.fly.dump: |
+    mix run run/fly-db-dump.exs
   # db browser tool: beekeeper
 
   ## Git ops https://github.com/zachdaniel/git_ops/blob/master/CHANGELOG.md

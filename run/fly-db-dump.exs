@@ -1,18 +1,17 @@
-#! mix run
+#!/usr/bin/env elixir
+
+# NOTE: ensure fly wireguard is on!
 
 db_url = System.fetch_env!("FLY_DB_URL")
 
 %URI{
   scheme: "postgres",
-  # authority: "a:b@host:5432",
-  # userinfo: "a:b",
   userinfo: userinfo,
   host: dbhost,
   # port: 5432,
   # path: "/db",
   path: "/" <> dbname
-  # query: "sslmode=disable",
-  # fragment: nil
+  # query: "sslmode=disable"
 } = URI.parse(db_url)
 
 [username, password] = String.split(userinfo, ":")

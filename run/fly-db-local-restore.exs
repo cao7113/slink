@@ -1,4 +1,4 @@
-#! mix run
+#!/usr/bin/env elixir
 
 db_dir = "_local/dump/flydb"
 target_db = "slink_dev"

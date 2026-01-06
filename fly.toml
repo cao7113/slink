@@ -24,6 +24,12 @@ kill_signal = 'SIGTERM'
 [http_service]
   internal_port = 8080
   force_https = true
+  # https://fly.io/docs/reference/fly-proxy-autostop-autostart/#how-fly-proxy-autostop-autostart-works
+  # Fly Proxy runs a process to determine whether an app has excess capacity every few minutes.
+  # NOTE: auto start/suspend only on existing machines other than create new machines! Fly Proxy autostop/autostart never creates or destroys Machines for you. 
+  # work with github action schedule!
+  # "off" (equivalent to false), "stop" (equivalent to true), or "suspend"
+  # Starting a Machine from a suspended state is faster than starting a Machine from a stopped state, but there are some caveats that you should know about.
   auto_stop_machines = 'suspend'
   auto_start_machines = true
   min_machines_running = 0
@@ -31,10 +37,22 @@ kill_signal = 'SIGTERM'
 
   [http_service.concurrency]
     type = 'connections'
-    hard_limit = 500
-    soft_limit = 100
+    hard_limit = 1000
+    soft_limit = 500
 
 [[vm]]
   memory = '512mb'
   cpu_kind = 'shared'
   cpus = 1
+
+[checks]
+  [checks.api_ping]
+    grace_period = "60s"
+    interval = "15s"
+    method = "get"
+    path = "/api/ping"
+    port = 8080
+    timeout = "10s"
+    type = "http"
+    [checks.api_ping.headers]
+      Content-Type = "application/json"
