@@ -1,0 +1,27 @@
+name: Fly App Scale
+on:
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
+  schedule:
+    # utc time with syntax: minute hour day month weekday
+    - cron: '15,30 14,15 * * *'
+    - cron: '15,30 22,23 * * *'
+
+jobs:
+  scale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Set Scale
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          echo "run schedule on rule ${{ github.event.schedule }}"
+          if [ "${{ github.event.schedule }}" == "15,30 14,15 * * *" ]; then
+            # force stop all machines
+            flyctl scale count 0 --yes
+          else
+            # restore one instance
+            flyctl scale count 1 --yes
+          fi
+
