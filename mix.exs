@@ -3,7 +3,7 @@ defmodule Slink.MixProject do
 
   @scm_url "https://github.com/cao7113/slink"
   # automatically bump version on release by git_ops
-  @version "0.3.36"
+  @version "0.3.37"
 
   def project do
     [
