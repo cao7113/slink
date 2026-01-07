@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.36](https://github.com/cao7113/slink/compare/v0.3.35...v0.3.36) (2026-01-07)
+
+
+
+
+### Bug Fixes:
+
+* autofocus using link navigate by Ryn Cao
+
 ## [v0.3.35](https://github.com/cao7113/slink/compare/v0.3.34...v0.3.35) (2026-01-05)
 
 
