@@ -16,7 +16,7 @@ defmodule SlinkWeb.LinkLive.Form do
       <.form for={@form} id="link-form" phx-change="validate" phx-submit="save">
         <.input field={@form[:title]} type="text" label="Title" />
         <.input field={@form[:url]} type="text" label="Url" />
-        <.input field={@form[:input_tags]} type="text" label="Tags(comma separated)" />
+        <.input field={@form[:input_tags]} type="text" label="Tags(comma separated)" autofocus />
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Link</.button>
           <.button navigate={return_path(@current_scope, @return_to, @link)}>Cancel</.button>
