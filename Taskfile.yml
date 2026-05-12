@@ -15,15 +15,15 @@ includes:
 tasks:
   default: mix test
   sh: iex --erl "-kernel shell_history enabled" -S mix
-  drun: |
-    mix deps.compile phoenix phoenix_live_view
-    task run
   run:
     env:
       ERL_AFLAGS: "-kernel shell_history enabled"
     cmds:
       # - iex --erl "-kernel shell_history enabled" -S mix phx.server
       - iex -S mix phx.server
+  drun: |
+    mix deps.compile phoenix phoenix_live_view
+    task run
   run6:
     aliases: [r6, n6, node6]
     env:

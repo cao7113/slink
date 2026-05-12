@@ -33,18 +33,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Elixir
-        # https://github.com/erlef/setup-beam
-        uses: erlef/setup-beam@v1
+      - name: Install mise & Runtime
+        # 替换了原有的 erlef/setup-beam
+        uses: mise-en-place/action@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          install: true
+          cache: true
 
       - name: Restore dependencies cache
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          # 建议在 key 中加入 mise.toml，确保环境变更时缓存能正确失效
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/mise.toml') }}
           restore-keys: ${{ runner.os }}-mix-
 
       - name: Install dependencies

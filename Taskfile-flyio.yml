@@ -25,9 +25,10 @@ tasks:
   dep: fly deploy
 
   s1: fly scale count 1 --yes
-  s2: fly scale count 2 --yes
+  # s2: fly scale count 2 --yes
   s0: fly scale count 0 --yes
-  s3: fly scale count 3 --max-per-region 1 --region "nrt,hkg,sin" --yes
+  # fly platform regions, nrt,sin,syd,bom
+  s2: fly scale count 2 --max-per-region 1 --region "nrt,sin" --yes
   show: fly scale show
   # fly machine clone MACHINE_ID --region NEW_REGION
 
