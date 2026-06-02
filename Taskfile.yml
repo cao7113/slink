@@ -172,6 +172,8 @@ tasks:
   ## Setup
   setup: |
     mise install 
-    mix deps.get
-
-    cd assets && task setup
+    mix setup
+    _build/bun --version
+    
+    mix test
+    # task run

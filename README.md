@@ -12,12 +12,11 @@ Share great links with the world!
 
 ```
 # setup
-mise install    # to install elixir
-mix setup       # to setup project deps
+task setup  # maybe need strong network
 
 # getting started
-task run # to run at: http://localhost:4000
-task sh  # to enter iex session
+task run    # to run at: http://localhost:4000
+task sh     # to enter iex session
 ````
 
 ## Learn more

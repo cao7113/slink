@@ -1,6 +1,6 @@
-# Assets
+# Assets management with bun
 
-## Bun
+## Two possible package.json
 
 - https://bun.com/docs/pm/workspaces
 

@@ -1,10 +1,7 @@
 # https://taskfile.dev/usage/
 version: '3'
 tasks:
-  # bun is globally installed by mise???
   default: bun i
-
-  t: ../_build/bun --version
 
   # # Install a NPM package such a htmx.org
   # _build/bun add htmx.org
@@ -12,7 +9,10 @@ tasks:
   # _build/bun remove htmx.org
 
   setup: |
-    bun add tailwindcss daisyui # @tailwindcss/vite@latest -D
+    ../_build/bun install
+
+  init: |
+    ../_build/bun add tailwindcss daisyui # @tailwindcss/vite@latest -D
   
   up.daisyui: |
     # refer assets/css/app.css # https://github.com/saadeghi/daisyui/releases
