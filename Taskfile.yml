@@ -7,11 +7,11 @@ vars:
   DOCKER_IMG_NAME: slink
   DOCKER_CONTAINER_NAME: slink
 includes:
-  # task f:iex
   flyio:
-    taskfile: ./Taskfile-flyio.yml
+    # task f:iex
     aliases: [f, fly]
-    optional: true
+    taskfile: ./Taskfile-flyio.yml
+    # optional: true
 tasks:
   default: mix test
   sh: iex --erl "-kernel shell_history enabled" -S mix
@@ -168,3 +168,10 @@ tasks:
   dk.test: |
     docker compose version
     docker compose up --quiet-pull --exit-code-from curl # --abort-on-container-exit
+  
+  ## Setup
+  setup: |
+    mise install 
+    mix deps.get
+
+    cd assets && task setup

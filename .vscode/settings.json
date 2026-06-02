@@ -1,4 +1,5 @@
 {
+  "workbench.profiles.actions.profileToUse": "phx",
   "tailwindcss-intellisense.trace.server": "verbose",
   "tailwindCSS.classAttributes": [
     "class"

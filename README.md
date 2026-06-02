@@ -1,26 +1,24 @@
-# Slink - Share up links
+# [Slink](https://slink.fly.dev)
 [![CI](https://github.com/cao7113/slink/actions/workflows/ci.yml/badge.svg)](https://github.com/cao7113/slink/actions/workflows/ci.yml)
 [![Fly Release](https://github.com/cao7113/slink/actions/workflows/fly-deploy.yml/badge.svg)](https://github.com/cao7113/slink/actions/workflows/fly-deploy.yml)
 
-Refactor Slink from scratch, because:
-
-- phoenix1.8 phx.gen.auth changed greatly based on user-scope
-- want to a better codebase and relearning phoenix
-
-## Site
-
-- https://slink.fly.dev
+Share great links with the world!
 
 ## Develop
 
-To start your Phoenix server:
+- DB:       Postgresql with `postgres/postgres` account
+- Tools:    mise & task & orbstack for docker
+- Lang:     elixir & phoenix
 
-* Run `mix setup` to install and setup dependencies
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+```
+# setup
+mise install    # to install elixir
+mix setup       # to setup project deps
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+# getting started
+task run # to run at: http://localhost:4000
+task sh  # to enter iex session
+````
 
 ## Learn more
 

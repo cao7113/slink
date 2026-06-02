@@ -1,9 +1,10 @@
 # https://taskfile.dev/usage/
 version: '3'
-
-## Assets management tasks
 tasks:
+  # bun is globally installed by mise???
   default: bun i
+
+  t: ../_build/bun --version
 
   # # Install a NPM package such a htmx.org
   # _build/bun add htmx.org

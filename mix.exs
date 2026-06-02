@@ -74,7 +74,8 @@ defmodule Slink.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       # {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       # {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
-      {:bun, "~> 1.6", runtime: Mix.env() == :dev, local_linking: true},
+      # https://hex.pm/packages/bun
+      {:bun, "~> 2.0", runtime: Mix.env() == :dev, local_linking: true},
       {:heroicons, heroicons_dep_opts(Mix.env())},
       {:swoosh, "~> 1.19"},
       {:req, "~> 0.5"},
@@ -121,7 +122,14 @@ defmodule Slink.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
+      setup: [
+        "deps.get",
+        "ecto.setup",
+        # NOTE: compile before assets.setup for ColocatedHook or ColocatedJS
+        "compile",
+        "assets.setup",
+        "assets.build"
+      ],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
@@ -188,7 +196,7 @@ defmodule Slink.MixProject do
 
   ## Support deps local-linking
 
-  # def env_deps(:prod), do: deps() |> prune_local_linking()
+  def env_deps(:prod), do: deps() |> prune_local_linking()
   def env_deps(_), do: deps_with_linking_path()
 
   def raw_deps, do: deps()
@@ -207,7 +215,7 @@ defmodule Slink.MixProject do
       {:error, reason} ->
         if Mix.env() in [:dev] do
           Mix.shell().info(
-            "No Mix.DepLink : #{reason |> inspect}, run: mix archive.install hex ehelper"
+            "Hint: no Mix.DepLink : #{reason |> inspect}, run: mix archive.install hex ehelper"
           )
         end
 
@@ -229,14 +237,14 @@ defmodule Slink.MixProject do
     end)
   end
 
-  def archives(:dev) do
-    [
-      # https://github.com/cao7113/ehelper?tab=readme-ov-file#install
-      # https://hexdocs.pm/mix/Mix.Tasks.Archive.Check.html
-      # mix archive.check called by mix deps.get automatically unless --no-archives-check given
-      {:ehelper, "~> 0.1"}
-    ]
-  end
+  # def archives(:dev) do
+  #   [
+  #     # https://github.com/cao7113/ehelper?tab=readme-ov-file#install
+  #     # https://hexdocs.pm/mix/Mix.Tasks.Archive.Check.html
+  #     # mix archive.check called by mix deps.get automatically unless --no-archives-check given
+  #     {:ehelper, "~> 0.1"}
+  #   ]
+  # end
 
   def archives(_), do: []
 

@@ -13,7 +13,7 @@ if Code.ensure_loaded?(Mix) do
   #     Code.append_path(ebin_path, cache: true)
   # end)
 
-  Ehelper.start!()
+  # Ehelper.start!()
 else
   raise "Mix not loaded"
 end

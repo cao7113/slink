@@ -4,7 +4,7 @@ services:
   # https://github.com/docker-library/docs/tree/master/postgres
   # https://github.com/docker-library/postgres/blob/master/16/bullseye/Dockerfile
   db:
-    image: postgres:17
+    image: postgres:18
     restart: always
     environment:
       POSTGRES_USER: postgres

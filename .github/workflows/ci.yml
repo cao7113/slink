@@ -34,8 +34,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install mise & Runtime
-        # 替换了原有的 erlef/setup-beam
-        uses: mise-en-place/action@v1
+        # 使用 jdx/mise-action 替代 mise-en-place/action
+        uses: jdx/mise-action@v2
         with:
           install: true
           cache: true

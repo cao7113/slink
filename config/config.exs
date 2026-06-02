@@ -65,9 +65,10 @@ config :slink, Slink.Mailer, adapter: Swoosh.Adapters.Local
 # https://github.com/crbelaus/bun?tab=readme-ov-file#adding-to-phoenix
 config :bun,
   # run mix bun.install --if-missing
-  # NOTE: maybe rm _build/bun before install new version
-  version: "1.3.4",
+  # NOTE: rm _build/bun to automatically install new version
+  version: "1.3.14",
   # mix bun assets --version
+  # mix bun assets info # assets is the profile name, follow bun command and mix other args!
   assets: [
     args: [],
     cd: Path.expand("../assets", __DIR__)
@@ -81,10 +82,17 @@ config :bun,
     # }
   ],
   css: [
-    # not work in Dockerfile???
-    # --bun x tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css
-    args: ~w(run tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css),
-    cd: Path.expand("../assets", __DIR__)
+    # 因为 tailwindcss cli 头部包含 #!/usr/bin/env node 而去找node解释器，因为可能没有全局安装nodejs可能导致失败！
+    # 以下测试均没有通过！！！
+    # bash> ../_build/bun run --bun tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css
+    # args: ~w(run tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css),
+    # args: ~w(x tailwindcss --input=css/app.css --output=../priv/static/assets/css/app.css),
+    # args: ~w(run --bun buildcss), # 使用package.json中的script
+    # 直接调用@tailwindcss/cli的二进制文件，绕过node解释器，成功了！
+    args:
+      ~w(run --bun node_modules/@tailwindcss/cli/dist/index.mjs --input=css/app.css --output=../priv/static/assets/css/app.css),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{}
   ]
 
 config :phoenix_live_view, :colocated_js,

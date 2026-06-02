@@ -3,9 +3,12 @@
     "../deps/*"
   ],
   "dependencies": {
-    "@tailwindcss/cli": "^4.1.18",
-    "daisyui": "^5.5.13",
-    "tailwindcss": "^4.1.18",
+    "phoenix": "workspace:*",
+    "phoenix_html": "workspace:*",
+    "phoenix_live_view": "workspace:*",
+    "tailwindcss": "^4.3.0",
+    "@tailwindcss/cli": "^4.3.0",
+    "daisyui": "^5.5.20",
     "topbar": "^3.0.0"
   },
   "devDependencies": {},

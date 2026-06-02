@@ -23,7 +23,7 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 
-// run: mix compile before assets.deploy!!! fro ColocatedHook or ColocatedJS
+// run: mix compile before assets.deploy!!! for ColocatedHook or ColocatedJS
 // https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.ColocatedHook.html
 import { hooks as colocatedHooks } from "phoenix-colocated/slink";
 // import topbar from "../vendor/topbar"
