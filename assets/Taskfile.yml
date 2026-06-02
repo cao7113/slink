@@ -4,9 +4,9 @@ tasks:
   default: bun i
 
   # # Install a NPM package such a htmx.org
-  # _build/bun add htmx.org
+  # ../_build/bun add htmx.org
   # # Remove a dependency
-  # _build/bun remove htmx.org
+  # ../_build/bun remove htmx.org
 
   setup: |
     ../_build/bun install
