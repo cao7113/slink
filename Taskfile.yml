@@ -176,4 +176,4 @@ tasks:
     _build/bun --version
     
     mix test
-    # task run
+    echo "# run by: task run"
