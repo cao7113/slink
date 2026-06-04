@@ -10,10 +10,26 @@
 #   - https://hub.docker.com/_/debian/tags?name=bookworm-20250610-slim - for the release image
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: docker.io/hexpm/elixir:1.18.4-erlang-27.3.4-debian-bookworm-20250610-slim
-#
-ARG ELIXIR_VERSION=1.19.4
-ARG OTP_VERSION=28.3
-ARG DEBIAN_VERSION=trixie-20251229-slim
+#  
+#   > mix h.docker
+#   %{
+#     "images" => ["amd64 linux", "arm64/v8 linux"],
+#     "last_updated" => "2026-05-20T01:04:40.37734Z",
+#     "name" => "1.19.5-erlang-28.5-debian-trixie-20260518-slim"
+#   },
+#   %{
+#     "images" => ["amd64 linux", "arm64/v8 linux"],
+#     "last_updated" => "2026-05-08T22:00:55.291413Z",
+#     "name" => "1.19.5-erlang-28.5-debian-trixie-20260505-slim"
+#   },
+#   %{
+#     "images" => ["amd64 linux", "arm64/v8 linux"],
+#     "last_updated" => "2026-04-24T12:41:44.001018Z",
+#     "name" => "1.19.5-erlang-28.5-debian-trixie-20260421-slim"
+#   }
+ARG ELIXIR_VERSION=1.19.5
+ARG OTP_VERSION=28.5
+ARG DEBIAN_VERSION=trixie-20260518-slim
 
 ARG BUILDER_IMAGE="docker.io/hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="docker.io/debian:${DEBIAN_VERSION}"
