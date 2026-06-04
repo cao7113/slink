@@ -5,6 +5,19 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.38](https://github.com/cao7113/slink/compare/v0.3.37...v0.3.38) (2026-06-04)
+
+
+
+
+### Bug Fixes:
+
+* bun css depends on node bug by Ryn Cao
+
+### Improvements:
+
+* upgrade elixir version in Dockerfile by Ryn Cao
+
 ## [v0.3.37](https://github.com/cao7113/slink/compare/v0.3.36...v0.3.37) (2026-01-07)
 
 
