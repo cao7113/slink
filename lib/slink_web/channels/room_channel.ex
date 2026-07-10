@@ -96,7 +96,8 @@ defmodule SlinkWeb.RoomChannel do
   end
 
   # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
+  defp authorized?(payload) do
+    # todo fix
+    Map.has_key?(payload, :auth_token)
   end
 end

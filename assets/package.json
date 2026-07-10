@@ -6,7 +6,7 @@
     "tailwindcss": "^4.3.0",
     "@tailwindcss/cli": "^4.3.0",
     "daisyui": "^5.5.20",
-    "topbar": "^3.0.0"
+    "topbar": "^3.0.1"
   },
   "devDependencies": {},
   "scripts": {

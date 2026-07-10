@@ -1,5 +1,5 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="sticky top-16 h-20 z-1 bg-base-100 border-1 border-green-300">
+  <div class="sticky top-16 h-20 z-1 bg-base-100 border border-green-300">
     <ul>
       <li
         :if={Enum.empty?(@pin_user_links)}
@@ -32,7 +32,7 @@
         </div>
 
         <div class="flex items-center space-x-2">
-          <.form for={@search_form} phx-change="search">
+          <.form for={@search_form} id="links-search-form" phx-change="search">
             <.input
               type="search"
               field={@search_form[:q]}
@@ -137,7 +137,7 @@
                   Unpin
                 </.button>
               <% else %>
-                <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})} alt="Pin">
+                <.button phx-click={JS.push("toggle_pin", value: %{id: link.id})}>
                   <.icon name="hero-map-pin" class="size-3" />
                 </.button>
               <% end %>
@@ -176,7 +176,7 @@
                   ]}
                   phx-click={JS.push("toggle_site_id", value: %{id: link.site.id})}
                 >
-                  <span class="w-fit max-w-12 truncate">{link.site && link.site.name}</span>
+                  <span class="w-fit max-w-12 truncate">{link.site.name}</span>
                 </.link>
               </span>
             </div>

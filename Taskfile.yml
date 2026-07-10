@@ -43,6 +43,12 @@ tasks:
         mix test.reset
   clean.links: find deps/ -type l -depth 1 -delete
 
+  prune: |
+    rm -fr _build
+    rm -fr deps
+    rm -fr assets/node_modules
+    rm -fr priv/static/assets
+
   ## assets install or upgrade
   bun.install: mix bun assets install --verbose
   bun.ls: mix bun assets pm ls
@@ -68,21 +74,28 @@ tasks:
   db:
     aliases: [sql, pg]
     cmds:
-      - pgcli slink_dev
+      - psql slink_dev
   db.reset: |
     mix do dev.reset + test.reset
   db.mig: mix ecto.migrate
   # task db.back -- 1
   db.back: mix ecto.rollback --step {{.CLI_ARGS}}
   db.back1: task db.back -- 1
-  db.fly.local: |
+
+  # db browser tool: beekeeper
+  
+  db.fly: |
+    ls -l _local/dump/flydb
+  db.fly.clean: |
+    find _local/dump/flydb -maxdepth 1 -type f -size +0 -print0 | xargs -0 rm -v
+  db.fly.dump: |
+    mix run run/fly-db-dump.exs
+
+  db.fly.restore.local: |
     mix dev.db.init
     mix run run/fly-db-local-restore.exs
     mix ecto.migrate
     mix run run/dev/seed.exs
-  db.fly.dump: |
-    mix run run/fly-db-dump.exs
-  # db browser tool: beekeeper
 
   ## Git ops https://github.com/zachdaniel/git_ops/blob/master/CHANGELOG.md
   ops: mix git_ops.project_info
@@ -166,14 +179,21 @@ tasks:
   dk.ping: curl https://{{.DOCKER_CONTAINER_NAME}}.orb.local/ping | jq
   dk.down: docker stop {{.DOCKER_CONTAINER_NAME}}
   dk.test: |
+    task dk.build
     docker compose version
     docker compose up --quiet-pull --exit-code-from curl # --abort-on-container-exit
   
   ## Setup
   setup: |
-    mise install 
+    mise install || true
     mix setup
     _build/bun --version
     
     mix test
     echo "# run by: task run"
+  
+  setup.collector: |
+    [[ -d _local/slink-collector ]] || {
+      mkdir -p _local && cd _local
+      gh clone cao7113/slink-collector
+    }

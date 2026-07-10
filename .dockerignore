@@ -47,8 +47,8 @@ erl_crash.dump
 _local/
 /notes/
 /run/
+/.github
+/.vscode
 fly.toml
 Taskfile*
 .env*
-.github
-.vscode

@@ -58,7 +58,8 @@ defmodule Phoenix.Router.RoutingTest do
   end
 
   setup do
-    Logger.disable(self())
+    # Logger.disable(self())
+    Logger.put_process_level(self(), :none)
     :ok
   end
 

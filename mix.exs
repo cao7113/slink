@@ -13,8 +13,7 @@ defmodule Slink.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: env_deps(Mix.env()),
-      archives: archives(Mix.env()),
+      deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader],
       name: "Shareup links",
@@ -58,24 +57,23 @@ defmodule Slink.MixProject do
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
-  # note: maybe have `local_linking` flag for local debug dep code
   # https://hexdocs.pm/mix/Mix.Tasks.Deps.html#module-dependency-definition-options
   defp deps do
     [
       {:bcrypt_elixir, "~> 3.0"},
-      {:phoenix, "~> 1.8", local_linking: true},
+      {:phoenix, "~> 1.8"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.1", local_linking: false},
+      {:phoenix_live_view, "~> 1.2"},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       # {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       # {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       # https://hex.pm/packages/bun
-      {:bun, "~> 2.0", runtime: Mix.env() == :dev, local_linking: true},
+      {:bun, "~> 2.0", runtime: Mix.env() == :dev},
       {:heroicons, heroicons_dep_opts(Mix.env())},
       {:swoosh, "~> 1.19"},
       {:req, "~> 0.5"},
@@ -84,10 +82,10 @@ defmodule Slink.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.8", local_linking: true},
-      {:phoenix_pubsub, "2.2.0", local_linking: true},
-      {:plug, "~> 1.18", local_linking: true},
-      {:mint_web_socket, "~> 1.0", optional: true, local_linking: true},
+      {:bandit, "~> 1.8"},
+      {:phoenix_pubsub, "2.2.0"},
+      {:plug, "~> 1.18"},
+      {:mint_web_socket, "~> 1.0", optional: true},
       {:req_client, "~> 0.1"},
 
       # App enhancement deps
@@ -180,6 +178,7 @@ defmodule Slink.MixProject do
     compile: false,
     depth: 1
   ]
+
   def heroicons_dep_opts(:dev) do
     path = "deps/heroicons"
 
@@ -193,60 +192,6 @@ defmodule Slink.MixProject do
   def heroicons_dep_opts(_) do
     @heroicons_git_opts
   end
-
-  ## Support deps local-linking
-
-  def env_deps(:prod), do: deps() |> prune_local_linking()
-  def env_deps(_), do: deps_with_linking_path()
-
-  def raw_deps, do: deps()
-
-  def deps_with_linking_path(deps \\ deps()) do
-    # Mix.Local.append_archives()
-    # :code.get_path() |> Enum.sort();
-
-    Mix.DepLink
-    |> Code.ensure_loaded()
-    |> case do
-      {:module, _} ->
-        deps
-        |> Mix.DepLink.deps_with_local_linking()
-
-      {:error, reason} ->
-        if Mix.env() in [:dev] do
-          Mix.shell().info(
-            "Hint: no Mix.DepLink : #{reason |> inspect}, run: mix archive.install hex ehelper"
-          )
-        end
-
-        deps |> prune_local_linking()
-    end
-  end
-
-  def prune_local_linking(deps \\ deps()) do
-    deps
-    |> Enum.map(fn
-      {app, v, opts} when is_list(opts) ->
-        {app, v, opts |> Keyword.delete(:local_linking)}
-
-      {app, opts} when is_list(opts) ->
-        {app, opts |> Keyword.delete(:local_linking)}
-
-      item ->
-        item
-    end)
-  end
-
-  # def archives(:dev) do
-  #   [
-  #     # https://github.com/cao7113/ehelper?tab=readme-ov-file#install
-  #     # https://hexdocs.pm/mix/Mix.Tasks.Archive.Check.html
-  #     # mix archive.check called by mix deps.get automatically unless --no-archives-check given
-  #     {:ehelper, "~> 0.1"}
-  #   ]
-  # end
-
-  def archives(_), do: []
 
   def demo_task(_args) do
     IO.puts("#" |> String.duplicate(40))

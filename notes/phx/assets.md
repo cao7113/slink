@@ -53,26 +53,47 @@ https://github.com/tailwindlabs/tailwindcss-intellisense 项目是个js项目，
 Todo：
 更好的方法是引导插件使用phoenix使用的命令行版本的tailwindcss，似乎不容易办到
 
+统一使用 bun 管理 css 和 js
+
 ## bun deploy
 
 search  assets.deploy TypeError: familySync is not a function const { MUSL, familySync } = require('detect-libc') process.platform === 'linux'
 
+
+项目地址
+https://github.com/cao7113/slink
+错误 github actions
+https://github.com/cao7113/slink/actions/runs/26945027930/job/79495738993
+
+
 ```
+#25 [builder 15/18] RUN mix assets.deploy
+#25 1.130 1 | let parts = [process.platform, process.arch];
+#25 1.130 2 | if (process.platform === 'linux') {
+#25 1.130 3 |   const { MUSL, familySync } = require('detect-libc');
+#25 1.130 4 |   const family = familySync();
+#25 1.130                      ^
+#25 1.130 TypeError: familySync is not a function. (In 'familySync()', 'familySync' is undefined)
+#25 1.130       at <anonymous> (/app/assets/node_modules/lightningcss/node/index.js:4:18)
+#25 1.130 
+#25 1.130 Bun v1.3.14 (Linux x64)
+#25 1.148 ** (Mix) `mix bun css --minify` exited with 1
+#25 ERROR: process "/bin/sh -c mix assets.deploy" did not complete successfully: exit code: 1
+------
  > [builder 15/18] RUN mix assets.deploy:
-1.381 1 | let parts = [process.platform, process.arch];
-1.381 2 | if (process.platform === 'linux') {
-1.381 3 |   const { MUSL, familySync } = require('detect-libc');
-1.381 4 |   const family = familySync();
-1.381                      ^
-1.381 TypeError: familySync is not a function. (In 'familySync()', 'familySync' is undefined)
-1.381       at /app/assets/node_modules/lightningcss/node/index.js:4:18
-1.381       at unknown:11:43
-1.381       at spawnSync (unknown:1:1)
-1.381       at spawnSync (node:child_process:226:22)
-1.381       at /app/assets/node_modules/detect-libc/lib/detect-libc.js:55:7
-1.381       at anonymous (unknown:1:1)
-1.381       at /app/assets/node_modules/@parcel/watcher/index.js:5:11
-1.381       at unknown:11:43
-1.381
-1.381 Bun v1.2.22 (Linux x64)
+1.130 1 | let parts = [process.platform, process.arch];
+1.130 2 | if (process.platform === 'linux') {
+1.130 3 |   const { MUSL, familySync } = require('detect-libc');
+1.130 4 |   const family = familySync();
+1.130                      ^
+1.130 TypeError: familySync is not a function. (In 'familySync()', 'familySync' is undefined)
+1.130       at <anonymous> (/app/assets/node_modules/lightningcss/node/index.js:4:18)
+1.130 
+1.130 Bun v1.3.14 (Linux x64)
+1.148 ** (Mix) `mix bun css --minify` exited with 1
+------
 ```
+
+后来如何解决的呢？？？
+
+删掉assets/bun.lock 后重新 install就好了。。。。

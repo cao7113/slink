@@ -3,10 +3,9 @@
 name: Fly Deploy
 on:
   push:
-    # branches:
-    #   # - main
-    #   # manual deploy locally now, this file is auto-generated when run `fly launch`
-    #   - flyio
+    branches:
+      # manually trigger deploy on this special branch temp when need
+      - fly
     tags:
       - "v*"
 jobs:

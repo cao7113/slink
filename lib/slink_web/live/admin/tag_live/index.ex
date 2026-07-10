@@ -7,7 +7,7 @@ defmodule SlinkWeb.Admin.TagLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <.form for={@search_form} phx-change="search">
+      <.form for={@search_form} id="search-form" phx-change="search">
         <.input
           type="search"
           field={@search_form[:query]}

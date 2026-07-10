@@ -3,6 +3,7 @@
 db_dir = "_local/dump/flydb"
 target_db = "slink_dev"
 
+# todo check valid when file-size > 0
 last_file = db_dir |> File.ls!() |> Enum.sort(:desc) |> List.first()
 db_file_path = Path.join(db_dir, last_file)
 
@@ -12,3 +13,5 @@ IO.puts("create database #{target_db};")
 IO.puts(restore_cmd)
 
 System.cmd("bash", ["-c", restore_cmd])
+
+IO.puts(restore_cmd)

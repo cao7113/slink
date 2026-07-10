@@ -1,6 +1,6 @@
 defmodule Phoenix.Controller.PipelineTest do
   @moduledoc """
-  copied from
+  Copied from
   - https://github.com/phoenixframework/phoenix/blob/main/test/phoenix/controller/pipeline_test.exs
   """
 
@@ -46,7 +46,7 @@ defmodule Phoenix.Controller.PipelineTest do
       send_resp(conn, :ok, trigger_func_clause_error(params))
     end
 
-    defp trigger_func_clause_error(%{"no" => "match"}), do: :nomatch
+    defp trigger_func_clause_error(%{"no" => "match"}), do: "nomatch"
 
     defp do_halt(conn, _), do: halt(conn)
 
@@ -73,7 +73,8 @@ defmodule Phoenix.Controller.PipelineTest do
   @moduletag :try
 
   setup do
-    Logger.disable(self())
+    # Logger.disable(self())
+    Logger.put_process_level(self(), :none)
     :ok
   end
 

@@ -11,6 +11,7 @@ defmodule SlinkWeb.PlayLive.Demo do
 
   attr :name, :string, default: "boy"
 
+  @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>

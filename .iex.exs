@@ -54,8 +54,8 @@ alias PhxHelper, as: Ph
 alias ReqClient, as: Rc
 
 ## Data & Ops
-u1 = user1 = Accounts.find_user(1)
-s1 = scope1 = Accounts.user_scope(1)
+# u1 = user1 = Accounts.find_user(1)
+# s1 = scope1 = Accounts.user_scope(1)
 # A.create_user_api_token(A.find_user(1))
 # UserAuth.get_login_magic_link_url(A.find_user(1))
 
