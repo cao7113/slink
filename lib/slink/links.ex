@@ -182,8 +182,8 @@ defmodule Slink.Links do
             "latest" ->
               query
               |> order_by([l, ul: ul],
-                desc_nulls_last: ul.updated_at,
-                desc: l.id
+                # desc_nulls_last: ul.updated_at,
+                desc: l.updated_at
               )
 
             "pinned" ->
