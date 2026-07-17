@@ -5,6 +5,19 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.39](https://github.com/cao7113/slink/compare/v0.3.38...v0.3.39) (2026-07-17)
+
+
+
+
+### Bug Fixes:
+
+* make latest links order by link updated_at desc by [@cao7113](https://github.com/cao7113)
+
+### Improvements:
+
+* upgrade elixir to 1.20 by [@cao7113](https://github.com/cao7113)
+
 ## [v0.3.38](https://github.com/cao7113/slink/compare/v0.3.37...v0.3.38) (2026-06-04)
 
 
