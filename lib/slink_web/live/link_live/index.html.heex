@@ -123,6 +123,10 @@
                 <.icon name="hero-pencil" class="size-3" />
               </.link>
 
+              <.button phx-click={JS.push("touch_link", value: %{id: link.id})}>
+                <.icon name="hero-bars-arrow-up" class="size-5" />
+              </.button>
+
               <.link
                 :if={@current_scope.user.id == link.user_id}
                 phx-click={JS.push("delete", value: %{id: link.id}) |> hide("##{id}")}

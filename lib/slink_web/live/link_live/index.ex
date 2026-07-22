@@ -97,6 +97,16 @@ defmodule SlinkWeb.LinkLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("touch_link", %{"id" => id}, socket) do
+    scope = socket.assigns.current_scope
+    link = Links.get_link_with_resources(id)
+    {:ok, _link} = Links.touch_link(scope, link)
+
+    socket = socket |> stream_items()
+
+    {:noreply, socket}
+  end
+
   def handle_event("update_note", %{"id" => id, "value" => new_note}, socket) do
     link = Links.get_link_with_resources(id)
     scope = socket.assigns.current_scope
