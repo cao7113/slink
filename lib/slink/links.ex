@@ -343,6 +343,12 @@ defmodule Slink.Links do
     end
   end
 
+  def touch_link(%Scope{} = scope, %Link{} = link) do
+    link
+    |> Link.changeset(%{}, scope)
+    |> Repo.update(force: true)
+  end
+
   @doc """
   Deletes a link.
 

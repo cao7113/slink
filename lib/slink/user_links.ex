@@ -99,6 +99,8 @@ defmodule Slink.UserLinks do
   end
 
   def do_collect_user_link(%Scope{} = scope, %Link{title: title} = link, attrs \\ %{}) do
+    {:ok, link} = Links.touch_link(scope, link)
+
     ulink_attrs =
       attrs
       |> Map.put(:link_id, link.id)
