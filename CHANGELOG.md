@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.3.41](https://github.com/cao7113/slink/compare/v0.3.40...v0.3.41) (2026-07-22)
+
+
+
+
+### Bug Fixes:
+
+* add touch-up action button on links index page by [@cao7113](https://github.com/cao7113)
+
 ## [v0.3.40](https://github.com/cao7113/slink/compare/v0.3.39...v0.3.40) (2026-07-22)
 
 
