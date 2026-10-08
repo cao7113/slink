@@ -10,49 +10,50 @@ kill_signal = 'SIGTERM'
 [build]
 
 [deploy]
-  release_command = '/app/bin/migrate'
+# 超时限制：release_command 默认的最大允许运行时间为 5 分钟。如果数据库迁移非常耗时，可能会被强行终结。
+release_command = '/app/bin/migrate'
 
 [env]
-  ECTO_IPV6 = 'true'
-  ERL_AFLAGS = '-proto_dist inet6_tcp'
-  MAILER_SMTP_GMAIL_ENABLED = 'true'
-  PHX_HOST = 'slink.fly.dev'
-  PORT = '8080'
-  RELEASE_COOKIE = 'happy-cookie-not-secret-but-for-cluster'
-  RELEASE_DISTRIBUTION = 'name'
+ECTO_IPV6 = 'true'
+ERL_AFLAGS = '-proto_dist inet6_tcp'
+MAILER_SMTP_GMAIL_ENABLED = 'true'
+PHX_HOST = 'slink.fly.dev'
+PORT = '8080'
+RELEASE_COOKIE = 'happy-cookie-not-secret-but-for-cluster'
+RELEASE_DISTRIBUTION = 'name'
 
 [http_service]
-  internal_port = 8080
-  force_https = true
-  # https://fly.io/docs/reference/fly-proxy-autostop-autostart/#how-fly-proxy-autostop-autostart-works
-  # Fly Proxy runs a process to determine whether an app has excess capacity every few minutes.
-  # NOTE: auto start/suspend only on existing machines other than create new machines! Fly Proxy autostop/autostart never creates or destroys Machines for you. 
-  # work with github action schedule!
-  # "off" (equivalent to false), "stop" (equivalent to true), or "suspend"
-  # Starting a Machine from a suspended state is faster than starting a Machine from a stopped state, but there are some caveats that you should know about.
-  auto_stop_machines = 'suspend'
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+internal_port = 8080
+force_https = true
+# https://fly.io/docs/reference/fly-proxy-autostop-autostart/#how-fly-proxy-autostop-autostart-works
+# Fly Proxy runs a process to determine whether an app has excess capacity every few minutes.
+# NOTE: auto start/suspend only on existing machines other than create new machines! Fly Proxy autostop/autostart never creates or destroys Machines for you. 
+# work with github action schedule!
+# "off" (equivalent to false), "stop" (equivalent to true), or "suspend"
+# Starting a Machine from a suspended state is faster than starting a Machine from a stopped state, but there are some caveats that you should know about.
+auto_stop_machines = 'suspend'
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
 
-  [http_service.concurrency]
-    type = 'connections'
-    hard_limit = 1000
-    soft_limit = 500
+[http_service.concurrency]
+type = 'connections'
+hard_limit = 1000
+soft_limit = 500
 
 [[vm]]
-  memory = '512mb'
-  cpu_kind = 'shared'
-  cpus = 1
+memory = '512mb'
+cpu_kind = 'shared'
+cpus = 1
 
 [checks]
-  [checks.api_ping]
-    grace_period = "60s"
-    interval = "15s"
-    method = "get"
-    path = "/api/ping"
-    port = 8080
-    timeout = "10s"
-    type = "http"
-    [checks.api_ping.headers]
-      Content-Type = "application/json"
+[checks.api_ping]
+grace_period = "60s"
+interval = "15s"
+method = "get"
+path = "/api/ping"
+port = 8080
+timeout = "10s"
+type = "http"
+[checks.api_ping.headers]
+Content-Type = "application/json"

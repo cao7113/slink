@@ -10,7 +10,7 @@ includes:
   flyio:
     # task f:iex
     aliases: [f, fly]
-    taskfile: ./Taskfile-flyio.yml
+    taskfile: rel/Taskfile-flyio.yml
     # optional: true
 tasks:
   default: mix test
@@ -43,7 +43,7 @@ tasks:
         mix test.reset
   clean.links: find deps/ -type l -depth 1 -delete
 
-  prune: |
+  clean: |
     rm -fr _build
     rm -fr deps
     rm -fr assets/node_modules
@@ -141,23 +141,6 @@ tasks:
     cmds:
       - echo "==Observing remote app"
       - run/observer.sh
-
-  # local release run in dev mode
-  prel: MIX_ENV=prod mix release --overwrite
-  lp-test:
-    dir: local-prod
-    cmds:
-      - pwd
-  lp: task lp-stop && task lp-run -- daemon
-  lp-run:
-    dir: local-prod
-    cmds:
-      - run/prod.sh
-  lp-stop:
-    dir: local-prod
-    cmds:
-      - _build/dev/rel/slink/bin/slink stop
-  lps: task lp-stop && task lp-run -- start
 
   ## Docker run env
   dk.build: docker build -t {{.DOCKER_IMG_NAME}} .

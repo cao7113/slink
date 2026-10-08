@@ -108,7 +108,8 @@ defmodule Slink.MixProject do
 
       # deployment tool
       {:igniter, "~> 0.6", only: [:dev, :test]},
-      {:git_ops, "~> 2.0", only: [:dev], runtime: false}
+      {:git_ops, "~> 2.0", only: [:dev], runtime: false},
+      {:db_ops, "~> 0.1"}
     ]
   end
 

@@ -31,6 +31,11 @@ tags = ~w[elixir phoenix web3 crypto]
 email2 = "a2@b.c"
 ```
 
+### Heroicons
+
+- https://heroicons.com/
+- should add `hero-` prefix, e.g. `hero-pencil`
+
 ## Learn more
 
 * Official website: https://www.phoenixframework.org/

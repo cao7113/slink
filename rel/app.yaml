@@ -1,0 +1,36 @@
+name: slink
+domain_suffix: .s
+app_type: phx
+cwd: /Users/rj/dev/elab/slink/_build/prod/_app
+cmd: /Users/rj/dev/elab/slink/_build/prod/_app/bin/server
+args: []
+env:
+  DATABASE_URL: postgres://postgres:postgres@localhost:5432/slink_prod?sslmode=disable
+  PHX_HOST: ${APP_DOMAIN}
+  PORT: ${PORT}
+  SECRET_KEY_BASE: fvKKztCHXzPitVg6fy9VpnnCWij6cXdNVv5Ph3ZbpkkyUPUI1P976tXh97VOirlh
+  # distribution config
+  RELEASE_DISTRIBUTION: name
+  RELEASE_NODE: slink@127.0.0.1
+  RELEASE_COOKIE: cookie
+commands:
+  migrate:
+    cmd: /Users/rj/dev/elab/slink/_build/prod/_app/bin/migrate
+    unset_env:
+      - PORT
+  # db_ops commands 
+  dbcreate:
+    cmd: /Users/rj/dev/elab/slink/_build/prod/_app/bin/slink
+    args:
+      - eval
+      - DbOps.create(:slink)
+    unset_env:
+      - PORT
+  dbdrop:
+    cmd: /Users/rj/dev/elab/slink/_build/prod/_app/bin/slink
+    args:
+      - eval
+      - 'DbOps.drop(:slink, confirm: "YES_DELETE_DATABASE")'
+    unset_env:
+      - PORT
+idle_timeout: 600s
